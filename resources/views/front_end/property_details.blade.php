@@ -114,11 +114,11 @@
                                                 <!--ps-facts-item end-->
 
                                                  <!--ps-facts-item-->
-                                                 <!-- <div class="ps-facts-item">
-                                                    <h4>{{ __('messages.balcony') }}</h4>
-                                                    <h5>{{$property->parking ?? '-'}}</h5>
+                                                 <div class="ps-facts-item">
+                                                    <h4>{{ __('messages.floor_number') }}</h4>
+                                                    <h5>{{$property->floor_no ?? '-'}}</h5>
                                                     <i class="fa-light fa-house-window"></i>
-                                                </div> -->
+                                                </div>
                                                 <!--ps-facts-item end-->
     <!--ps-facts-item-->
                                                 <div class="ps-facts-item">
