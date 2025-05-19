@@ -27,3 +27,11 @@ Homestead.json
 .phpunit.result.cache
 
 # End of https://www.toptal.com/developers/gitignore/api/laravel
+.idea/binsheikh-laravel.iml
+.idea/commandlinetools/Laravel_18_05_2025__12_29.xml
+.idea/commandlinetools/schemas/frameworkDescriptionVersion1.1.4.xsd
+.idea/modules.xml
+.idea/php.xml
+.idea/phpunit.xml
+.idea/vcs.xml
+.idea/workspace.xml

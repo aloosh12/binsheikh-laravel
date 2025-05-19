@@ -148,7 +148,7 @@ return [
     'unit_number' => 'Unit Number',
     'area' => 'Area',
     'balcony' => 'Balcony',
-    'three_d_view' => '3D View',
+    'three_d_view' => '3D DESIGN',
     'floor_plan' => 'Floor Plan',
     'property_amenities' => 'Property Amenities',
     'property_location' => 'Property Location',
