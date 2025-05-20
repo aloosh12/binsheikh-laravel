@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Validator;
 
 class CustomerController extends Controller
@@ -233,6 +234,22 @@ class CustomerController extends Controller
 
         echo json_encode(['status' => $status, 'message' => $message, 'o_data' => $o_data]);
 
+    }
+
+    public function deleteAll(Request $request)
+    {
+        //Log::info($request->all());
+        if ($request->has('delete_all_id')) {
+            $ids = explode(',', $request->delete_all_id);
+            //Log::info($ids);
+            User::whereIn('id', $ids)->delete();
+
+            return redirect()->back()->with('success', 'Selected customers deleted successfully.');
+        }
+        return redirect()->back()->with('error', 'No customers selected.');
+//        $delete_all_id = explode(",", $request->delete_all_id);
+//        User::whereIn('id', $delete_all_id)->delete();
+//        return redirect('admin/sections')->with('success', 'Sections deleted successfully.');
     }
 
 }
