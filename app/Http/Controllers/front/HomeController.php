@@ -284,9 +284,9 @@ class HomeController extends Controller
 
         $bed_bath_text = __('messages.room_baths');
         if ($bedrooms && $bathrooms) {
-            $bed_bath_text = $bedrooms . ' '.__('messages.beds').' & ' . $bathrooms . ' '.__('messages.baths');
+            $bed_bath_text = ($bedrooms == "0" ? __('messages.studio') : $bedrooms . ' '.__('messages.beds')) . ' & ' . $bathrooms . ' '.__('messages.baths');
         } else if ($bedrooms) {
-            $bed_bath_text = $bedrooms . ' '.__('messages.beds');
+            $bed_bath_text = $bedrooms == "0" ? __('messages.studio') : $bedrooms . ' '.__('messages.beds');
         } else if ($bathrooms) {
             $bed_bath_text = $bathrooms . ' '.__('messages.baths');
         }
