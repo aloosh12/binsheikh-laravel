@@ -259,6 +259,8 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
 
     Route::delete("customer/delete/{id}", "CustomerController@destroy");
 
+    Route::delete('customer/deleteAll', "CustomerController@deleteAll")->name('customer.deleteAll');
+
 });
 
 Route::any('/check_sms', 'App\Http\Controllers\front\HomeController@check_sms')
