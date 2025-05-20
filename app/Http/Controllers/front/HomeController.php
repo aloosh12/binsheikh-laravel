@@ -247,7 +247,7 @@ class HomeController extends Controller
         if ($location_id) {
             $properties = $properties->where('projects.country', $location_id);
         }
-        if ($bedrooms) {
+        if (isset($bedrooms)) {
             if ($bedrooms == "6+") {
                 $properties = $properties->where('bedrooms', '>=', 6);
             } else {
@@ -283,10 +283,10 @@ class HomeController extends Controller
         $locations = ProjectCountry::select('id', 'name','name_ar')->where(['active' => '1', 'deleted' => 0])->orderBy('created_at', 'desc')->get();
 
         $bed_bath_text = __('messages.room_baths');
-        if ($bedrooms && $bathrooms) {
-            $bed_bath_text = $bedrooms . ' '.__('messages.beds').' & ' . $bathrooms . ' '.__('messages.baths');
-        } else if ($bedrooms) {
-            $bed_bath_text = $bedrooms . ' '.__('messages.beds');
+        if (isset($bedrooms) && $bathrooms) {
+            $bed_bath_text = ($bedrooms == "0" ? __('messages.studio') : $bedrooms . ' '.__('messages.beds')) . ' & ' . $bathrooms . ' '.__('messages.baths');
+        } else if (isset($bedrooms)) {
+            $bed_bath_text = $bedrooms == "0" ? __('messages.studio') : $bedrooms . ' '.__('messages.beds');
         } else if ($bathrooms) {
             $bed_bath_text = $bathrooms . ' '.__('messages.baths');
         }

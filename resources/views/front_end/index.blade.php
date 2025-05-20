@@ -52,38 +52,42 @@
                                                     </div>
                                                     <div class="col-lg-2">
 
-                                                        <div class="dropdown">
-                                                            <button class="btn select-dropdown dropdown-toggle room_bath_btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
-                                                                {{ __("messages.room_baths") }}
-                                                            </button>
-                                                            <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton1">
-                                                                <h6 class="mb-2">{{ __("messages.beds") }}</h6>
-                                                                <div class="number-group">
-                                                                    <label>
-                                                                        <input type="radio" name="bedrooms" value="1" class="bedrooms bed_bath"/>
-                                                                        <span>1</span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <input type="radio" name="bedrooms" value="2" class="bedrooms bed_bath"/>
-                                                                        <span>2</span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <input type="radio" name="bedrooms" value="3" class="bedrooms bed_bath"/>
-                                                                        <span>3</span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <input type="radio" name="bedrooms" value="4" class="bedrooms bed_bath"/>
-                                                                        <span>4</span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <input type="radio" name="bedrooms" value="5" class="bedrooms bed_bath"/>
-                                                                        <span>5</span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <input type="radio" name="bedrooms" value="6+" class="bedrooms bed_bath"/>
-                                                                        <span>6+</span>
-                                                                    </label>
-                                                                </div>
+                                                            <div class="dropdown">
+                                                                <button class="btn select-dropdown dropdown-toggle room_bath_btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
+                                                                    {{ __("messages.room_baths") }}
+                                                                </button>
+                                                                <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton1">
+                                                                    <h6 class="mb-2">{{ __("messages.beds") }}</h6>
+                                                                    <div class="number-group">
+                                                                        <label>
+                                                                            <input type="radio" name="bedrooms" value="0" class="bedrooms bed_bath"/>
+                                                                            <span>{{ __("messages.studio") }}</span>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio" name="bedrooms" value="1" class="bedrooms bed_bath"/>
+                                                                            <span>1</span>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio" name="bedrooms" value="2" class="bedrooms bed_bath"/>
+                                                                            <span>2</span>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio" name="bedrooms" value="3" class="bedrooms bed_bath"/>
+                                                                            <span>3</span>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio" name="bedrooms" value="4" class="bedrooms bed_bath"/>
+                                                                            <span>4</span>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio" name="bedrooms" value="5" class="bedrooms bed_bath"/>
+                                                                            <span>5</span>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio" name="bedrooms" value="6+" class="bedrooms bed_bath"/>
+                                                                            <span>6+</span>
+                                                                        </label>
+                                                                    </div>
 
                                                                 <h6 class="mb-2 mt-3">{{ __("messages.baths") }}</h6>
                                                                 <div class="number-group">
@@ -622,45 +626,48 @@
 
             @stop
 
-            @section('script')
-                <script>
-                    $(".pr_range").change(function(){
-                        pr_text = "Price"
-                        if($(this).val()){
-                            var val = $(this).val().split(';');
-                            $('#price_from').val(val[0]);
-                            $('#price_to').val(val[1]);
-                            pr_text = val[0]+" - "+val[1];
-                        }else{
-                            $('#price_from').val('');
-                            $('#price_to').val('');
-                        }
-                        $(".price_button").text(pr_text)
-                    });
-                    $(".bed_bath").change(function(){
-                        var bed_val = $('.bedrooms:checked').val() || '';
-                        var bath_val = $('.bathrooms:checked').val() || '';
-                        var text = '  {{ __('messages.room_baths') }}';
-                        if(bed_val && bath_val){
-                            text = bed_val+' {{ __('messages.beds') }} & '+bath_val+' {{ __('messages.baths') }}';
-                        }else if(bed_val){
-                            text = bed_val+' {{ __('messages.beds') }}';
-                        }else if(bath_val){
-                            text = bath_val+'{{ __('messages.baths') }}';
-                        }
-                        $(".room_bath_btn").text(text)
-                    });
-                    $(".clear_bath_bed").click(function(){
-                        $(".room_bath_btn").click();
-                        $(".room_bath_btn").text('  {{ __('messages.room_baths') }}');
-                        $('.bedrooms:checked').prop('checked', false);
-                        $('.bathrooms:checked').prop('checked', false);
-                    });
-                    $(".clear_price").click(function(){
-                        $(".price_button").click();
-                        $(".price_button").text('  {{ __('messages.price') }}');
-                        $('#price_from').val('');
-                        $('#price_to').val('');
-                    });
-                </script>
+@section('script')
+<script>
+    $(".pr_range").change(function(){
+        pr_text = "Price"
+        if($(this).val()){
+            var val = $(this).val().split(';');
+            $('#price_from').val(val[0]);
+            $('#price_to').val(val[1]);
+            pr_text = val[0]+" - "+val[1];
+        }else{
+            $('#price_from').val('');
+            $('#price_to').val('');
+        }
+        $(".price_button").text(pr_text)
+    });
+    $(".bed_bath").change(function(){
+        var bed_val = $('.bedrooms:checked').val() || '';
+        var bath_val = $('.bathrooms:checked').val() || '';
+        var text = '  {{ __('messages.room_baths') }}';
+        var text = '{{ __('messages.room_baths') }}';
+        if(bed_val && bath_val){
+            var bed_text = bed_val == "0" ? '{{ __('messages.studio') }}' : bed_val + ' {{ __('messages.beds') }}';
+            text = bed_text + ' & ' + bath_val + ' {{ __('messages.baths') }}';
+        }else if(bed_val){
+            text = bed_val == "0" ? '{{ __('messages.studio') }}' : bed_val + ' {{ __('messages.beds') }}';
+        }else if(bath_val){
+            text = bath_val+'{{ __('messages.baths') }}';
+        }
+        $(".room_bath_btn").text(text)
+    });
+    $(".clear_bath_bed").click(function(){
+        $(".room_bath_btn").click();
+        $(".room_bath_btn").text('  {{ __('messages.room_baths') }}');
+        $('.bedrooms:checked').prop('checked', false);
+        $('.bathrooms:checked').prop('checked', false);
+    });
+    $(".clear_price").click(function(){
+        $(".price_button").click();
+        $(".price_button").text('  {{ __('messages.price') }}');
+        $(".price_button").text('{{ __('messages.price') }}');
+        $('#price_from').val('');
+        $('#price_to').val('');
+    });
+</script>
 @stop

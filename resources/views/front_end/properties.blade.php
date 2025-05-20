@@ -89,6 +89,10 @@
                                                             <h6 class="mb-2">{{ __('messages.beds') }}</h6>
                                                             <div class="number-group">
                                                                 <label>
+                                                                    <input type="radio" name="bedrooms" <?=$bedrooms=="0"?'checked':'' ?> value="0" class="bedrooms bed_bath"/>
+                                                                    <span>{{ __('messages.studio') }}</span>
+                                                                </label>
+                                                                <label>
                                                                     <input type="radio" name="bedrooms" <?=$bedrooms==1?'checked':'' ?> value="1" class="bedrooms bed_bath"/>
                                                                     <span>1</span>
                                                                 </label>
@@ -423,9 +427,10 @@
         var bath_val = $('.bathrooms:checked').val() || '';
         var text = '  {{ __('messages.room_baths') }}';
         if(bed_val && bath_val){
-            text = bed_val+' {{ __('messages.beds') }} & '+bath_val+' {{ __('messages.baths') }}';
+            var bed_text = bed_val == "0" ? '{{ __('messages.studio') }}' : bed_val + ' {{ __('messages.beds') }}';
+            text = bed_text + ' & ' + bath_val + ' {{ __('messages.baths') }}';
         }else if(bed_val){
-            text = bed_val+' {{ __('messages.beds') }}';
+            text = bed_val == "0" ? '{{ __('messages.studio') }}' : bed_val + ' {{ __('messages.beds') }}';
         }else if(bath_val){
             text = bath_val+'{{ __('messages.baths') }}';
         }
