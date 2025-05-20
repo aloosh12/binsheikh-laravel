@@ -200,6 +200,21 @@
                                             <input type="checkbox" id="is_recommended" name="is_recommended" @if($id && $property->is_recommended) checked @endif>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Similar Properties <small class="text-info">Select properties that are similar to this one</small></label>
+                                            <select name="similar_properties[]" class="form-control select2" multiple>
+                                                @foreach($properties as $prop)
+                                                    @if(!$id || $prop->id != $property->id)
+                                                        <option value="{{$prop->id}}" @if($id && in_array($prop->id, explode(',', $property->similar_properties))) selected @endif>
+                                                            {{$prop->name}} ({{$prop->apartment_no}})
+                                                        </option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                     
                                     <div class="col-md-12">
                                         <div class="form-group">

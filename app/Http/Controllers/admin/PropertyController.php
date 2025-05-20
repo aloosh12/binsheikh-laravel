@@ -52,7 +52,6 @@ class PropertyController extends Controller
      */
     public function create()
     {
-
         $page_heading = "Properties";
         $mode = "create";
         $id = "";
@@ -61,7 +60,8 @@ class PropertyController extends Controller
         $categories = Categories::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get();
         $projects = Projects::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get();
         $amenities = Amenities::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get();
-        return view("admin.property.create", compact('page_heading', 'mode', 'id', 'amenities', 'categories', 'images', 'faq','projects'));
+        $properties = Properties::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get();
+        return view("admin.property.create", compact('page_heading', 'mode', 'id', 'amenities', 'categories', 'images', 'faq', 'projects', 'properties'));
     }
 
     public function store(Request $request)
@@ -118,6 +118,7 @@ class PropertyController extends Controller
                 'meta_title_ar' =>  $request->meta_title_ar,
                 'meta_description' =>  $request->meta_description,
                 'meta_description_ar' =>  $request->meta_description_ar,
+                'similar_properties' => $request->similar_properties ? implode(',', $request->similar_properties) : null,
             ];
 
             $imgs = [];
@@ -233,7 +234,6 @@ class PropertyController extends Controller
      */
     public function edit($id)
     {
-
         $property = Properties::with('amenities')->find($id);
         if ($property) {
             $page_heading = "Properties";
@@ -243,7 +243,11 @@ class PropertyController extends Controller
             $categories = Categories::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get();
             $faq = PropertyFaq::where('property_id', $id)->orderBy('id', 'asc')->get();
             $projects = Projects::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get();
-            return view("admin.property.create", compact('page_heading', 'mode', 'id', 'property', 'images', 'categories', 'amenities', 'faq','projects'));
+            $properties = Properties::where(['deleted' => 0, 'active' => 1])
+                ->where('id', '!=', $id)
+                ->orderBy('name', 'asc')
+                ->get();
+            return view("admin.property.create", compact('page_heading', 'mode', 'id', 'property', 'images', 'categories', 'amenities', 'faq', 'projects', 'properties'));
         } else {
             abort(404);
         }

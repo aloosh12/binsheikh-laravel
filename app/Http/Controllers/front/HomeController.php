@@ -298,12 +298,40 @@ class HomeController extends Controller
     }
     public function property_details($slug)
     {
-
         $property = Properties::with(['property_type', 'images', 'amenities'])->where(['slug' => $slug, 'active' => '1', 'deleted' => 0])->first();
         if (!$property) {
             abort(404);
         }
-        $similar = Properties::with(['property_type', 'images'])->where(['active' => '1', 'deleted' => 0, 'sale_type' => $property->sale_type, 'category' => $property->category])->where('id', '!=', $property->id)->limit('6')->get();
+        
+        // First try to get explicitly linked similar properties
+        $similar = null;
+        if ($property->similar_properties) {
+            $similar = Properties::with(['property_type', 'images'])
+                ->whereIn('id', explode(',', $property->similar_properties))
+                ->where(['active' => '1', 'deleted' => 0])
+                ->limit('6')
+                ->get();
+        }
+        
+        // If no explicitly linked properties or not enough, fall back to the default criteria
+        if (!$similar || $similar->count() < 6) {
+            $fallback = Properties::with(['property_type', 'images'])
+                ->where(['active' => '1', 'deleted' => 0, 'sale_type' => $property->sale_type, 'category' => $property->category])
+                ->where('id', '!=', $property->id);
+                
+            if ($similar) {
+                $fallback->whereNotIn('id', explode(',', $property->similar_properties));
+            }
+            
+            $fallback = $fallback->limit(6 - ($similar ? $similar->count() : 0))->get();
+            
+            if ($similar) {
+                $similar = $similar->concat($fallback);
+            } else {
+                $similar = $fallback;
+            }
+        }
+        
         foreach ($similar as $key => $val) {
             $similar[$key]->is_fav = 0;
             if (Auth::check() && (Auth::user()->role != '1')) {
