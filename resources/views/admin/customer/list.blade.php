@@ -16,7 +16,7 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="mb-3">
-                                            <label class="form-label">Name/Email/Phone</label>
+                                            <label class="form-label">Name/Email/Phone/Date</label>
                                             <input class="form-control filter_1" name="search_text" value="{{$search_text}}">
                                         </div>
                                     </div>
@@ -29,7 +29,7 @@
                                     </div>
                                 </div>
                             </form>
-                          
+
 
                             <table class="table table-responsive-sm table-bordered">
                                 <thead>
@@ -94,7 +94,7 @@
                                     {!! $customers->appends(request()->input())->links('admin.template.pagination') !!}
                                 </div>
                             </div>
-                        
+
 
                         </div>
                     </div>

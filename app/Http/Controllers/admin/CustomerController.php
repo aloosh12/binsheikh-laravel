@@ -20,7 +20,17 @@ class CustomerController extends Controller
         $search_text  = $_GET['search_text'] ?? '';
         $customer       = User::where(['deleted' => 0])->where('role','!=',1)->orderBy('created_at', 'desc');
         if ($search_text) {
-            $customer = $customer->whereRaw("(name like '%$search_text%' OR email like '%$search_text%' OR phone like '%$search_text%')");
+           // $customer = $customer->whereRaw("(name like '%$search_text%' OR email like '%$search_text%' OR phone like '%$search_text%' )");
+            $customer = $customer->where(function ($query) use ($search_text) {
+                $query->where('name', 'like', "%$search_text%")
+                    ->orWhere('email', 'like', "%$search_text%")
+                    ->orWhere('phone', 'like', "%$search_text%");
+
+                // Try to match date part only (YYYY-MM-DD)
+                if (strtotime($search_text)) {
+                    $query->orWhereDate('created_at', '=', date('Y-m-d', strtotime($search_text)));
+                }
+            });
         }
         $customers = $customer->paginate(10);
         // dd($customer);
