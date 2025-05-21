@@ -59,7 +59,7 @@
                                         </div>
                                     </div>
 
-                                    
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Price<b class="text-danger">&nbsp;</b></label>
@@ -67,7 +67,6 @@
                                                 data-parsley-required-message="Enter Price" value="@if($id){{$property->price}}@endif">
                                         </div>
                                     </div>
-
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Project<b class="text-danger">&nbsp;</b></label>
@@ -97,7 +96,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6"></div>
-                                    
+
 
                                     <!-- <div class="col-md-3">
                                         <div class="form-group">
@@ -107,7 +106,7 @@
                                         </div>
                                     </div> -->
 
-                                    
+
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Gross Area<b class="text-danger">&nbsp;</b></label>
@@ -167,7 +166,7 @@
                                         </div>
                                     </div>
 
-                                    
+
 
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -201,6 +200,7 @@
                                         </div>
                                     </div>
 
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Similar Properties <small class="text-info">Select properties that are similar to this one</small></label>
@@ -215,7 +215,14 @@
                                             </select>
                                         </div>
                                     </div>
-                                    
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Order</label>
+                                            <input required data-parsley-required-message="Enter Order " data-parsley-type="integer" data-parsley-type-message="Enter a valid order" type="text" name="order" class="form-control"  value="@if($id){{$property->order}}@endif" >
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Short Description<b class="text-danger">&nbsp;</b></label>
@@ -244,7 +251,7 @@
                                             <textarea name="description_ar" class="form-control editor" required data-parsley-required-message="Enter Arabic Description">@if($id){{$property->description_ar}}@endif</textarea>
                                         </div>
                                     </div>
-                                    
+
 
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -293,7 +300,7 @@
                                             <label>Video<b class="text-danger">&nbsp;</b></label>
                                             <input <?=!$id ? 'required' : '' ?>
                                                 data-parsley-required-message="Select Video"
-                                                type="file" name="video" class="form-control" 
+                                                type="file" name="video" class="form-control"
                                                 data-parsley-trigger="change"accept="video/*">
                                                 @if($id && $property->video) <a href=" {{aws_asset_path($property->video) }}" target="_blank" rel="noopener noreferrer">View Video</a> @endif
                                         </div>
@@ -302,22 +309,22 @@
                                         <div class="form-group">
                                             <label>Video <small>Youtube Embed Link</small><b class="text-danger">&nbsp;</b></label>
                                             <input type="url" name="video_link" class="form-control" required    data-parsley-pattern="^https:\/\/www\.youtube\.com\/embed\/([a-zA-Z0-9_-]{11})(\?[\w=&]*)?$"
-                                            data-parsley-pattern-message="Please enter a valid YouTube embed URL." 
+                                            data-parsley-pattern-message="Please enter a valid YouTube embed URL."
                                                 data-parsley-required-message="Enter Embed Link" value="@if($id){{ $property->video_link }} @endif">
                                         </div>
                                     </div>
-                                    
+
                                     <!-- <div class="col-md-6 mt-2">
                                         <div class="form-group">
                                             <label>Video Thumbnail<b class="text-danger">&nbsp;</b></label>
                                             <input <?=!$id ? 'required' : '' ?>
                                                 data-parsley-required-message="Select Video Thumbnail"
-                                                type="file" name="video_thumbnail" class="form-control" 
+                                                type="file" name="video_thumbnail" class="form-control"
                                                 data-parsley-trigger="change "accept="image/*">
                                                 @if($id && $property->video_thumbnail) <a href="{{aws_asset_path($property->video_thumbnail) }}" target="_blank" rel="noopener noreferrer">View Thumbnail </a> @endif
                                         </div>
                                     </div> -->
-                                    
+
                                     <div class="col-md-6 mt-2">
                                         <div class="form-group">
                                             <label>360 Link</label>
@@ -332,7 +339,7 @@
                                         </div>
                                     </div>
 
-                            
+
 
                                     <!-- <div class="col-md-6"></div> -->
 
@@ -355,7 +362,7 @@
                                         <label>Meta Description Ar<b class="text-danger">&nbsp;</b></label>
                                         <textarea name="meta_description_ar" class="form-control jqv-input" placeholder="Meta Description Arabic">@if($id){{$property->meta_description_ar}}@endif</textarea>
                                     </div>
-                                    
+
 
 
 
@@ -412,7 +419,7 @@
                                         @if (!count($faq))
                                             <div class="row">
 
-                                                
+
 
                                                 <div class="col-md-5">
                                                     <div class="form-group">
@@ -439,7 +446,7 @@
                                                             class="btn btn-primary add_new_itinerary">+</button>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label>Details<b class="text-danger">&nbsp;</b></label>
@@ -459,7 +466,7 @@
                                         @else
                                             @foreach ($faq as $key => $val)
                                                 <div class="row">
-                                                    
+
 
                                                     <div class="col-md-5">
                                                         <div class="form-group">
@@ -481,9 +488,9 @@
                                                     </div>
 
 
-                                                   
-                                              
-                                                    
+
+
+
 
                                                     <div class="col-md-1">
                                                         <div class="form-group">
@@ -660,12 +667,12 @@
                         <div class="form-group"><label>Faq Ar<b class="text-danger">&nbsp;</b></label><input type="text" name="faq_title_ar[${faq_index }]" class="form-control" required data-parsley-required-message="Enter ArabicFaq" value="">
                         </div>
                     </div>
-                
+
                     <div class="col-md-1">
                     <div class="form-group"><label>Action</label><br><button type="button"
                         class="btn btn-danger remove_itinerary">-</button></div>
                     </div>
-                
+
                     <div class="col-md-12">
                     <div class="form-group"><label>Details<b class="text-danger">&nbsp;</b></label><textarea name="faq_description[${faq_index }]" rows="3" class="form-control editor" required
                         data-parsley-required-message="Enter Details"></textarea></div>
@@ -675,7 +682,7 @@
                         data-parsley-required-message="Enter Arabic Details"></textarea></div>
                     </div>
                 </div>`;
-            
+
             $(".itinerary").append(_html);
 
 

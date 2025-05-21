@@ -28,7 +28,7 @@ class PropertyController extends Controller
         $search_text = $_GET['search_text'] ?? '';
         $sale_type = $_GET['sale_type'] ?? '';
         $project_id = $_GET['project_id'] ?? '';
-        
+
         $properties = Properties::with('project')->where(['properties.deleted' => 0])->orderBy('properties.created_at', 'desc');
         if ($search_text) {
             $properties = $properties->whereRaw("(properties.name like '%$search_text%' OR apartment_no like '%$search_text%')");
@@ -39,7 +39,7 @@ class PropertyController extends Controller
         if ($project_id) {
             $properties = $properties->where("project_id",$project_id);
         }
-        
+
         $properties = $properties->paginate(10);
         $projects = Projects::select('id','name')->where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get();
         return view('admin.property.list', compact('page_heading', 'properties', 'search_text','sale_type','projects','project_id'));
@@ -77,7 +77,7 @@ class PropertyController extends Controller
             'category' => 'required',
             'description' => 'required',
             'short_description' => 'required',
-            
+
         ]);
         if ($validator->fails()) {
             $status = "0";
@@ -110,6 +110,7 @@ class PropertyController extends Controller
                 'unit_layout' =>  $request->unit_layout,
                 'video_link' =>  $request->video_link,
                 'is_recommended' => isset($request->is_recommended) ? 1 : 0,
+                'order' => $request->order,
 
                 'balcony_size' =>  $request->balcony_size,
                 'gross_area' =>  $request->gross_area,
@@ -133,7 +134,7 @@ class PropertyController extends Controller
                 foreach ($images as $file) {
                     $name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                     $path = '/uploads/property/' . $name;
-                    Storage::disk('s3')->put($path, fopen($file, 'r+')); 
+                    Storage::disk('s3')->put($path, fopen($file, 'r+'));
                     $imgs[] = '/'.$path;
                 }
             }
@@ -163,8 +164,8 @@ class PropertyController extends Controller
                     $ins['video_thumbnail'] = $response['link'];
                 }
             }
-            
-            
+
+
 
             if ($request->id != "") {
                 $prpty_id = $request->id;
