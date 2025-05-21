@@ -69,6 +69,53 @@ class HomeController extends Controller
                 ];
             });
 
+            // Get suggested apartments
+            $similar = null;
+            if ($project->suggested_apartments) {
+                $suggested_apartment_ids = explode(',', $project->suggested_apartments);
+                $similar = Properties::with(['property_type', 'images'])
+                    ->whereIn('id', $suggested_apartment_ids)
+                    ->where(['active' => 1, 'deleted' => 0])
+                    ->limit(6)
+                    ->get();
+            }
+
+            // If no explicitly linked properties or not enough, fall back to the default criteria
+            if (!$similar || $similar->count() < 6) {
+                $fallbackQuery = Properties::with(['property_type', 'images'])
+                    ->where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id]);
+
+                if ($similar) {
+                    $fallbackQuery->whereNotIn('id', explode(',', $project->suggested_apartments));
+                }
+
+                $fallback = $fallbackQuery->limit(6 - ($similar ? $similar->count() : 0))->get();
+
+                if ($similar) {
+                    $similar = $similar->concat($fallback);
+                } else {
+                    $similar = $fallback;
+                }
+            }
+
+            if ($similar){
+              $suggested_apartments = $similar->map(function($property) {
+                    return [
+                        'id' => $property->id,
+                        'name' => $property->name,
+                        'price' => $property->price,
+                        'bedrooms' => $property->bedrooms,
+                        'bathrooms' => $property->bathrooms,
+                        'area' => $property->area,
+                        'image' => $property->images->first() ? aws_asset_path($property->images->first()->image) : "",
+                    ];
+                });
+                $data['suggested_apartments'] = $suggested_apartments;
+            }
+            else
+            {
+                $data['suggested_apartments'] = [];
+            }
         }
         return response()->json(['message' => "Project Details", 'data' => convert_all_elements_to_string($data)], 200);
     }

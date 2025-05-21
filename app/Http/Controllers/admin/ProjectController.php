@@ -71,6 +71,7 @@ class ProjectController extends Controller
                 'active' => $request->active,
                 'country' => $request->country??0,
                 'end_date' => $request->end_date,
+                'suggested_apartments' => $request->suggested_apartments ? implode(',', $request->suggested_apartments) : null,
             ];
 
             if ($request->file("image")) {

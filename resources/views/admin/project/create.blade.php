@@ -159,6 +159,19 @@
                                     </div>
                                   
 
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Suggested Apartments</label>
+                                            <select name="suggested_apartments[]" class="form-control select2" multiple>
+                                                @php
+                                                    $selected_apartments = $id ? explode(',', $project->suggested_apartments) : [];
+                                                @endphp
+                                                @foreach(\App\Models\Properties::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get() as $property)
+                                                    <option value="{{ $property->id }}" @if(in_array($property->id, $selected_apartments)) selected @endif>{{ $property->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
 
                                     <div class="col-md-12">
                                         <div class="form-group">

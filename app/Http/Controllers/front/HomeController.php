@@ -398,7 +398,6 @@ class HomeController extends Controller
 
     public function project_details($slug)
     {
-
         $project = Projects::with(['images'])->where(['slug' => $slug, 'active' => '1', 'deleted' => 0])->first();
         if (!$project) {
             abort(404);
@@ -427,10 +426,39 @@ class HomeController extends Controller
             $floors_with_properties[$k]['floor'] = $floor_no;
             $floors_with_properties[$k]['prop'] = $properties;
         }
-        $similar = Properties::with(['property_type', 'images'])->where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id])->limit('6')->get();
+        // First try to get explicitly linked similar properties
+        $similar = null;
+        if ($project->suggested_apartments) {
+            $suggested_apartment_ids = explode(',', $project->suggested_apartments);
+            $similar = Properties::with(['property_type', 'images'])
+                ->whereIn('id', $suggested_apartment_ids)
+                ->where(['active' => 1, 'deleted' => 0])
+                ->limit(6)
+                ->get();
+        }
+
+        // If no explicitly linked properties or not enough, fall back to the default criteria
+        if (!$similar || $similar->count() < 6) {
+            $fallbackQuery = Properties::with(['property_type', 'images'])
+                ->where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id]);
+
+            if ($similar) {
+                $fallbackQuery->whereNotIn('id', explode(',', $project->suggested_apartments));
+            }
+
+            $fallback = $fallbackQuery->limit(6 - ($similar ? $similar->count() : 0))->get();
+
+            if ($similar) {
+                $similar = $similar->concat($fallback);
+            } else {
+                $similar = $fallback;
+            }
+        }
+
+
+
         $page_heading = $project->name;
         return view('front_end.project_details', compact('page_heading', 'project', 'similar','floors','floors_with_properties'));
-
     }
     public function project_listing()
     {
