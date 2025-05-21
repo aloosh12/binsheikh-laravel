@@ -281,6 +281,7 @@ return [
     'net_area'=>'المساحة الصافية',
     'county'=>'دولة',
     'floor_number'=>'رقم الطابق',
+    'floor_no' => 'ر.الطابق ',
     'payment_calculator'=>'حاسبة الدفع',
     'advance_amount'=>'المبلغ المسبق',
     'rental_duration'=>'مدة التقسيط',
