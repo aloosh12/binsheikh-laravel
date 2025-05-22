@@ -159,24 +159,23 @@
 
                                             <div class="geodir-category-button  ">
                                                 <div class="row g-3">
-                                                @if($property->unit_layout)
-                                                <div class="col ">
-                                                    <!-- <a href="{{$property->unit_layout}}" target="_blank" rel="noopener noreferrer" class="post-card_book mt-0 d-block " style="width: 100%;"><span>{{ __('messages.unit_layout') }}</span></a> -->
+                                                    @if($property->floor_plan)
+                                                        <div class="col ">
+                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#floorPlan" class="mt-0 d-block post-card_book " style="width: 100%;"><span>{{ __('messages.floor_plan') }}</span></a>
+                                                        </div>
+                                                    @endif
+                                                    @if($property->link_360)
+                                                    <div class="col ">
+                                                        <a href="#" class="post-card_book mt-0 d-block "  data-bs-toggle="modal" data-bs-target="#three_d_view" style="width: 100%;"><span>{{ __('messages.three_d_view') }}</span></a>
+                                                    </div>
+                                                    @endif
+                                                    @if($property->unit_layout)
+                                                        <div class="col ">
+                                                            <!-- <a href="{{$property->unit_layout}}" target="_blank" rel="noopener noreferrer" class="post-card_book mt-0 d-block " style="width: 100%;"><span>{{ __('messages.unit_layout') }}</span></a> -->
 
-                                                    <a href="#" class="post-card_book mt-0 d-block "  data-bs-toggle="modal" data-bs-target="#unit_layout_view" style="width: 100%;"><span>{{ __('messages.unit_layout') }}</span></a>
-                                                </div>
-                                                @endif
-
-                                                @if($property->link_360)
-                                                <div class="col ">
-                                                    <a href="#" class="post-card_book mt-0 d-block "  data-bs-toggle="modal" data-bs-target="#three_d_view" style="width: 100%;"><span>{{ __('messages.three_d_view') }}</span></a>
-                                                </div>
-                                                @endif
-                                                @if($property->floor_plan)
-                                                <div class="col ">
-                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#floorPlan" class="mt-0 d-block post-card_book " style="width: 100%;"><span>{{ __('messages.floor_plan') }}</span></a>
-                                                </div>
-                                                @endif
+                                                            <a href="#" class="post-card_book mt-0 d-block "  data-bs-toggle="modal" data-bs-target="#unit_layout_view" style="width: 100%;"><span>{{ __('messages.unit_layout') }}</span></a>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
 

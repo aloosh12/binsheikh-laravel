@@ -121,7 +121,13 @@ class HomeController extends Controller
     }
     public function getProjects(Request $request)
     {
-        $r = Projects::where('country', $request->location_id)->get();
+        $query = Projects::where(['active' => '1', 'deleted' => 0]);
+        
+        if ($request->location_id) {
+            $query->where('country', $request->location_id);
+        }
+        
+        $r = $query->get();
         return response()->json(['data' => $r, 'status' => 200], 200);
     }
 
