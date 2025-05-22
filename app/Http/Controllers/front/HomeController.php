@@ -173,7 +173,7 @@ class HomeController extends Controller
     {
         $page_heading = "Home";
         $categories = Categories::where(['deleted' => 0])->orderBy('name', 'asc')->get();
-        $recommended = Properties::with(['property_type', 'images'])->where(['is_recommended' => 1, 'active' => '1', 'deleted' => 0])->orderBy('created_at', 'desc')->limit(3)->get();
+        $recommended = Properties::with(['property_type', 'images'])->where(['is_recommended' => 1, 'active' => '1', 'deleted' => 0])->orderBy('order')->limit(3)->get();
         foreach ($recommended as $key => $val) {
             $recommended[$key]->is_fav = 0;
             if (Auth::check() && (Auth::user()->role != '1')) {
@@ -194,6 +194,7 @@ class HomeController extends Controller
 
         return view('front_end.index', compact('page_heading', 'recommended', 'categories', 'recommended_prj', 'recommended_ser', 'prj','locations','reviews'));
     }
+
     public function property_listing()
     {
         $page_heading = "Properties";
@@ -308,7 +309,7 @@ class HomeController extends Controller
         if (!$property) {
             abort(404);
         }
-        
+
         // First try to get explicitly linked similar properties
         $similar = null;
         if ($property->similar_properties) {
@@ -318,26 +319,26 @@ class HomeController extends Controller
                 ->limit('6')
                 ->get();
         }
-        
+
         // If no explicitly linked properties or not enough, fall back to the default criteria
         if (!$similar || $similar->count() < 6) {
             $fallback = Properties::with(['property_type', 'images'])
                 ->where(['active' => '1', 'deleted' => 0, 'sale_type' => $property->sale_type, 'category' => $property->category])
                 ->where('id', '!=', $property->id);
-                
+
             if ($similar) {
                 $fallback->whereNotIn('id', explode(',', $property->similar_properties));
             }
-            
+
             $fallback = $fallback->limit(6 - ($similar ? $similar->count() : 0))->get();
-            
+
             if ($similar) {
                 $similar = $similar->concat($fallback);
             } else {
                 $similar = $fallback;
             }
         }
-        
+
         foreach ($similar as $key => $val) {
             $similar[$key]->is_fav = 0;
             if (Auth::check() && (Auth::user()->role != '1')) {
