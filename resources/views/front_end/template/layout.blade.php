@@ -1223,3 +1223,22 @@
 
    </body>
 </html>
+
+<script>
+    function redirectToSpecificCheckout(event) {
+        event.preventDefault();
+
+        // Get form values
+        const advanceAmount = $('#AdvanceAmount').val();
+        const rentalDuration = $('select[name="rental_duration"]').val();
+
+        if (!advanceAmount || !rentalDuration) {
+            show_msg(0, "{{ __('messages.please_fill_in_all_required_fields_and_calculate_emi_first') }}");
+            return;
+        }
+
+        // Redirect to specific checkout page with parameters
+        const propertyId = $('input[name="property_id"]').val();
+        window.location.href = `/specific-checkout/${propertyId}?advance_amount=${advanceAmount}&rental_duration=${rentalDuration}`;
+    }
+</script>

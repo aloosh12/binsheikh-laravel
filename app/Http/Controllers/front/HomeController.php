@@ -122,11 +122,11 @@ class HomeController extends Controller
     public function getProjects(Request $request)
     {
         $query = Projects::where(['active' => '1', 'deleted' => 0]);
-        
+
         if ($request->location_id) {
             $query->where('country', $request->location_id);
         }
-        
+
         $r = $query->get();
         return response()->json(['data' => $r, 'status' => 200], 200);
     }
@@ -1260,6 +1260,71 @@ class HomeController extends Controller
         }
 
     }
+
+    public function specific_book_now(Properties $property,Request $request)
+    {
+        if($request->submit=="book"){
+            $with_management_fee = $request->with_management_fee;
+            $page_heading = "Specific Book Now";
+            $settings = Settings::find(1);
+            $down_payment = $request->down_payment;
+            $rental_duration = $request->rental_duration;
+            $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
+            $total = $property->price + $ser_amt;
+            // $down_payment = ($settings->advance_perc / 100) * $total;
+            if($with_management_fee){
+                $down_payment = $down_payment + $ser_amt;
+            }else{
+                $down_payment = $down_payment;
+            }
+
+
+
+
+
+            // $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
+            // $total = $property->price + $ser_amt;
+            // $down_payment = ($settings->advance_perc / 100) * $total;
+            $amount_to_pay = $down_payment;
+            // $amount_to_pay = 0.1;
+            $pending_amt = $total - $amount_to_pay;
+
+            $gatewayId = "015995941";
+            $secretKey = "LRhchdhRxSGUxzt5";
+            $amount = number_format((float) $amount_to_pay, 2, '.', '');
+            $referenceId = $this->generateReferenceId();
+            $hashable_string = "gatewayId=" . $gatewayId . ",amount=" . $amount . ",referenceId=" . $referenceId;
+            $signature = base64_encode(hash_hmac('sha256', $hashable_string, $secretKey, true));
+            $returnUrl = url('qib_payment_status');
+
+            $temp['user_id'] = Auth::user()->id;
+            $temp['property_id'] = $property->id;
+            $temp['payment_ref_id'] = $referenceId;
+            $temp['amount'] = $amount_to_pay;
+            $temp['with_management_fee'] = $with_management_fee;
+            $temp['pending_amt'] = $pending_amt;
+            TempBooking::insert($temp);
+            return view('front_end.qib', compact('gatewayId', 'secretKey', 'amount', 'referenceId', 'hashable_string', 'signature', 'returnUrl'));
+        }else{
+            $page_heading = "Reserve Now";
+            $amount_to_pay =  10000;
+            $gatewayId = "015995941";
+            $secretKey = "LRhchdhRxSGUxzt5";
+            $amount = number_format((float) $amount_to_pay, 2, '.', '');
+            $referenceId = $this->generateReferenceId();
+            $hashable_string = "gatewayId=" . $gatewayId . ",amount=" . $amount . ",referenceId=" . $referenceId;
+            $signature = base64_encode(hash_hmac('sha256', $hashable_string, $secretKey, true));
+            $returnUrl = url('qib_reserve_payment_status');
+
+            $temp['user_id'] = Auth::user()->id;
+            $temp['property_id'] = $property->id;
+            $temp['payment_ref_id'] = $referenceId;
+            $temp['amount'] = $amount_to_pay;
+            TempReservation::insert($temp);
+            return view('front_end.qib', compact('gatewayId', 'secretKey', 'amount', 'referenceId', 'hashable_string', 'signature', 'returnUrl'));
+        }
+
+    }
     public function change_currency($currency)
     {
         session()->put('currency', $currency);
@@ -1338,6 +1403,47 @@ class HomeController extends Controller
             return view('front_end.rent_checkout', compact('page_heading','property'));
         }
 
+    }
+
+    public function specific_checkout(Properties $property, Request $request)
+    {
+        $page_heading = "Specific Checkout";
+        if($property->sale_type==1){
+            $settings = Settings::find(1);
+            $advance_amount = $request->advance_amount;
+            $rental_duration = $request->rental_duration;
+
+            $cur_month = Carbon::now();
+            $cur_month->startOfMonth();
+
+            $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
+            $total = $property->price + $ser_amt;
+            $down_payment_p = $advance_amount;
+            $pending_amt = $total - $down_payment_p;
+
+            $payableEmiAmount = $pending_amt;
+            $monthCount = $rental_duration;
+            $monthlyPayment = $payableEmiAmount / $monthCount;
+            $downPaymentPercentage = ($down_payment_p / $total) * 100;
+            $percentageRate = (100 - $downPaymentPercentage) / $monthCount;
+
+            $months = [];
+            $totalPercentage = $downPaymentPercentage;
+            $remainingAmount = $payableEmiAmount;
+
+            for ($i = 0; $i < $monthCount; $i++) {
+                $remainingAmount -= $monthlyPayment;
+                $totalPercentage += $percentageRate;
+                $months[$i]['month'] = $cur_month->addMonth()->format('M-y');
+                $months[$i]['ordinal'] = $this->getOrdinalSuffix($i + 1);
+                $months[$i]['payment'] = round($monthlyPayment, 2);
+                $months[$i]['remaining_amount'] = round($remainingAmount, 2);
+                $months[$i]['total_percentage'] = round($totalPercentage, 2);
+            }
+            return view('front_end.specific_checkout', compact('page_heading','property','settings','months', 'down_payment_p', 'downPaymentPercentage', 'rental_duration'));
+        }else{
+            return view('front_end.rent_checkout', compact('page_heading','property'));
+        }
     }
     public function calculate_emi(Request $request)
     {

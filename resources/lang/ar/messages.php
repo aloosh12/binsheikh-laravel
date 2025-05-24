@@ -344,4 +344,5 @@ return [
     'view_professional_practice_certificate'=>'عرض شهادة الممارسة المهنية',
     'show' => 'عرض',
     'results' => 'نتيجة',
+    'please_fill_in_all_required_fields_and_calculate_emi_first' => 'يرجى ملء جميع الحقول المطلوبة وحساب EMI أولاً',
 ];
