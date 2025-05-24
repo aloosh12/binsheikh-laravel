@@ -287,3 +287,5 @@ Route::middleware('user')->group(function () {
     Route::get('user/logout', 'App\Http\Controllers\front\HomeController@logout')->name('frontend.logout');
 
 });
+
+Route::get('get-property-count', 'App\Http\Controllers\front\HomeController@getPropertyCount');

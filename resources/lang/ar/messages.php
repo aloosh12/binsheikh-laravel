@@ -342,5 +342,6 @@ return [
     'professional_practice_certificate'=>'شهادة الممارسة المهنية',
     'select_professional_practice_certificate'=>'حدد شهادة الممارسة المهنية',
     'view_professional_practice_certificate'=>'عرض شهادة الممارسة المهنية',
-
+    'show' => 'عرض',
+    'results' => 'نتيجة',
 ];

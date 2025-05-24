@@ -331,4 +331,6 @@ return [
     'view_professional_practice_certificate'=>'View Professional Practice Certificate',
     'XXXXXXXXXXXXXX'=>'XXXXXXXXXXXX',
     'XXXXXXXXXXXXXX'=>'XXXXXXXXXXXX',
+    'show' => 'Show',
+    'results' => 'Results',
 ];

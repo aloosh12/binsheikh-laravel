@@ -1463,4 +1463,55 @@ class HomeController extends Controller
         }
 
     }
+    public function getPropertyCount(Request $request)
+    {
+        $sale_type = $request->sale_type ?? '';
+        $property_type = $request->property_type ?? '';
+        $bedrooms = $request->bedrooms ?? '';
+        $bathrooms = $request->bathrooms ?? '';
+        $price_from = $request->price_from ?? '';
+        $price_to = $request->price_to ?? '';
+        $project_id = $request->project ?? '';
+        $location_id = $request->location ?? '';
+
+        $properties = Properties::select('properties.*')
+            ->where(['properties.active' => '1', 'properties.deleted' => 0])
+            ->leftjoin('projects', 'projects.id', 'properties.project_id');
+
+        if ($sale_type) {
+            $properties = $properties->whereIn('sale_type', [$sale_type, 3]);
+        }
+        if ($property_type) {
+            $properties = $properties->where('category', $property_type);
+        }
+        if ($project_id) {
+            $properties = $properties->where('project_id', $project_id);
+        }
+        if ($location_id) {
+            $properties = $properties->where('projects.country', $location_id);
+        }
+        if (isset($bedrooms)) {
+            if ($bedrooms == "6+") {
+                $properties = $properties->where('bedrooms', '>=', 6);
+            } else {
+                $properties = $properties->where('bedrooms', $bedrooms);
+            }
+        }
+        if ($bathrooms) {
+            if ($bathrooms == "6+") {
+                $properties = $properties->where('bathrooms', '>=', 6);
+            } else {
+                $properties = $properties->where('bathrooms', $bathrooms);
+            }
+        }
+        if ($price_from) {
+            $properties = $properties->where('price', '>=', $price_from);
+        }
+        if ($price_to) {
+            $properties = $properties->where('price', '<=', $price_to);
+        }
+
+        $count = $properties->count();
+        return response()->json(['count' => $count]);
+    }
 }
