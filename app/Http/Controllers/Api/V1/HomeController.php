@@ -37,10 +37,17 @@ class HomeController extends Controller
         }
         $projects = $projects->orderBy('created_at', 'desc')->get();
         foreach ($projects as $key => $val) {
+            // Get count of apartments for this project
+            $apartment_count = Properties::where([
+                'project_id' => $val->id,
+                'active' => '1',
+                'deleted' => 0
+            ])->count();
 
             $projects[$key]->name  = $val->name;
             $projects[$key]->location  = $val->location;
             $projects[$key]->image = $val->app_image ? aws_asset_path($val->app_image) : ($val->image ?aws_asset_path($val->image) : '');
+            $projects[$key]->apartment_count = $apartment_count;
             // $projects[$key]->image = $val->image ? aws_asset_path($val->image) : "";
             unset($projects[$key]->name_ar);
             unset($projects[$key]->location_ar);
