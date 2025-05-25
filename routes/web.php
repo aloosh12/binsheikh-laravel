@@ -249,7 +249,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::delete("career/delete_application/{id}", "CareerController@delete_application");
 
 
-    Route::get("customer", "CustomerController@index");
+    Route::get("customer/{role?}", "CustomerController@index");
 
     Route::get("customer/create", "CustomerController@create");
 
@@ -260,6 +260,8 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::delete("customer/delete/{id}", "CustomerController@destroy");
 
     Route::delete('customer/deleteAll', "CustomerController@deleteAll")->name('customer.deleteAll');
+
+    Route::get('customer/details/{id}', 'CustomerController@details')->name('admin.customer.details');
 
 });
 

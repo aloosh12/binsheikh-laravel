@@ -10,16 +10,17 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header"><i class="fa fa-align-justify"></i> Customers</div>
+                        <div class="card-header"><i class="fa fa-align-justify"></i> {{$page_heading}}</div>
                         <div class="card-body">
                             <div class="col-md-8 mb-0" style="top:51px">
-                                <form action="" method="get" >
+                                <form action="{{ url('admin/customer') }}" method="get" >
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="mb-3">
                                                 <label class="form-label">Name/Email/Phone/Date</label>
                                                 <input class="form-control filter_1" name="search_text" value="{{$search_text}}">
                                             </div>
+                                            <input type="hidden" name="role" value="{{$role}}">
                                         </div>
 
 
@@ -93,6 +94,9 @@
                                                     class="btn btn-outline-danger active deleteListItem" data-role="unlink"
                                                     data-message="Do you want to remove this property?" title="Delete"
                                                     aria-hidden="true"><i class="fas fa-trash-alt fa-1x"></i></a>
+                                                <a href="{{ url('admin/customer/details/' . $cust->id . '?role=' . $role) }}"
+                                                    class="btn btn-outline-info active" title="View Details"
+                                                    aria-hidden="true"><i class="fas fa-eye fa-1x"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach
