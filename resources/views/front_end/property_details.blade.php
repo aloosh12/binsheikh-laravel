@@ -1,6 +1,27 @@
 @extends('front_end.template.layout')
 @section('header')
+<style>
+    /* Modal should fill the screen */
+    .modal-dialog.modal-fullscreen {
+        margin: 0;
+        max-width: 100vw;
+        max-height: 100vh;
+    }
 
+    /* Body fills available space */
+    .modal-body {
+        height: calc(100vh - 60px); /* Adjust for modal header height */
+        overflow: hidden;
+    }
+
+    /* Center and contain image */
+    .floor-plan-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+</style>
 @stop
 
 @section('content')
@@ -208,14 +229,16 @@
                                             </div>
 
                                             <div class="modal fade" id="floorPlan" tabindex="-1" aria-labelledby="floorPlanLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                                                <div class="modal-dialog modal-fullscreen"> <!-- fullscreen modal -->
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title fs-5 fw-bold" id="exampleModalLabel">{{ __('messages.floor_plan') }}</h5>
+                                                            <h5 class="modal-title">{{ __('messages.floor_plan') }}</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <img src="{{aws_asset_path($property->floor_plan) }}" style="width: 100%" alt="">
+                                                        <div class="modal-body p-0">
+                                                            <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                                                                <img src="{{ aws_asset_path($property->floor_plan) }}" class="floor-plan-img" alt="Floor Plan">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
