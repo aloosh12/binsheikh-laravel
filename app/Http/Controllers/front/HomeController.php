@@ -254,11 +254,34 @@ class HomeController extends Controller
         if ($location_id) {
             $properties = $properties->where('projects.country', $location_id);
         }
+        if (isset($bedrooms) && $bathrooms) {
+            $bed_bath_text = ($bedrooms == "0" ? __('messages.studio') : $bedrooms . ' '.__('messages.beds')) . ' & ' . $bathrooms . ' '.__('messages.baths');
+        } else if (isset($bedrooms)) {
+            $bed_bath_text = $bedrooms == "0" ? __('messages.studio') : $bedrooms . ' '.__('messages.beds');
+        } else if ($bathrooms) {
+            $bed_bath_text = $bathrooms . ' '.__('messages.baths');
+        }
+
+//        if (isset($bedrooms)) {
+//            if ($bedrooms == "6+") {
+//                $properties = $properties->where('bedrooms', '>=', 6);
+//            } else {
+//                $properties = $properties->where('bedrooms', $bedrooms);
+//            }
+//        }
         if (isset($bedrooms)) {
             if ($bedrooms == "6+") {
                 $properties = $properties->where('bedrooms', '>=', 6);
             } else {
-                $properties = $properties->where('bedrooms', $bedrooms);
+                if($bedrooms == '0')
+                    $properties = $properties->where('bedrooms', $bedrooms);
+                else
+                {
+                    if($bedrooms)
+                    {
+                        $properties = $properties->where('bedrooms', $bedrooms);
+                    }
+                }
             }
         }
         if ($bathrooms) {
@@ -1600,7 +1623,15 @@ class HomeController extends Controller
             if ($bedrooms == "6+") {
                 $properties = $properties->where('bedrooms', '>=', 6);
             } else {
-                $properties = $properties->where('bedrooms', $bedrooms);
+                if($bedrooms == '0')
+                    $properties = $properties->where('bedrooms', $bedrooms);
+                else
+                {
+                    if($bedrooms)
+                    {
+                        $properties = $properties->where('bedrooms', $bedrooms);
+                    }
+                }
             }
         }
         if ($bathrooms) {
