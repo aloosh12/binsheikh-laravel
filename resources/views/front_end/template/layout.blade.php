@@ -1,4 +1,3 @@
-
 <!DOCTYPE HTML>
 <?php
     $currentRouteUri = \Route::current()->uri();
@@ -998,15 +997,36 @@
             });
         });
 
-        $('.location-select').change(function() {
-            $('.prj-select').html('');
-            $(".prj-select").attr("data-placeholder",'{{ __("messages.project") }}');
+        $(document).ready(function() {
+            // Load all projects on page load
+            $.ajax({
+                url: '{{ url('/get-projects') }}',
+                method: "POST",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    location_id: ''
+                },
+                dataType: "json",
+                success: function(response) {
+                    var data = response.data;
+                    if (data.length > 0) {
+                        $.each(data, function(index, value) {
+                            $('.prj-select').append('<option value="' + value['id'] + '">' + value['name'] + '</option>');
+                        });
+                        $('.prj-select').niceSelect('update');
+                    }
+                }
+            });
 
-            $('.prj-select').html('<option value="">{{ __("messages.project") }}</option>');
+            // Existing location change handler
+            $('.location-select').change(function() {
+                $('.prj-select').html('');
+                $(".prj-select").attr("data-placeholder",'{{ __("messages.project") }}');
 
-            var location_id = $(this).val();
+                $('.prj-select').html('<option value="">{{ __("messages.project") }}</option>');
 
-            if (location_id != '') {
+                var location_id = $(this).val();
+
                 $.ajax({
                     url: '{{ url('/get-projects') }}',
                     method: "POST",
@@ -1037,13 +1057,7 @@
                         $('.prj-select').niceSelect('update');
                     }
                 });
-            } else {
-                $('.prj-select').html('');
-                $(".prj-select").attr("data-placeholder",'{{ __("messages.project") }}');
-                $('.prj-select').html('<option value="" selected>{{ __("messages.project") }}</option>');
-
-                $('.prj-select').niceSelect('update');
-            }
+            });
         });
         $('body').off('submit', '#emiCalculatorForm');
         $('body').on('submit', '#emiCalculatorForm', function(e) {
@@ -1209,3 +1223,22 @@
 
    </body>
 </html>
+
+<script>
+    function redirectToSpecificCheckout(event) {
+        event.preventDefault();
+
+        // Get form values
+        const advanceAmount = $('#AdvanceAmount').val();
+        const rentalDuration = $('select[name="rental_duration"]').val();
+
+        if (!advanceAmount || !rentalDuration) {
+            show_msg(0, "{{ __('messages.please_fill_in_all_required_fields_and_calculate_emi_first') }}");
+            return;
+        }
+
+        // Redirect to specific checkout page with parameters
+        const propertyId = $('input[name="property_id"]').val();
+        window.location.href = `/specific-checkout/${propertyId}?advance_amount=${advanceAmount}&rental_duration=${rentalDuration}`;
+    }
+</script>

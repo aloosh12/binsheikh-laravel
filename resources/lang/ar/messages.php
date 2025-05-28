@@ -342,5 +342,7 @@ return [
     'professional_practice_certificate'=>'شهادة الممارسة المهنية',
     'select_professional_practice_certificate'=>'حدد شهادة الممارسة المهنية',
     'view_professional_practice_certificate'=>'عرض شهادة الممارسة المهنية',
-
+    'show' => 'عرض',
+    'results' => 'نتيجة',
+    'please_fill_in_all_required_fields_and_calculate_emi_first' => 'يرجى ملء جميع الحقول المطلوبة وحساب EMI أولاً',
 ];

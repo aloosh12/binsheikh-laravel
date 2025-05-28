@@ -249,7 +249,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::delete("career/delete_application/{id}", "CareerController@delete_application");
 
 
-    Route::get("customer", "CustomerController@index");
+    Route::get("customer/{role?}", "CustomerController@index");
 
     Route::get("customer/create", "CustomerController@create");
 
@@ -260,6 +260,8 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::delete("customer/delete/{id}", "CustomerController@destroy");
 
     Route::delete('customer/deleteAll', "CustomerController@deleteAll")->name('customer.deleteAll');
+
+    Route::get('customer/details/{id}', 'CustomerController@details')->name('admin.customer.details');
 
 });
 
@@ -279,11 +281,15 @@ Route::middleware('user')->group(function () {
     Route::get('my-bookings', 'App\Http\Controllers\front\HomeController@my_bookings')->name('frontend.my_bookings');
     Route::get('my-reservations', 'App\Http\Controllers\front\HomeController@my_reservations')->name('frontend.my_reservations');
     Route::get('book-now/{property}', 'App\Http\Controllers\front\HomeController@book_now')->name('frontend.book_now');
+    Route::get('specific-book-now/{property}', 'App\Http\Controllers\front\HomeController@specific_book_now')->name('frontend.book_now');
     Route::get('book-rent-now/{property}', 'App\Http\Controllers\front\HomeController@book_rent_now')->name('frontend.book_rent_now');
 
     Route::get('/checkout/{property}', 'App\Http\Controllers\front\HomeController@checkout');
 
+    Route::get('/specific-checkout/{property}', 'App\Http\Controllers\front\HomeController@specific_checkout');
 
     Route::get('user/logout', 'App\Http\Controllers\front\HomeController@logout')->name('frontend.logout');
 
 });
+
+Route::get('get-property-count', 'App\Http\Controllers\front\HomeController@getPropertyCount');

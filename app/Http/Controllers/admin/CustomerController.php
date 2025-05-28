@@ -14,12 +14,32 @@ class CustomerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-
+        $search_text = $request->get('search_text')?? '';
+        $role = $request->get('role');
         $page_heading = "Customer";
-        $search_text  = $_GET['search_text'] ?? '';
-        $customer       = User::where(['deleted' => 0])->where('role','!=',1)->orderBy('created_at', 'desc');
+        $query = User::where('deleted', 0);
+        if ($role !== null) {
+            $query->where('role', $role);
+                if($role == '2'){
+                    $page_heading = "Users";
+                }
+                else
+                {
+                    if($role == '3'){
+                        $page_heading = "Agents";
+                    }
+                    else
+                    {
+                        if($role == '4'){
+                            $page_heading = "Agencies";
+                        }
+                    }
+                }
+            }
+       // $search_text  = $_GET['search_text'] ?? '';
+        $customer       = $query->orderBy('created_at', 'desc');
         if ($search_text) {
            // $customer = $customer->whereRaw("(name like '%$search_text%' OR email like '%$search_text%' OR phone like '%$search_text%' )");
             $customer = $customer->where(function ($query) use ($search_text) {
@@ -35,7 +55,7 @@ class CustomerController extends Controller
         }
         $customers = $customer->paginate(10);
         // dd($customer);
-        return view('admin.customer.list', compact('page_heading', 'customers', 'search_text'));
+        return view('admin.customer.list', compact('page_heading', 'customers', 'search_text', 'role'));
     }
 
     /**
@@ -250,6 +270,12 @@ class CustomerController extends Controller
 //        $delete_all_id = explode(",", $request->delete_all_id);
 //        User::whereIn('id', $delete_all_id)->delete();
 //        return redirect('admin/sections')->with('success', 'Sections deleted successfully.');
+    }
+
+    public function details($id)
+    {
+        $customer = User::findOrFail($id);
+        return view('admin.customer.details', compact('customer'));
     }
 
 }

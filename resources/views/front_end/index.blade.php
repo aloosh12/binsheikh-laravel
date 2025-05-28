@@ -188,7 +188,8 @@
                                         <div class="row mt-4 justify-content-center">
                                             <div class="col-md-3 ">
                                                 <div class="cs-intputwrap">
-                                                    <button class="commentssubmit commentssubmit_fw">{{ __("messages.search") }}</button>
+                                                    <input type="hidden" id="total_results" value="0">
+                                                    <button class="commentssubmit commentssubmit_fw" id="search_button">{{ __("messages.search") }}</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -640,6 +641,7 @@
             $('#price_to').val('');
         }
         $(".price_button").text(pr_text)
+        updatePropertyCount();
     });
     $(".bed_bath").change(function(){
         var bed_val = $('.bedrooms:checked').val() || '';
@@ -655,12 +657,14 @@
             text = bath_val+'{{ __('messages.baths') }}';
         }
         $(".room_bath_btn").text(text)
+        updatePropertyCount();
     });
     $(".clear_bath_bed").click(function(){
         $(".room_bath_btn").click();
         $(".room_bath_btn").text('  {{ __('messages.room_baths') }}');
         $('.bedrooms:checked').prop('checked', false);
         $('.bathrooms:checked').prop('checked', false);
+        updatePropertyCount();
     });
     $(".clear_price").click(function(){
         $(".price_button").click();
@@ -668,6 +672,47 @@
         $(".price_button").text('{{ __('messages.price') }}');
         $('#price_from').val('');
         $('#price_to').val('');
+        updatePropertyCount();
     });
+
+    // Function to update search button text
+    function updateSearchButtonText() {
+        var totalResults = $('#total_results').val();
+        if(totalResults > 0) {
+            $('#search_button').text('{{ __("messages.show") }} ' + totalResults + ' {{ __("messages.results") }}');
+        } else {
+            $('#search_button').text('{{ __("messages.show") }} ' + totalResults + ' {{ __("messages.results") }}');
+        }
+    }
+
+    // Function to update property count
+    function updatePropertyCount() {
+        $.ajax({
+            url: '{{ url("get-property-count") }}',
+            type: 'GET',
+            data: {
+                sale_type: $('select[name="sale_type"]').val(),
+                property_type: $('select[name="property_type"]').val(),
+                location: $('select[name="location"]').val(),
+                project: $('select[name="project"]').val(),
+                price_from: $('input[name="price_from"]').val(),
+                price_to: $('input[name="price_to"]').val(),
+                bedrooms: $('input[name="bedrooms"]:checked').val(),
+                bathrooms: $('input[name="bathrooms"]:checked').val()
+            },
+            success: function(response) {
+                $('#total_results').val(response.count);
+                updateSearchButtonText();
+            }
+        });
+    }
+
+    // Add change event listeners to all search inputs
+    $('select[name="sale_type"], select[name="property_type"], select[name="location"], select[name="project"]').on('change', function() {
+        updatePropertyCount();
+    });
+
+    // Initial update of button text
+    updatePropertyCount();
 </script>
 @stop

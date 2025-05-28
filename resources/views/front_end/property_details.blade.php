@@ -180,24 +180,23 @@
 
                                             <div class="geodir-category-button  ">
                                                 <div class="row g-3">
-                                                @if($property->unit_layout)
-                                                <div class="col ">
-                                                    <!-- <a href="{{$property->unit_layout}}" target="_blank" rel="noopener noreferrer" class="post-card_book mt-0 d-block " style="width: 100%;"><span>{{ __('messages.unit_layout') }}</span></a> -->
+                                                    @if($property->floor_plan)
+                                                        <div class="col ">
+                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#floorPlan" class="mt-0 d-block post-card_book " style="width: 100%;"><span>{{ __('messages.floor_plan') }}</span></a>
+                                                        </div>
+                                                    @endif
+                                                    @if($property->link_360)
+                                                    <div class="col ">
+                                                        <a href="#" class="post-card_book mt-0 d-block "  data-bs-toggle="modal" data-bs-target="#three_d_view" style="width: 100%;"><span>{{ __('messages.three_d_view') }}</span></a>
+                                                    </div>
+                                                    @endif
+                                                    @if($property->unit_layout)
+                                                        <div class="col ">
+                                                            <!-- <a href="{{$property->unit_layout}}" target="_blank" rel="noopener noreferrer" class="post-card_book mt-0 d-block " style="width: 100%;"><span>{{ __('messages.unit_layout') }}</span></a> -->
 
-                                                    <a href="#" class="post-card_book mt-0 d-block "  data-bs-toggle="modal" data-bs-target="#unit_layout_view" style="width: 100%;"><span>{{ __('messages.unit_layout') }}</span></a>
-                                                </div>
-                                                @endif
-
-                                                @if($property->link_360)
-                                                <div class="col ">
-                                                    <a href="#" class="post-card_book mt-0 d-block "  data-bs-toggle="modal" data-bs-target="#three_d_view" style="width: 100%;"><span>{{ __('messages.three_d_view') }}</span></a>
-                                                </div>
-                                                @endif
-                                                @if($property->floor_plan)
-                                                <div class="col ">
-                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#floorPlan" class="mt-0 d-block post-card_book " style="width: 100%;"><span>{{ __('messages.floor_plan') }}</span></a>
-                                                </div>
-                                                @endif
+                                                            <a href="#" class="post-card_book mt-0 d-block "  data-bs-toggle="modal" data-bs-target="#unit_layout_view" style="width: 100%;"><span>{{ __('messages.unit_layout') }}</span></a>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
 
@@ -457,12 +456,12 @@
                                                                                     @csrf()
                                                                                     <input type="hidden" name="property_id" value="{{$property->id}}">
                                                                                     <div class="row">
-                                                                                        <div class="col-md-4">
+                                                                                        <div class="col-md-3">
                                                                                             <label for="loanAmount" class="form-label">{{ __('messages.advance_amount') }}</label>
                                                                                             <input type="text" data-parsley-type="integer" class="form-control" id="AdvanceAmount" required max="{{$total}}" data-parsley-type-message="{{ __('messages.this_value_should_be_a_valid_integer') }}" data-parsley-required-message="" name="advance_amount" data-parsley-greater-than-zero="true">
                                                                                         </div>
 
-                                                                                        <div class="col-md-4">
+                                                                                        <div class="col-md-3">
                                                                                             <label for="interestRate" class="form-label">{{ __('messages.rental_duration') }}</label>
                                                                                             <select data-parsley-type="integer" class="form-control " id="" required max="{{$monthCount}}" data-parsley-max-message="{{ __('messages.month_count_limit', ['monthCount' => $monthCount]) }}" data-parsley-type-message="{{ __('messages.this_value_should_be_a_valid_integer') }}" data-parsley-required-message="" name="rental_duration" data-parsley-greater-than-zero="true">
                                                                                                 <option value="">{{ __('messages.rental_duration') }}</option>
@@ -473,9 +472,13 @@
 
                                                                                         </div>
 
-                                                                                        <div class="col-md-4">
-
+                                                                                        <div class="col-md-3">
                                                                                             <button type="submit" class="btn btn-warning w-100" style="border-radius: 4px; margin-top: 30px">{{ __('messages.calculate_emi') }}</button>
+                                                                                        </div>
+                                                                                        <div class="col-md-3">
+                                                                                            <a href="#" class="btn btn-warning w-100" style="border-radius: 4px; margin-top: 30px" id="bookNowBtn" onclick="redirectToSpecificCheckout(event)">
+                                                                                                {{ __('messages.book_now') }}
+                                                                                            </a>
                                                                                         </div>
                                                                                     </div>
                                                                                 </form>

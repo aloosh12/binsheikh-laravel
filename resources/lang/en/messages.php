@@ -331,4 +331,7 @@ return [
     'view_professional_practice_certificate'=>'View Professional Practice Certificate',
     'XXXXXXXXXXXXXX'=>'XXXXXXXXXXXX',
     'XXXXXXXXXXXXXX'=>'XXXXXXXXXXXX',
+    'show' => 'Show',
+    'results' => 'Results',
+    'please_fill_in_all_required_fields_and_calculate_emi_first' =>'please fill in all required fields and calculate emi first'
 ];
