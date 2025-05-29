@@ -10,6 +10,9 @@ class Properties extends Model
 {
 
     use HasFactory;
+    const BUY = 1;
+    const RENT = 2;
+    const BUY_RENT = 3;
 
     protected $guarded = [];
 
