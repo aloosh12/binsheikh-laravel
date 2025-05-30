@@ -54,7 +54,7 @@
             <div class="card-body card-body  d-flex justify-content-between align-items-center">
               <div>
                 <div class="text-value-lg">{{$rent}}</div>
-                <div>Rent</div>
+                <div>For Rent</div>
               </div>
               <div>
                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-building-up" viewBox="0 0 16 16">
@@ -74,18 +74,48 @@
             <div class="card-body card-body  d-flex justify-content-between align-items-center">
               <div>
                 <div class="text-value-lg">{{$sale}}</div>
-                <div>Sale</div>
+                <div>For Sale</div>
               </div>
               <div>
                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-building-lock" viewBox="0 0 16 16">
   <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1z"/>
   <path d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM9 13a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1"/>
 </svg>
+
               </div>
             </div>
 
           </div>
         </div>
+
+         <div class="col-sm-6 col-lg-3">
+
+             <div class="card text-white bg-primary border-0 border-0">
+                 <div class="card-body card-body  d-flex justify-content-between align-items-center">
+                     <div>
+                         <div class="text-value-lg">{{$available}}</div>
+                         <div>Available</div>
+                     </div>
+                     <div>
+{{--                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-building-lock" viewBox="0 0 16 16">--}}
+{{--                             <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1z"/>--}}
+{{--                             <path d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM9 13a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1"/>--}}
+{{--                         </svg>--}}
+{{--                         <span class="text-success" title="Available Property">--}}
+{{--                          <img src ="{{ asset('icons/available-properties.svg') }}" fill="white" style="fill:#ffffff !important"--}}
+{{--                               class="img-fluid submenu-img text-white" />--}}
+{{--                        </span>--}}
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-building-lock" viewBox="0 0 16 16">
+                             <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1z"/>
+                             <path d="M13.854 10.146a.5.5 0 0 0-.708 0L10.5 12.793l-1.146-1.147a.5.5 0 0 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0 0-.708z"/>
+                         </svg>
+                     </div>
+                 </div>
+
+             </div>
+         </div>
+
+
          <!-- <div class="col-sm-6 col-lg-3">
 
           <div class="card text-white bg-gradient-primary">
@@ -220,10 +250,10 @@ document.addEventListener("DOMContentLoaded", function() {
         const myChart = new Chart(ctx, {
             type: 'bar', // 'bar', 'line', 'pie', etc.
             data: {
-                labels: months, 
+                labels: months,
                 datasets: [{
                     label: 'Sales Data',
-                    data: buyData, 
+                    data: buyData,
                     backgroundColor: monthColors,
                     borderColor: monthColors.map(color => color.replace('0.6', '1')), // Make border color a darker version of the background color
                     borderWidth: 1
@@ -248,11 +278,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         console.log(value);
 
                           if (value !== undefined && value !== null) {
-                              return 'QR ' + value.toLocaleString(); 
+                              return 'QR ' + value.toLocaleString();
                           }
-                          return 'QR 0'; 
+                          return 'QR 0';
                       },
-                      color: 'black', 
+                      color: 'black',
                       font: {
                           weight: 'bold',
                           size: 12
@@ -260,7 +290,7 @@ document.addEventListener("DOMContentLoaded", function() {
                   }
                 }
             },
-            plugins: [ChartDataLabels]  
+            plugins: [ChartDataLabels]
         });
 });
 </script>
