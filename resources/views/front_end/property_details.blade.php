@@ -476,9 +476,15 @@
                                                                                             <button type="submit" class="btn btn-warning w-100" style="border-radius: 4px; margin-top: 30px">{{ __('messages.calculate_emi') }}</button>
                                                                                         </div>
                                                                                         <div class="col-md-3">
-                                                                                            <a href="#" class="btn btn-warning w-100" style="border-radius: 4px; margin-top: 30px" id="bookNowBtn" onclick="redirectToSpecificCheckout(event)">
-                                                                                                {{ __('messages.book_now') }}
-                                                                                            </a>
+                                                                                            @if(Auth::check() && (Auth::user()->role != '1'))
+                                                                                                <a href="#" class="btn btn-warning w-100" style="border-radius: 4px; margin-top: 30px" id="bookNowBtn" onclick="redirectToSpecificCheckout(event)">
+                                                                                                    {{ __('messages.book_now') }}
+                                                                                                </a>
+                                                                                            @else
+                                                                                                <a href="javascript:;" class="btn btn-warning w-100 modal-open" style="border-radius: 4px; margin-top: 30px">
+                                                                                                    {{ __('messages.book_now') }}
+                                                                                                </a>
+                                                                                            @endif
                                                                                         </div>
                                                                                     </div>
                                                                                 </form>
