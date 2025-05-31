@@ -511,6 +511,12 @@
                                                                         <div class="card">
                                                                             <div class="card-body">
                                                                                 <div class="table-responsive ">
+                                                                                    <div class="d-flex justify-content-between mb-3">
+                                                                                        <h5 class="card-title">{{ __('messages.payment_schedule') }}</h5>
+                                                                                        <a href="javascript:void(0)" id="downloadCalculationPdf" class="btn btn-primary">
+                                                                                            <i class="fa fa-download"></i> {{ __('messages.download_pdf') }}
+                                                                                        </a>
+                                                                                    </div>
                                                                                     <table class="payment-table table">
                                                                                         <thead>
                                                                                             <tr>
@@ -632,5 +638,53 @@
 @stop
 
 @section('script')
+<script>
+    $(document).ready(function() {
+        // Handle download calculator PDF button click
+        $('#downloadCalculationPdf').click(function() {
+            var property_id = $('input[name="property_id"]').val();
+            var advance_amount = $('#AdvanceAmount').val();
+            var rental_duration = $('select[name="rental_duration"]').val();
 
+            if (!advance_amount || !rental_duration) {
+                show_msg(0, "{{ __('messages.please_fill_in_all_required_fields_and_calculate_emi_first') }}");
+                return;
+            }
+            // Create a form and submit it
+            var form = $('<form>', {
+                'method': 'post',
+                'action': '{{ url("download-calculator-result") }}',
+                'target': '_blank'
+            });
+
+            form.append($('<input>', {
+                'name': '_token',
+                'value': '{{ csrf_token() }}',
+                'type': 'hidden'
+            }));
+
+            form.append($('<input>', {
+                'name': 'property_id',
+                'value': property_id,
+                'type': 'hidden'
+            }));
+
+            form.append($('<input>', {
+                'name': 'advance_amount',
+                'value': advance_amount,
+                'type': 'hidden'
+            }));
+
+            form.append($('<input>', {
+                'name': 'rental_duration',
+                'value': rental_duration,
+                'type': 'hidden'
+            }));
+
+            $('body').append(form);
+            form.submit();
+            form.remove();
+        });
+    });
+</script>
 @stop

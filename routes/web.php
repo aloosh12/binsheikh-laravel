@@ -30,6 +30,7 @@ Route::post('/get-projects', 'App\Http\Controllers\front\HomeController@getProje
 Route::post('/calculate_emi', 'App\Http\Controllers\front\HomeController@calculate_emi');
 Route::post('/get_payment_dates', 'App\Http\Controllers\front\HomeController@get_payment_dates');
 Route::get('/download-payment-plan/{id}', 'App\Http\Controllers\front\HomeController@downloadPaymentPlan');
+Route::post('/download-calculator-result', 'App\Http\Controllers\front\HomeController@downloadCalculatorResult');
 
 
 Route::get('/login/facebook', function () {

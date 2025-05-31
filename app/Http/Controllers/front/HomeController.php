@@ -1725,4 +1725,71 @@ class HomeController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    public function downloadCalculatorResult(Request $request)
+    {
+        try {
+            // Get property details
+            $property = Properties::findOrFail($request->property_id);
+            
+            // Get settings
+            $settings = Settings::first();
+            
+            // Get calculation parameters from request
+            $advance_amount = $request->advance_amount;
+            $rental_duration = $request->rental_duration;
+            
+            // Calculate payment details
+            $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
+            $total = $property->price + $ser_amt;
+            $full_price_calc = $property->price;
+            $down_payment = $advance_amount;
+            $pending_amt = $full_price_calc - $down_payment;
+            
+            // Calculate percentages
+            $downPaymentPercentage = ($down_payment / $full_price_calc) * 100;
+            $monthlyPercentage = (100 - $downPaymentPercentage) / $rental_duration;
+            
+            // Generate months and payment schedule
+            $cur_month = Carbon::now();
+            $cur_month->startOfMonth();
+            
+            $monthlyPayment = $pending_amt / $rental_duration;
+            
+            $months = [];
+            $totalPercentage = $downPaymentPercentage;
+            $remainingAmount = $pending_amt;
+            
+            for ($i = 0; $i < $rental_duration; $i++) {
+                $remainingAmount -= $monthlyPayment;
+                $totalPercentage += $monthlyPercentage;
+                $month = $cur_month->copy()->addMonths($i+1)->format('M-y');
+                $months[] = [
+                    'ordinal' => $this->getOrdinalSuffix($i + 1),
+                    'month' => $month,
+                    'payment' => round($monthlyPayment, 2),
+                    'remaining_amount' => round($remainingAmount, 2),
+                    'total_percentage' => round($totalPercentage, 2)
+                ];
+            }
+            
+            // Generate PDF
+            $pdf = PDF::loadView('front_end.pdf.calculator_plan', [
+                'property' => $property,
+                'ser_amt' => $ser_amt,
+                'total' => $total,
+                'full_price' => $full_price_calc,
+                'down_payment' => $down_payment,
+                'downPaymentPercentage' => $downPaymentPercentage,
+                'months' => $months,
+                'settings' => $settings,
+                'rental_duration' => $rental_duration
+            ]);
+            
+            return $pdf->download('payment_calculator_' . $property->apartment_no . '.pdf');
+            
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }
