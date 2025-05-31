@@ -339,17 +339,25 @@
                                                                         <?php
                                                                             $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
                                                                             $total = $property->price + $ser_amt;
-                                                                            $down_payment = ($settings->advance_perc / 100) * $total;
-                                                                            $pending_amt = $total - $down_payment;
+                                                                            $full_price_calc = $property->price;
+                                                                            $down_payment = ($settings->advance_perc / 100) * $full_price_calc;
+                                                                            $pending_amt = $full_price_calc - $down_payment;
                                                                         ?>
 
                                                                         <div class="card">
                                                                             <div class="card-body">
+                                                                                <div class="d-flex justify-content-between mb-3">
+                                                                                    <h5 class="card-title">{{ __('messages.payment_schedule') }}</h5>
+                                                                                    <a href="{{ url('download-payment-plan/' . $property->id) }}" class="btn btn-primary" target="_blank">
+                                                                                        <i class="fa fa-download"></i> {{ __('messages.download_pdf') }}
+                                                                                    </a>
+                                                                                </div>
                                                                                 <div class="table-responsive">
                                                                                     <table class="table">
                                                                                         <thead>
                                                                                             <tr>
                                                                                                 <th>{{ __('messages.unit_number') }}</th>
+                                                                                                <th>{{ __('messages.gross_area') }}</th>
                                                                                                 <th>{{ __('messages.size_net') }}</th>
                                                                                                 <th>{{ __('messages.full_price') }}</th>
                                                                                                 <th>{{ __('messages.management_fees') }}</th>
@@ -359,6 +367,7 @@
                                                                                         <tbody>
                                                                                             <tr>
                                                                                                 <td>{{$property->apartment_no}}</td>
+                                                                                                <td>{{$property->gross_area}}</td>
                                                                                                 <td>{{$property->area}} m2</td>
                                                                                                 <td>{{moneyFormat($property->price)}}</td>
                                                                                                 <td>{{moneyFormat($ser_amt)}}</td>
@@ -389,6 +398,12 @@
                                                                                                 <td>{{ moneyFormat($down_payment) }}</td>
                                                                                                 <td>{{$settings->advance_perc}}%</td>
                                                                                             </tr>
+                                                                                            <tr class="payment-row-highlight">
+                                                                                                <td>{{ __('messages.management_fees') }}</td>
+                                                                                                <td>{{ date('M-y') }}</td>
+                                                                                                <td>{{ moneyFormat($ser_amt) }}</td>
+                                                                                                <td></td>
+                                                                                            </tr>
                                                                                             @foreach($months as $key => $mnth)
                                                                                             <tr>
                                                                                                 <td>{{$mnth['ordinal']}} {{ __('messages.installment') }}</td>
@@ -418,8 +433,9 @@
                                                                         <?php
                                                                             $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
                                                                             $total = $property->price + $ser_amt;
-                                                                            $down_payment = ($settings->advance_perc / 100) * $total;
-                                                                            $pending_amt = $total - $down_payment;
+                                                                            $full_price_calc = $property->price;
+                                                                            $down_payment = ($settings->advance_perc / 100) * $full_price_calc;
+                                                                            $pending_amt = $full_price_calc - $down_payment;
                                                                         ?>
 
                                                                         <div class="card">
@@ -429,6 +445,7 @@
                                                                                         <thead>
                                                                                             <tr>
                                                                                                 <th>{{ __('messages.unit_number') }}</th>
+                                                                                                <th>{{ __('messages.gross_area') }}</th>
                                                                                                 <!-- <th>{{ __('messages.size_net') }}</th> -->
                                                                                                 <th>{{ __('messages.full_price') }}</th>
                                                                                                 <th>{{ __('messages.management_fees') }}</th>
@@ -439,6 +456,7 @@
                                                                                         <tbody>
                                                                                             <tr>
                                                                                                 <td>{{$property->apartment_no}}</td>
+                                                                                                <td>{{$property->gross_area}}</td>
                                                                                                 <!-- <td>{{$property->area}} m2</td> -->
                                                                                                 <td>{{moneyFormat($property->price)}}</td>
                                                                                                 <td>{{moneyFormat($ser_amt)}}</td>

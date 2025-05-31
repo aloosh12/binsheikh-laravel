@@ -92,6 +92,12 @@
                                                                         <td>{{ moneyFormat($down_payment_without_ser_amt) }}</td>
                                                                         <td>{{ $settings->advance_perc }}%</td>
                                                                     </tr>
+                                                                    <tr class="payment-row-highlight">
+                                                                        <td>{{ __('messages.management_fees') }}</td>
+                                                                        <td>{{ date('M-y') }}</td>
+                                                                        <td>{{ moneyFormat($ser_amt) }}</td>
+                                                                        <td></td>
+                                                                    </tr>
                                                                     @foreach($months as $key => $mnth)
                                                                     <tr>
                                                                         <td>{{ $mnth['ordinal'] }} {{ __('messages.installment') }}</td>

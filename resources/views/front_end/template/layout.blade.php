@@ -520,6 +520,8 @@
                                                             <label class="form-check-label" for="user_type_user">{{ __('messages.user') }}</label>
                                                             <input class="form-check-input user_type_inp" type="radio" name="user_type" id="user_type_agent" value="3">
                                                             <label class="form-check-label" for="user_type_agent">{{ __('messages.agent') }}</label>
+                                                            <input class="form-check-input user_type_inp" type="radio" name="user_type" id="user_type_agency" value="4">
+                                                            <label class="form-check-label" for="user_type_agency">{{ __('messages.agency') }}</label>
                                                             {{-- <input class="form-check-input user_type_inp" type="radio" name="user_type" id="user_type_agency" value="4">
                                                             <label class="form-check-label" for="user_type_agency">{{ __('messages.agency') }}</label> --}}
                                                         </div>

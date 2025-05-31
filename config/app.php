@@ -165,6 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Barryvdh\DomPDF\ServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -233,6 +234,7 @@ return [
         'AWS' => Aws\Laravel\AwsFacade::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
 
+        'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
     ],
 
 ];
