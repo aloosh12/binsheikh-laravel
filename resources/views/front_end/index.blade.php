@@ -1,6 +1,22 @@
 @extends('front_end.template.layout')
 @section('header')
-
+<style>
+    .number-group label:first-child {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        min-width: 43px;
+        justify-content: center;
+    }
+    .number-group label:first-child input[type="radio"] {
+        margin-right: 5px;
+    }
+    .number-group label:first-child span {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+</style>
 @stop
 
 @section('content')

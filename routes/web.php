@@ -29,6 +29,8 @@ Route::get('/property-listing', 'App\Http\Controllers\front\HomeController@prope
 Route::post('/get-projects', 'App\Http\Controllers\front\HomeController@getProjects');
 Route::post('/calculate_emi', 'App\Http\Controllers\front\HomeController@calculate_emi');
 Route::post('/get_payment_dates', 'App\Http\Controllers\front\HomeController@get_payment_dates');
+Route::get('/download-payment-plan/{id}', 'App\Http\Controllers\front\HomeController@downloadPaymentPlan');
+Route::post('/download-calculator-result', 'App\Http\Controllers\front\HomeController@downloadCalculatorResult');
 
 
 Route::get('/login/facebook', function () {
@@ -293,3 +295,4 @@ Route::middleware('user')->group(function () {
 });
 
 Route::get('get-property-count', 'App\Http\Controllers\front\HomeController@getPropertyCount');
+Route::get('/download-payment-plan/{id}', 'App\Http\Controllers\front\HomeController@downloadPaymentPlan');

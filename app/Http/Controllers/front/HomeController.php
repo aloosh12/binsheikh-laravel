@@ -31,6 +31,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use GuzzleHttp\Client;
+use PDF;
+
 class HomeController extends Controller
 {
     //
@@ -385,8 +387,9 @@ class HomeController extends Controller
 
         $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
         $total = $property->price + $ser_amt;
-        $down_payment = ($settings->advance_perc / 100) * $total;
-        $pending_amt = $total - $down_payment;
+        $full_price_calc = $property->price;
+        $down_payment = ($settings->advance_perc / 100) * $full_price_calc;
+        $pending_amt = $full_price_calc - $down_payment;
 
         $payableEmiAmount = $pending_amt;
         $monthCount = $monthsDifference;//$settings->month_count;
@@ -1441,13 +1444,14 @@ class HomeController extends Controller
 
             $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
             $total = $property->price + $ser_amt;
+            $full_price_calc = $property->price;
             $down_payment_p = $advance_amount;
-            $pending_amt = $total - $down_payment_p;
+            $pending_amt = $full_price_calc - $down_payment_p;
 
             $payableEmiAmount = $pending_amt;
             $monthCount = $rental_duration;
             $monthlyPayment = $payableEmiAmount / $monthCount;
-            $downPaymentPercentage = ($down_payment_p / $total) * 100;
+            $downPaymentPercentage = ($down_payment_p / $full_price_calc) * 100;
             $percentageRate = (100 - $downPaymentPercentage) / $monthCount;
 
             $months = [];
@@ -1463,7 +1467,7 @@ class HomeController extends Controller
                 $months[$i]['remaining_amount'] = round($remainingAmount, 2);
                 $months[$i]['total_percentage'] = round($totalPercentage, 2);
             }
-            return view('front_end.specific_checkout', compact('page_heading','property','settings','months', 'down_payment_p', 'downPaymentPercentage', 'rental_duration'));
+            return view('front_end.specific_checkout', compact('page_heading','property','settings','months', 'down_payment_p','ser_amt', 'downPaymentPercentage', 'rental_duration'));
         }else{
             return view('front_end.rent_checkout', compact('page_heading','property'));
         }
@@ -1481,13 +1485,14 @@ class HomeController extends Controller
 
         $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
 
-        $total = $property->price + $ser_amt;
+       // $total = $property->price + $ser_amt;
+        $full_price_calc = $property->price;
 
         // Set the down payment (advance amount from user)
         $down_payment = $advance_amount;
 
         // Calculate the pending amount to be paid via EMI
-        $pending_amt = $total - $down_payment;
+        $pending_amt = $full_price_calc - $down_payment;
 
         // The payable EMI amount is the pending amount
         $payableEmiAmount = $pending_amt;
@@ -1497,7 +1502,7 @@ class HomeController extends Controller
 
         // Calculate the monthly payment based on the pending amount and rental duration
         $monthlyPayment = $payableEmiAmount / $monthCount;
-        $downPaymentPercentage = ($down_payment / $total) * 100;
+        $downPaymentPercentage = ($down_payment / $full_price_calc) * 100;
         // Calculate the percentage rate for each month's EMI
         $percentageRate = (100 - $downPaymentPercentage) / $monthCount;
         $months = [];
@@ -1512,7 +1517,7 @@ class HomeController extends Controller
             $months[$i]['remaining_amount'] = round($remainingAmount, 2);
             $months[$i]['total_percentage'] = round($totalPercentage, 2);
         }
-        $html = view('front_end.calculate_emi', compact('down_payment', 'months','downPaymentPercentage'))->render();
+        $html = view('front_end.calculate_emi', compact('down_payment', 'ser_amt', 'months','downPaymentPercentage'))->render();
         return response()->json(['html' => $html]);
     }
     public function get_payment_dates(Request $request)
@@ -1650,5 +1655,141 @@ class HomeController extends Controller
 
         $count = $properties->count();
         return response()->json(['count' => $count]);
+    }
+
+    public function downloadPaymentPlan($id)
+    {
+        try {
+
+            $property = Properties::with(['property_type', 'images', 'amenities'])->findOrFail($id);
+            if (!$property) {
+                abort(404);
+            }
+
+            $page_heading = $property->name;
+            $settings = Settings::find(1);
+
+            $cur_month = Carbon::now();
+            $cur_month->startOfMonth();
+            if(isset($property->project->end_date) && $property->project->end_date){
+                $targetDate = Carbon::createFromFormat('Y-m', $property->project->end_date)->endOfMonth();;
+                $monthsDifference = $cur_month->diffInMonths($targetDate);
+            }else{
+                $monthsDifference = $settings->month_count;
+            }
+
+
+            $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
+            $total = $property->price + $ser_amt;
+            $full_price_calc = $property->price;
+            $down_payment = ($settings->advance_perc / 100) * $full_price_calc;
+            $pending_amt = $full_price_calc - $down_payment;
+
+            $payableEmiAmount = $pending_amt;
+            $monthCount = $monthsDifference;//$settings->month_count;
+            $monthlyPayment = $payableEmiAmount / $monthCount;
+            $percentageRate = (100 - $settings->advance_perc) / $monthCount;
+
+            $months = [];
+            $totalPercentage = $settings->advance_perc;
+            $remainingAmount = $payableEmiAmount;
+
+            for ($i = 0; $i < $monthCount; $i++) {
+                $remainingAmount -= $monthlyPayment;
+                $totalPercentage += $percentageRate;
+                $month = $cur_month->addMonth()->format('M-y');
+                $months[$i]['month'] = $month;
+                $months[$i]['month_list'] = $formatted_date = Carbon::createFromFormat('M-y', $month)->format('F - Y');;
+                $months[$i]['val'] = $i+1;
+                $months[$i]['ordinal'] = $this->getOrdinalSuffix($i + 1);
+                $months[$i]['payment'] = round($monthlyPayment, 2);
+                $months[$i]['remaining_amount'] = round($remainingAmount, 2);
+                $months[$i]['total_percentage'] = round($totalPercentage, 2);
+            }
+
+            // Generate PDF
+            $pdf = PDF::loadView('front_end.pdf.payment_plan', [
+                'property' => $property,
+                'ser_amt' => $ser_amt,
+                'total' => $total,
+                'down_payment' => $down_payment,
+                'months' => $months,
+                'settings' => $settings
+            ]);
+
+            return $pdf->download('payment_plan_' . $property->apartment_no . '.pdf');
+
+
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function downloadCalculatorResult(Request $request)
+    {
+        try {
+            // Get property details
+            $property = Properties::findOrFail($request->property_id);
+            
+            // Get settings
+            $settings = Settings::first();
+            
+            // Get calculation parameters from request
+            $advance_amount = $request->advance_amount;
+            $rental_duration = $request->rental_duration;
+            
+            // Calculate payment details
+            $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
+            $total = $property->price + $ser_amt;
+            $full_price_calc = $property->price;
+            $down_payment = $advance_amount;
+            $pending_amt = $full_price_calc - $down_payment;
+            
+            // Calculate percentages
+            $downPaymentPercentage = ($down_payment / $full_price_calc) * 100;
+            $monthlyPercentage = (100 - $downPaymentPercentage) / $rental_duration;
+            
+            // Generate months and payment schedule
+            $cur_month = Carbon::now();
+            $cur_month->startOfMonth();
+            
+            $monthlyPayment = $pending_amt / $rental_duration;
+            
+            $months = [];
+            $totalPercentage = $downPaymentPercentage;
+            $remainingAmount = $pending_amt;
+            
+            for ($i = 0; $i < $rental_duration; $i++) {
+                $remainingAmount -= $monthlyPayment;
+                $totalPercentage += $monthlyPercentage;
+                $month = $cur_month->copy()->addMonths($i+1)->format('M-y');
+                $months[] = [
+                    'ordinal' => $this->getOrdinalSuffix($i + 1),
+                    'month' => $month,
+                    'payment' => round($monthlyPayment, 2),
+                    'remaining_amount' => round($remainingAmount, 2),
+                    'total_percentage' => round($totalPercentage, 2)
+                ];
+            }
+            
+            // Generate PDF
+            $pdf = PDF::loadView('front_end.pdf.calculator_plan', [
+                'property' => $property,
+                'ser_amt' => $ser_amt,
+                'total' => $total,
+                'full_price' => $full_price_calc,
+                'down_payment' => $down_payment,
+                'downPaymentPercentage' => $downPaymentPercentage,
+                'months' => $months,
+                'settings' => $settings,
+                'rental_duration' => $rental_duration
+            ]);
+            
+            return $pdf->download('payment_calculator_' . $property->apartment_no . '.pdf');
+            
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
