@@ -225,6 +225,7 @@ class HomeController extends Controller
             $data[$key]['location']  = $val->location;
             $data[$key]['location_link']  = $val->location_link;
             $data[$key]['unit_number']  = $val->apartment_no;
+            $data[$key]['floor_number']  = $val->floor_no;
             $data[$key]['image']  = $val->images->first() ? aws_asset_path($val->images->first()->image) : '';
             $data[$key]['area']  = $val->area.'m2';
             $data[$key]['property_type']  = $val->property_type->name;
