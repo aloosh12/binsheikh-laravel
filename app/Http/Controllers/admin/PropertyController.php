@@ -132,9 +132,15 @@ class PropertyController extends Controller
                 //     $imgs[] = '/uploads/property/' . $name;
                 // }
                 foreach ($images as $file) {
-                    $name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                    $path = '/uploads/property/' . $name;
-                    Storage::disk('s3')->put($path, fopen($file, 'r+'));
+                    //$name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                   // $path = '/uploads/property/' . $name;
+                   // Storage::disk('s3')->put($path, fopen($file, 'r+'));
+                    if ($file && $file->isValid()) {
+                        $name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $path = 'uploads/property/' . $name;
+
+                        Storage::disk('s3')->put($path, fopen($file->getRealPath(), 'r+'));
+                    }
                     $imgs[] = '/'.$path;
                 }
             }
