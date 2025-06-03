@@ -333,8 +333,9 @@ class HomeController extends Controller
             if($property->sale_type == 1){
                 $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
                 $total = $property->price + $ser_amt;
-                $down_payment = ($settings->advance_perc / 100) * $total;
-                $pending_amt = $total - $down_payment;
+                $full_price_calc = $property->price;
+                $down_payment = ($settings->advance_perc / 100) * $full_price_calc;
+                $pending_amt = $full_price_calc - $down_payment;
                 $data['down_payment_plain']  = $down_payment;
 
                 $payableEmiAmount = $pending_amt;
@@ -349,7 +350,11 @@ class HomeController extends Controller
                 $months[0]['type'] = __('messages.down_payment');
                 $months[0]['payment'] = moneyFormat($down_payment);
                 $months[0]['total_percentage'] = $settings->advance_perc.'%';
-                for ($i = 1; $i <= $monthCount; $i++) {
+                $months[1]['month'] = date('M-y');
+                $months[1]['type'] = __('messages.management_fees');
+                $months[1]['payment'] = moneyFormat($ser_amt);
+                $months[1]['total_percentage'] = '';
+                for ($i = 2; $i <= $monthCount; $i++) {
                     $remainingAmount -= $monthlyPayment;
                     $totalPercentage += $percentageRate;
                     $month = $cur_month->addMonth()->format('M-y');
