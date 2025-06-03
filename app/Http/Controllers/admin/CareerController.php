@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Career;
 use App\Models\CareerApplication;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Validator;
 
 class CareerController extends Controller
@@ -205,6 +206,7 @@ class CareerController extends Controller
         $applications = $applications->paginate(10);
         return view('admin.career.applications', compact('page_heading', 'applications', 'search_text'));
     }
+
     public function delete_application($id)
     {
         $status  = "0";
@@ -223,6 +225,20 @@ class CareerController extends Controller
         }
 
         echo json_encode(['status' => $status, 'message' => $message, 'o_data' => $o_data]);
+
+    }
+
+    public function deleteAll(Request $request)
+    {
+        //Log::info($request->all());
+        if ($request->has('delete_all_id')) {
+            $ids = explode(',', $request->delete_all_id);
+
+            CareerApplication::whereIn('id', $ids)->delete();
+
+            return redirect()->back()->with('success', 'Selected applications deleted successfully.');
+        }
+        return redirect()->back()->with('error', 'No Application selected.');
 
     }
 

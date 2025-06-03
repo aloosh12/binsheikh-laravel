@@ -33,8 +33,7 @@
                                 </form>
                             </div>
 
-                            <div class="   float-right col-md-3  mb-2" >
-
+                            <div class="float-right col-md-3  mb-2" >
                                 <button id="deleteSelected" class="btn btn-danger">Delete Selected</button>
                             </div>
 
