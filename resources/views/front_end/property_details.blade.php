@@ -359,19 +359,19 @@
 
                                                         <!--boxed-content-item end-->
                                                         <div class="modal fade" id="paymentPlan" tabindex="-1" aria-labelledby="paymentPlanLabel" aria-hidden="true">
-                                                            <div class=" modal-dialog modal-dialog-custom  modal-fullscreen "> <!-- modal-dialog modal-xl-->
-                                                                <div class="modal-content modal-content-custom">
+                                                            <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                                                                <div class="modal-content">
                                                                     <div class="modal-header">
                                                                         <h5 class="modal-title fs-5 fw-bold" id="exampleModalLabel">{{ __('messages.payment_plan') }}</h5>
                                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                     </div>
-                                                                    <div class="modal-body modal-body-custom ">
+                                                                    <div class="modal-body">
                                                                         <?php
-                                                                            $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
-                                                                            $total = $property->price + $ser_amt;
-                                                                            $full_price_calc = $property->price;
-                                                                            $down_payment = ($settings->advance_perc / 100) * $full_price_calc;
-                                                                            $pending_amt = $full_price_calc - $down_payment;
+                                                                        $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
+                                                                        $total = $property->price + $ser_amt;
+                                                                        $full_price_calc = $property->price;
+                                                                        $down_payment = ($settings->advance_perc / 100) * $full_price_calc;
+                                                                        $pending_amt = $full_price_calc - $down_payment;
                                                                         ?>
 
                                                                         <div class="card">
@@ -385,24 +385,24 @@
                                                                                 <div class="table-responsive">
                                                                                     <table class="table">
                                                                                         <thead>
-                                                                                            <tr>
-                                                                                                <th>{{ __('messages.unit_number') }}</th>
-                                                                                                <th>{{ __('messages.gross_area') }}</th>
-                                                                                                <th>{{ __('messages.size_net') }}</th>
-                                                                                                <th>{{ __('messages.full_price') }}</th>
-                                                                                                <th>{{ __('messages.management_fees') }}</th>
-                                                                                                <th>{{ __('messages.total') }}</th>
-                                                                                            </tr>
+                                                                                        <tr>
+                                                                                            <th>{{ __('messages.unit_number') }}</th>
+                                                                                            <th>{{ __('messages.gross_area') }}</th>
+                                                                                            <th>{{ __('messages.size_net') }}</th>
+                                                                                            <th>{{ __('messages.full_price') }}</th>
+                                                                                            <th>{{ __('messages.management_fees') }}</th>
+                                                                                            <th>{{ __('messages.total') }}</th>
+                                                                                        </tr>
                                                                                         </thead>
                                                                                         <tbody>
-                                                                                            <tr>
-                                                                                                <td>{{$property->apartment_no}}</td>
-                                                                                                <td>{{$property->gross_area}}</td>
-                                                                                                <td>{{$property->area}} m2</td>
-                                                                                                <td>{{moneyFormat($property->price)}}</td>
-                                                                                                <td>{{moneyFormat($ser_amt)}}</td>
-                                                                                                <td>{{moneyFormat($total)}}</td>
-                                                                                            </tr>
+                                                                                        <tr>
+                                                                                            <td>{{$property->apartment_no}}</td>
+                                                                                            <td>{{$property->gross_area}} m2</td>
+                                                                                            <td>{{$property->area}} m2</td>
+                                                                                            <td>{{moneyFormat($property->price)}}</td>
+                                                                                            <td>{{moneyFormat($ser_amt)}}</td>
+                                                                                            <td>{{moneyFormat($total)}}</td>
+                                                                                        </tr>
                                                                                         </tbody>
                                                                                     </table>
                                                                                 </div>
@@ -414,34 +414,34 @@
                                                                                 <div class="table-responsive">
                                                                                     <table class="payment-table table">
                                                                                         <thead>
-                                                                                            <tr>
-                                                                                                <th>{{ __('messages.payment') }}</th>
-                                                                                                <th>{{ __('messages.month') }}</th>
-                                                                                                <th>{{ __('messages.amount') }}</th>
-                                                                                                <th>{{ __('messages.percentage') }}</th>
-                                                                                            </tr>
+                                                                                        <tr>
+                                                                                            <th>{{ __('messages.payment') }}</th>
+                                                                                            <th>{{ __('messages.month') }}</th>
+                                                                                            <th>{{ __('messages.amount') }}</th>
+                                                                                            <th>{{ __('messages.percentage') }}</th>
+                                                                                        </tr>
                                                                                         </thead>
                                                                                         <tbody>
-                                                                                            <tr class="payment-row-highlight">
-                                                                                                <td>{{ __('messages.down_payment') }}</td>
-                                                                                                <td>{{ date('M-y') }}</td>
-                                                                                                <td>{{ moneyFormat($down_payment) }}</td>
-                                                                                                <td>{{$settings->advance_perc}}%</td>
-                                                                                            </tr>
-                                                                                            <tr class="payment-row-highlight">
-                                                                                                <td>{{ __('messages.management_fees') }}</td>
-                                                                                                <td>{{ date('M-y') }}</td>
-                                                                                                <td>{{ moneyFormat($ser_amt) }}</td>
-                                                                                                <td></td>
-                                                                                            </tr>
-                                                                                            @foreach($months as $key => $mnth)
+                                                                                        <tr class="payment-row-highlight">
+                                                                                            <td>{{ __('messages.down_payment') }}</td>
+                                                                                            <td>{{ date('M-y') }}</td>
+                                                                                            <td>{{ moneyFormat($down_payment) }}</td>
+                                                                                            <td>{{$settings->advance_perc}}%</td>
+                                                                                        </tr>
+                                                                                        <tr class="payment-row-highlight">
+                                                                                            <td>{{ __('messages.management_fees') }}</td>
+                                                                                            <td>{{ date('M-y') }}</td>
+                                                                                            <td>{{ moneyFormat($ser_amt) }}</td>
+                                                                                            <td></td>
+                                                                                        </tr>
+                                                                                        @foreach($months as $key => $mnth)
                                                                                             <tr>
                                                                                                 <td>{{$mnth['ordinal']}} {{ __('messages.installment') }}</td>
                                                                                                 <td>{{$mnth['month']}}</td>
                                                                                                 <td>{{ moneyFormat($mnth['payment']) }}</td>
                                                                                                 <td>{{$mnth['total_percentage']}}%</td>
                                                                                             </tr>
-                                                                                            @endforeach
+                                                                                        @endforeach
                                                                                         </tbody>
                                                                                     </table>
                                                                                 </div>
@@ -451,9 +451,8 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                           <div class="modal fade" id="paymentCalculator" tabindex="-1" aria-labelledby="paymentCalculatorLabel" aria-hidden="true">
-                                                            <div class="modal-dialog modal-xl">
+                                                            <div class="modal-dialog modal-dialog-scrollable modal-xl">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
                                                                         <h5 class="modal-title fs-5 fw-bold" id="exampleModalLabel">{{ __('messages.payment_calculator') }}</h5>
@@ -486,7 +485,7 @@
                                                                                         <tbody>
                                                                                             <tr>
                                                                                                 <td>{{$property->apartment_no}}</td>
-                                                                                                <td>{{$property->gross_area}}</td>
+                                                                                                <td>{{$property->gross_area}} m2</td>
                                                                                                 <!-- <td>{{$property->area}} m2</td> -->
                                                                                                 <td>{{moneyFormat($property->price)}}</td>
                                                                                                 <td>{{moneyFormat($ser_amt)}}</td>
