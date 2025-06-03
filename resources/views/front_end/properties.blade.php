@@ -353,6 +353,7 @@
                                                         <li><i class="fa-light fa-bed"></i><span>{{$property->bedrooms}}</span></li>
                                                         <li><i class="fa-light fa-bath"></i><span>{{$property->bathrooms}}</span></li>
                                                         <li><i class="fa-light fa-chart-area"></i><span>{{$property->area}} m2</span></li>
+                                                        <li><i class="fa-light fa-building" title="{{__('messages.floor_number')}}"></i><span>{{__('messages.floor_no')}}{{$property->floor_no}} </span></li>
                                                     </ul>
                                                 </div>
                                             </div>
