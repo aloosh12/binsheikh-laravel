@@ -2,14 +2,14 @@
 @section('header')
 <style>
     /* Modal should fill the screen */
-    .modal-dialog.modal-fullscreen {
+    .modal-dialog.x {
         margin: 0;
         max-width: 100vw;
         max-height: 100vh;
     }
 
     /* Body fills available space */
-    .modal-body {
+    .cus {
         height: calc(100vh - 60px); /* Adjust for modal header height */
         overflow: hidden;
     }
@@ -20,6 +20,36 @@
         max-height: 100%;
         object-fit: contain;
         display: block;
+    }
+
+
+    .modal-dialog-custom {
+        /*max-width: 90vw;*/
+        max-height: 90vh;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-content-custom {
+        max-height: 90vh !important;
+        overflow: hidden !important;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-body-custom {
+        overflow: hidden !important; /* Hides scrollbar */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centers content */
+        align-items: center;
+        max-height: 60vh; /* Adjust to fit content */
+        padding: 10px; /* Reduce unnecessary space */
+    }
+    .modal-body-custom > * {
+        max-width: 100%; /* Prevents overflow */
+        max-height: 100%;
     }
 </style>
 @stop
@@ -229,13 +259,13 @@
                                             </div>
 
                                             <div class="modal fade" id="floorPlan" tabindex="-1" aria-labelledby="floorPlanLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-fullscreen"> <!-- fullscreen modal -->
+                                                <div class="modal-dialog x modal-fullscreen "> <!-- fullscreen modal -->
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title">{{ __('messages.floor_plan') }}</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <div class="modal-body p-0">
+                                                        <div class="modal-body cus p-0">
                                                             <div class="d-flex justify-content-center align-items-center w-100 h-100">
                                                                 <img src="{{ aws_asset_path($property->floor_plan) }}" class="floor-plan-img" alt="Floor Plan">
                                                             </div>
@@ -329,13 +359,13 @@
 
                                                         <!--boxed-content-item end-->
                                                         <div class="modal fade" id="paymentPlan" tabindex="-1" aria-labelledby="paymentPlanLabel" aria-hidden="true">
-                                                            <div class="modal-dialog modal-xl">
-                                                                <div class="modal-content">
+                                                            <div class=" modal-dialog modal-dialog-custom  modal-fullscreen "> <!-- modal-dialog modal-xl-->
+                                                                <div class="modal-content modal-content-custom">
                                                                     <div class="modal-header">
                                                                         <h5 class="modal-title fs-5 fw-bold" id="exampleModalLabel">{{ __('messages.payment_plan') }}</h5>
                                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                     </div>
-                                                                    <div class="modal-body">
+                                                                    <div class="modal-body modal-body-custom ">
                                                                         <?php
                                                                             $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
                                                                             $total = $property->price + $ser_amt;
@@ -686,5 +716,7 @@
             form.remove();
         });
     });
+
+
 </script>
 @stop
