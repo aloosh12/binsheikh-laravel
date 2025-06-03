@@ -297,12 +297,19 @@
                                 </div>
 
                                 <!--listing-item-container-->
-                                <div class="row">
-                                    <div class="col-md-12">
-                                <div class="listing-item-container three-columns-grid">
+                                <div class="listing-grid_heroheader ">
+                                    <h3>{{ __("messages.properties") }}</h3>
+                                    <div class="gallery-filters mt-2">
+                                        <a href="#" class="gallery-filter gallery-filter-active" data-filter="*">{{ __("messages.rent_buy") }}</a>
+                                        <a href="#" class="gallery-filter" data-filter=".cat-sale">{{ __("messages.buy") }}</a>
+                                        <a href="#" class="gallery-filter" data-filter=".cat-rent">{{ __("messages.rent") }}</a>
+                                    </div>
+                                </div>
+                                <div class="listing-grid gisp">
 
                                     <!-- listing-item -->
                                     @foreach($properties as $property)
+                                    <div class="listing-grid-item @if($property->sale_type==1 || $property->sale_type==3) cat-sale @endif @if($property->sale_type==2 || $property->sale_type==3) cat-rent @endif">
                                     <div class="listing-item">
                                         <div class="geodir-category-listing">
                                             <div class="geodir-category-img">
@@ -367,14 +374,13 @@
 
                                         </div>
                                     </div>
-
+                                        </div>
                                     @endforeach
 
 
                                 </div>
                                 <!--listing-item-container end-->
-                                  </div>
-                                </div>
+
                                 <div class="pagination-wrap">
                                     <!-- <div class="pagination">
                                         <a href="#" class="prevposts-link"><i class="fa fa-caret-left"></i></a>

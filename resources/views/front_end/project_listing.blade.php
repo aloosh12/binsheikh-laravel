@@ -16,14 +16,14 @@
                             <div class="hero-section-wrap-item">
                                 <div class="container">
                                     <div class="hero-section-container">
-                                     
+
                                         <div class="hero-section-title_container">
-                                           
+
                                             <div class="hero-section-title">
                                                    <h2>{{ __('messages.projects') }}</h2>
-                                               
+
                                             </div>
-                                          
+
                                         </div>
                                         <div class="hs-scroll-down-wrap">
                                             <div class="scroll-down-item">
@@ -34,8 +34,8 @@
                                             </div>
                                             <div class="svg-corner svg-corner_white"  style="bottom:0;left:-40px;"></div>
                                         </div>
-                                       
-                                       
+
+
                                     </div>
                                 </div>
                                 <div class="bg-wrap bg-hero bg-parallax-wrap-gradien fs-wrapper" data-scrollax-parent="true">
@@ -45,14 +45,14 @@
                             </div>
                         </div>
                     </div>
-                    
-                 
 
-                    <!--section-end-->				
+
+
+                    <!--section-end-->
                     <!--container-->
                     <div class="container">
                     </div>
-                    <!--container end-->	
+                    <!--container end-->
 
                     <!--main-content-->
                     <div class="main-content ms_vir_height">
@@ -78,9 +78,9 @@
                                     @endforeach
                                 </div>
                             </div>
-                            <!--boxed-container end-->					
+                            <!--boxed-container end-->
                         </div>
-                        <!--container end-->	
+                        <!--container end-->
                     </div>
 
                     <!--main-content end-->
