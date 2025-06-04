@@ -17,7 +17,7 @@
     /* Center and contain image */
     .floor-plan-img {
         max-width: 100%;
-        max-height: 100%;
+        max-height: 85%;
         object-fit: contain;
         display: block;
     }
