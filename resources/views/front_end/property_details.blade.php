@@ -231,7 +231,7 @@
                                             </div>
 
                                             <div class="modal fade" id="unit_layout_view" tabindex="-1" aria-labelledby="unit_layoutLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                                                <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title fs-5 fw-bold" id="exampleModalLabel">{{ __('messages.unit_layout') }}</h5>
