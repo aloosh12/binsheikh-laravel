@@ -15,6 +15,22 @@
                             <div class="col-md-8 mb-0" style="top:51px">
                                 <form action="" method="get">
                                     <div class="row">
+
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label">From</label>
+                                                <input class="form-control filter_1" name="from" type="date" value="{{ \Carbon\Carbon::create(2010, 1, 1)->format('Y-m-d') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label">To</label>
+                                                <input class="form-control filter_1" name="to" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
                                         <div class="col-md-3">
                                             <div class="mb-3">
                                                 <label class="form-label">Name/Email/Phone</label>

@@ -199,9 +199,19 @@ class CareerController extends Controller
 
         $page_heading = "Career Applications";
         $search_text  = $_GET['search_text'] ?? '';
+        $from  = $_GET['from'] ?? '';
+        $to  = $_GET['to'] ?? '';
+        $from = \Carbon\Carbon::parse($from)->startOfDay()->toDateTimeString();
+        $to = \Carbon\Carbon::parse($to)->endOfDay()->toDateTimeString();
         $applications       = CareerApplication::with('career')->where(['deleted' => 0])->orderBy('created_at', 'desc');
         if ($search_text) {
             $applications = $applications->whereRaw("(name like '%$search_text%' OR email like '%$search_text%' OR phone like '%$search_text%')");
+        }
+        // Apply date range filter
+        if ($from && $to) {
+            Log::info($from);
+            Log::info($to);
+            $applications = $applications->whereBetween('created_at', [$from, $to]);
         }
         $applications = $applications->paginate(10);
         return view('admin.career.applications', compact('page_heading', 'applications', 'search_text'));
