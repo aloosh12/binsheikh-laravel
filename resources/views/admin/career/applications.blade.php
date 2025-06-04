@@ -81,8 +81,12 @@
                                             <td class="trVOE">{{ $app->phone }}</td>
                                             <td class="trVOE">{{ $app->career->name }}</td>
                                             <td class="trVOE"><a href="{{ aws_asset_path($app->cv) }}" target="_blank" rel="noopener noreferrer">View CV</a></td>
+{{--                                            <td class="trVOE">--}}
+{{--                                                {{ web_date_in_timezone($app->created_at, 'd-M-Y h:i A') }}</td>--}}
+
                                             <td class="trVOE">
-                                                {{ web_date_in_timezone($app->created_at, 'd-M-Y h:i A') }}</td>
+                                                {{ date_format($app->created_at, 'd-M-Y h:i A') }}</td>
+
 
                                             <td>
                                                 <a href="{{ url('admin/career/delete_application/' . $app->id) }}"
