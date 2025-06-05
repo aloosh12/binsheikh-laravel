@@ -200,6 +200,12 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="is_sold">Mark as Sold</label> <br>
+                                            <input type="checkbox" id="is_sold" name="is_sold" @if($id && $property->is_sold) checked @endif>
+                                        </div>
+                                    </div>
 
                                     <div class="col-md-6">
                                         <div class="form-group">

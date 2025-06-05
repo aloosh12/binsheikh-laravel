@@ -16,6 +16,11 @@ class Properties extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'is_sold' => 'boolean',
+        'is_recommended' => 'boolean'
+    ];
+
     public function __get($key)
     {
         if (\Request::is('admin/*')) {

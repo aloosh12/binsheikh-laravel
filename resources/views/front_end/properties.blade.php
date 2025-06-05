@@ -274,8 +274,9 @@
     <div class="col-md-4 d-flex align-items-center">
     <span >{{ __('messages.sort_by') }}:</span>
                                                     <div class="cs-intputwrap flex-grow-1 px-3" style="margin-bottom: 0">
-                                                        <select data-placeholder="{{ __('messages.latest') }}" class="chosen-select no-search-select" id="sort_sel">
-                                                            <option value="latest">{{ __('messages.latest') }}</option>
+                                                        <select data-placeholder="{{ __('messages.select') }}" class="chosen-select no-search-select" id="sort_sel">
+                                                            <option @if($sort=="order") selected @endif value="order"></option>
+                                                            <option @if($sort=="latest") selected @endif value="latest">{{ __('messages.latest') }}</option>
                                                             <option @if($sort=="price_low_to_high") selected @endif value="price_low_to_high">{{ __('messages.price_low_to_high') }}</option>
                                                             <option @if($sort=="price_high_to_low") selected @endif value="price_high_to_low">{{ __('messages.price_high_to_low') }}</option>
                                                             <option @if($sort=="size_low_to_high") selected @endif value="size_low_to_high">{{ __('messages.size_low_to_high') }}</option>

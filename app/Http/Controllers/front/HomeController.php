@@ -209,7 +209,7 @@ class HomeController extends Controller
         $price_to = $_GET['price_to'] ?? '';
         $project_id = $_GET['project'] ?? '';
         $location_id = $_GET['location'] ?? '';
-        $sort = $_GET['sort'] ?? 'latest';
+        $sort = $_GET['sort'] ?? 'order';
         $unit_number = $_GET['unit_number'] ?? '';
         $pr_text = __('messages.price');
 
@@ -218,28 +218,32 @@ class HomeController extends Controller
             $properties = $properties->whereRaw("(properties.apartment_no like '%$unit_number%')");
         }
         if ($sort =="latest") {
-            $properties = $properties->orderBy('properties.created_at', 'desc');
+            $properties = $properties->orderBy('properties.created_at', 'desc')->orderBy('properties.order', 'asc');
         }
         if ($sort == "price_low_to_high") {
-            $properties = $properties->orderBy('properties.price', 'asc');
+            $properties = $properties->orderBy('properties.price', 'asc')->orderBy('properties.order', 'asc');
         }
         if ($sort == "price_high_to_low") {
-            $properties = $properties->orderBy('properties.price', 'desc');
+            $properties = $properties->orderBy('properties.price', 'desc')->orderBy('properties.order', 'asc');
         }
 
         if ($sort == "size_low_to_high") {
-            $properties = $properties->orderByRaw('CAST(properties.area AS DECIMAL) ASC');
+            $properties = $properties->orderByRaw('CAST(properties.area AS DECIMAL) ASC, properties.order ASC');
         }
         if ($sort == "size_high_to_low") {
-            $properties = $properties->orderByRaw('CAST(properties.area AS DECIMAL) DESC');
+            $properties = $properties->orderByRaw('CAST(properties.area AS DECIMAL) DESC, properties.order ASC');
         }
 
         if ($sort == "floor_low_to_high") {
-            $properties = $properties->orderByRaw('CAST(properties.floor_no AS DECIMAL) ASC');
+            $properties = $properties->orderByRaw('CAST(properties.floor_no AS DECIMAL) ASC, properties.order ASC');
         }
         if ($sort == "floor_high_to_low") {
-            $properties = $properties->orderByRaw('CAST(properties.floor_no AS DECIMAL) DESC');
+            $properties = $properties->orderByRaw('CAST(properties.floor_no AS DECIMAL) DESC, properties.order ASC');
         }
+        if ($sort =="order") {
+            $properties = $properties->orderBy('properties.order', 'asc');
+        }
+        // Apply default ordering by order field
 
         if ($search_text) {
             $properties = $properties->whereRaw("(properties.name like '%$search_text%')");

@@ -135,6 +135,7 @@ return [
     'faster_login' => 'For faster login or register use your social account.',
     'search_results' => 'Search Results',
     'popularity' => 'Popularity',
+    'select' => 'Sort By',
     'latest' => 'Latest',
     'price_low_to_high' => 'Price: low to high',
     'price_high_to_low' => 'Price: high to low',
