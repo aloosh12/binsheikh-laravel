@@ -23,33 +23,12 @@
     }
 
 
-    .modal-dialog-custom {
-        /*max-width: 90vw;*/
-        max-height: 90vh;
-        margin: auto;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .modal-content-custom {
-        max-height: 90vh !important;
-        overflow: hidden !important;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .modal-body-custom {
-        overflow: hidden !important; /* Hides scrollbar */
-        display: flex;
-        flex-direction: column;
-        justify-content: center; /* Centers content */
-        align-items: center;
-        max-height: 60vh; /* Adjust to fit content */
-        padding: 10px; /* Reduce unnecessary space */
-    }
-    .modal-body-custom > * {
-        max-width: 100%; /* Prevents overflow */
-        max-height: 100%;
+    .pp-description {
+        font-size: 16px !important;
+        color: #333 !important;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
     }
 </style>
 @stop
@@ -190,7 +169,7 @@
 
 
                                             </div>
-                                                      <div class="ps-facts-wrapper">
+                                            <div class="ps-facts-wrapper">
 
                                                            <!--ps-facts-item-->
                                                  @if($property->balcony_size)
@@ -205,7 +184,7 @@
 
 
 
-                                                          </div>
+                                           </div>
                                             <!--ps-facts-wrapper end-->
 
                                             <div class="geodir-category-button  ">
@@ -222,11 +201,11 @@
                                                         <a href="#" class="post-card_book mt-0 d-block "  data-bs-toggle="modal" data-bs-target="#three_d_view" style="width: 100%;"><span>{{ __('messages.three_d_view') }}</span></a>
                                                     </div>
                                                     @endif
-                                                        @if($property->floor_plan)
-                                                            <div class="col ">
-                                                                <a href="#" data-bs-toggle="modal" data-bs-target="#floorPlan" class="mt-0 d-block post-card_book " style="width: 100%;"><span>{{ __('messages.floor_plan') }}</span></a>
-                                                            </div>
-                                                        @endif
+                                                    @if($property->floor_plan)
+                                                        <div class="col ">
+                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#floorPlan" class="mt-0 d-block post-card_book " style="width: 100%;"><span>{{ __('messages.floor_plan') }}</span></a>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
 
@@ -292,11 +271,15 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!-- Description block -->
+                                                <div class="pp-description">
+                                                    <p>{{trim(strip_tags($property->description)) }}</p>
+                                                </div>
                                                 <!--boxed-content-item end-->
                                             </div>
 
 
-                                               <iframe width="100%" height="400" style="border-radius: 30px;" src="{{$property->video_link}}"></iframe>
+                                            <iframe width="100%" height="400" style="border-radius: 30px;" src="{{$property->video_link}}"></iframe>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
