@@ -354,14 +354,14 @@ class HomeController extends Controller
                 $months[1]['type'] = __('messages.management_fees');
                 $months[1]['payment'] = moneyFormat($ser_amt);
                 $months[1]['total_percentage'] = '';
-                for ($i = 2; $i <= $monthCount; $i++) {
+                for ($i = 0; $i < $monthCount; $i++) {
                     $remainingAmount -= $monthlyPayment;
                     $totalPercentage += $percentageRate;
                     $month = $cur_month->addMonth()->format('M-y');
-                    $months[$i]['month'] = $month;
-                    $months[$i]['type'] = $this->getOrdinalSuffix($i + 1). ' '.__('messages.installment');
-                    $months[$i]['payment'] = moneyFormat($monthlyPayment);
-                    $months[$i]['total_percentage'] = round($totalPercentage, 2).'%';
+                    $months[$i+2]['month'] = $month;
+                    $months[$i+2]['type'] = $this->getOrdinalSuffix($i + 1). ' '.__('messages.installment');
+                    $months[$i+2]['payment'] = moneyFormat($monthlyPayment);
+                    $months[$i+2]['total_percentage'] = round($totalPercentage, 2).'%';
                 }
                 $data['payment_plan'] = $months;
             }else{
