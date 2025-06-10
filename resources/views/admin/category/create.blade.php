@@ -52,10 +52,12 @@
                                             </select>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-12 mt-2">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary">Submit</button>
+
+                                            <a href="{{url('admin/categories')}}" class="btn btn-secondary"  data-bs-dismiss="modal">{{__('Back')}}  </a>
                                         </div>
                                     </div>
 
@@ -72,7 +74,7 @@
 
 @stop
 @section('script')
-  
+
     <script>
         $('body').off('submit', '#admin-form');
         $('body').on('submit', '#admin-form', function(e) {
@@ -85,7 +87,7 @@
                 .text('Saving')
                 .attr('disabled', true);
 
-          
+
             $.ajax({
                 type: "POST",
                 enctype: 'multipart/form-data',
@@ -149,5 +151,5 @@
 
 
     </script>
- 
+
 @stop

@@ -272,6 +272,8 @@ class CustomerController extends Controller
 //        return redirect('admin/sections')->with('success', 'Sections deleted successfully.');
     }
 
+
+
     public function details($id)
     {
         $customer = User::findOrFail($id);

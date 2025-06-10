@@ -65,7 +65,7 @@
                                             <label>Image<b class="text-danger">&nbsp;</b></label>
                                             <input <?=!$id ? 'required' : '' ?>
                                                 data-parsley-required-message="Select Image"
-                                                type="file" name="image" class="form-control" 
+                                                type="file" name="image" class="form-control"
                                                 accept="image/*" data-parsley-trigger="change"
                                                 data-parsley-fileextension="jpg,png,gif,jpeg"
                                                 data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported"
@@ -80,7 +80,7 @@
                                             <label>App Image<b class="text-danger">&nbsp;</b></label>
                                             <input <?=!$id ? 'required' : '' ?>
                                                 data-parsley-required-message="Select Image"
-                                                type="file" name="app_image" class="form-control" 
+                                                type="file" name="app_image" class="form-control"
                                                 accept="image/*" data-parsley-trigger="change"
                                                 data-parsley-fileextension="jpg,png,gif,jpeg"
                                                 data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported"
@@ -90,14 +90,14 @@
                                         </div>
                                     </div>
 
-                                    
-                                    
+
+
                                     <div class="col-md-6 mt-2">
                                         <div class="form-group">
                                             <label>Banner<b class="text-danger">&nbsp;</b></label>
                                             <input <?=!$id ? 'required' : '' ?>
                                                 data-parsley-required-message="Select Banner"
-                                                type="file" name="banner" class="form-control" 
+                                                type="file" name="banner" class="form-control"
                                                 accept="image/*" data-parsley-trigger="change"
                                                 data-parsley-fileextension="jpg,png,gif,jpeg"
                                                 data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported"
@@ -136,7 +136,7 @@
                                         </div>
                                     </div>
 
-                                   
+
 
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -149,7 +149,7 @@
                                         </div>
                                     </div>
 
-                                    
+
 
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -157,7 +157,7 @@
                                             <input type="checkbox" id="is_recommended" name="is_recommended" @if($id && $project->is_recommended) checked @endif>
                                         </div>
                                     </div>
-                                  
+
 
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -186,15 +186,15 @@
                                             <textarea name="description_ar" class="form-control editor" required data-parsley-required-message="Enter Arabic Description">@if($id){{$project->description_ar}}@endif</textarea>
                                         </div>
                                     </div>
-                                    
 
-                                
+
+
                                     <div class="col-md-6 mt-2">
                                         <div class="form-group">
                                             <label>Video<b class="text-danger">&nbsp;</b></label>
                                             <input <?=!$id ? 'required' : '' ?>
                                                 data-parsley-required-message="Select Video"
-                                                type="file" name="video" class="form-control" 
+                                                type="file" name="video" class="form-control"
                                                 data-parsley-trigger="change"accept="video/*">
                                                 @if($id && $project->video) <a href=" {{aws_asset_path($project->video) }}" target="_blank" rel="noopener noreferrer">View Video</a> @endif
                                         </div>
@@ -205,12 +205,12 @@
                                             <label>Video Thumbnail<b class="text-danger">&nbsp;</b></label>
                                             <input <?=!$id ? 'required' : '' ?>
                                                 data-parsley-required-message="Select Video Thumbnail"
-                                                type="file" name="video_thumbnail" class="form-control" 
+                                                type="file" name="video_thumbnail" class="form-control"
                                                 data-parsley-trigger="change "accept="image/*">
                                                 @if($id && $project->video_thumbnail) <a href="{{aws_asset_path($project->video_thumbnail) }}" target="_blank" rel="noopener noreferrer">View Thumbnail </a> @endif
                                         </div>
                                     </div>
-                                    
+
                                     @if (count($images) > 0)
                                         <div class="col-md-12">
                                             <label>
@@ -236,19 +236,19 @@
                                         </div>
 
                                     @endif
-                            
+
 
                                     <div class=" col-md-12 mt-3">
                                         <h5>Images</h5>
                                     </div>
 
                                     <div class="itinerary col-md-12 mb-5" style="background-color: lightgray">
-                                        <div class="row">    
+                                        <div class="row">
                                             <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label>Image<b class="text-danger">&nbsp;</b></label>
                                                     <input @if(!$id) required @endif data-parsley-required-message="Select Image"
-                                                    type="file" name="prj_image[0]" class="form-control" 
+                                                    type="file" name="prj_image[0]" class="form-control"
                                                     accept="image/*" data-parsley-trigger="change"
                                                     data-parsley-fileextension="jpg,png,gif,jpeg"
                                                     data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported"
@@ -276,11 +276,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> 
-                                    
+                                    </div>
+
                                    <div class="col-md-12 mt-2">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary">Submit</button>
+                                            <a href="{{url('admin/projects')}}" class="btn btn-secondary"  data-bs-dismiss="modal">{{__('Back')}}  </a>
                                         </div>
                                     </div>
 
@@ -404,7 +405,7 @@
                         <div class="form-group">
                             <label>Image<b class="text-danger">&nbsp;</b></label>
                             <input required data-parsley-required-message="Select Image"
-                            type="file" name="prj_image[${faq_index }]" class="form-control" 
+                            type="file" name="prj_image[${faq_index }]" class="form-control"
                             accept="image/*" data-parsley-trigger="change"
                             data-parsley-fileextension="jpg,png,gif,jpeg"
                             data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported"
@@ -422,13 +423,13 @@
                             </select>
                         </div>
                     </div>
-                   
+
                     <div class="col-md-1">
                     <div class="form-group"><label>Action</label><br><button type="button"
                         class="btn btn-danger remove_itinerary">-</button></div>
                     </div>
                 </div>`;
-            
+
             $(".itinerary").append(_html);
 
 

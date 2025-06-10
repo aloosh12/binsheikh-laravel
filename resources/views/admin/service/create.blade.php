@@ -43,14 +43,14 @@
                                     </div>
 
 
-                                    
+
 
                                     <div class="col-md-6 mt-2">
                                         <div class="form-group">
                                             <label>Image<b class="text-danger">&nbsp;</b></label>
                                             <input <?=!$id ? 'required' : '' ?>
                                                 data-parsley-required-message="Select Image"
-                                                type="file" name="image" class="form-control" 
+                                                type="file" name="image" class="form-control"
                                                 accept="image/*" data-parsley-trigger="change"
                                                 data-parsley-fileextension="jpg,png,gif,jpeg"
                                                 data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported"
@@ -59,8 +59,8 @@
                                                 @if($id && $service->image) <a href=" {{aws_asset_path($service->image) }}" target="_blank" rel="noopener noreferrer">View Image</a> @endif
                                         </div>
                                     </div>
-                                    
-                                   
+
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Status</label>
@@ -72,7 +72,7 @@
                                         </div>
                                     </div>
 
-                                    
+
 
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -80,7 +80,7 @@
                                             <input type="checkbox" id="is_recommended" name="is_recommended" @if($id && $service->is_recommended) checked @endif>
                                         </div>
                                     </div>
-                                  
+
 
 
                                     <div class=" col-md-12 mt-3">
@@ -91,7 +91,7 @@
                                         @if (!count($highlights))
                                             <div class="row">
 
-                                                
+
 
                                                 <div class="col-md-5">
                                                     <div class="form-group">
@@ -118,7 +118,7 @@
                                                             class="btn btn-primary add_new_itinerary">+</button>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label>Details<b class="text-danger">&nbsp;</b></label>
@@ -138,7 +138,7 @@
                                         @else
                                             @foreach ($highlights as $key => $val)
                                                 <div class="row">
-                                                    
+
 
                                                     <div class="col-md-5">
                                                         <div class="form-group">
@@ -160,9 +160,9 @@
                                                     </div>
 
 
-                                                   
-                                              
-                                                    
+
+
+
 
                                                     <div class="col-md-1">
                                                         <div class="form-group">
@@ -197,10 +197,11 @@
                                             @endforeach
                                         @endif
                                     </div>
-                                    
+
                                    <div class="col-md-12 mt-2">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary">Submit</button>
+                                            <a href="{{url('admin/services')}}" class="btn btn-secondary"  data-bs-dismiss="modal">{{__('Back')}}  </a>
                                         </div>
                                     </div>
 
@@ -327,12 +328,12 @@
                         <div class="form-group"><label>Title Ar<b class="text-danger">&nbsp;</b></label><input type="text" name="highlight_title_ar[${faq_index }]" class="form-control" required data-parsley-required-message="Enter ArabicTitle" value="">
                         </div>
                     </div>
-                
+
                     <div class="col-md-1">
                     <div class="form-group"><label>Action</label><br><button type="button"
                         class="btn btn-danger remove_itinerary">-</button></div>
                     </div>
-                
+
                     <div class="col-md-12">
                     <div class="form-group"><label>Details<b class="text-danger">&nbsp;</b></label><textarea name="highlight_description[${faq_index }]" rows="3" class="form-control editor" required
                         data-parsley-required-message="Enter Details"></textarea></div>
@@ -342,7 +343,7 @@
                         data-parsley-required-message="Enter Arabic Details"></textarea></div>
                     </div>
                 </div>`;
-            
+
             $(".itinerary").append(_html);
 
 

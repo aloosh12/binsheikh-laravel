@@ -125,7 +125,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::post("save_property", "PropertyController@store");
 
     Route::delete("property/delete_image/{id}", "PropertyController@delete_image");
-
+    Route::delete('properties/deleteAll', "PropertyController@deleteAll")->name('properties.deleteAll');
 
     Route::get("blog", "BlogController@index");
 
@@ -149,7 +149,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::delete("photos/delete/{id}", "GalleryController@destroy");
 
     Route::post("save_photos", "GalleryController@store");
-
+    Route::delete('photos/deleteAll', "GalleryController@deleteAll")->name('photos.deleteAll');
 
 
     Route::get("videos", "VideoController@index");
@@ -191,8 +191,6 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::delete("service/delete/{id}", "ServiceController@destroy");
 
     Route::post("save_service", "ServiceController@store");
-
-
 
     Route::get("subscribers", "SubscriberController@index");
 
