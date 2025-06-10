@@ -163,7 +163,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::delete("videos/delete/{id}", "VideoController@destroy");
 
     Route::post("save_videos", "VideoController@store");
-
+    Route::delete('videos/deleteAll', "VideoController@deleteAll")->name('videos.deleteAll');
 
     Route::get("projects", "ProjectController@index");
 

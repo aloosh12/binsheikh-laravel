@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Properties;
 use App\Models\Video;
 use Illuminate\Http\Request;
 use Validator;
@@ -33,7 +34,7 @@ class VideoController extends Controller
         $page_heading = "Videos";
         $mode = "create";
         $id = "";
-    
+
         return view("admin.videos.create", compact('page_heading', 'mode', 'id'));
     }
 
@@ -58,7 +59,7 @@ class VideoController extends Controller
             $ins = [
                 'link' => $request->link,
                 'active' => $request->active,
-            ];           
+            ];
             if ($request->id != "") {
                 $data = Video::find($request->id);
                 $ins['updated_at'] = gmdate('Y-m-d H:i:s');
@@ -124,6 +125,20 @@ class VideoController extends Controller
             $message = "Sorry!.. Something went wrong";
         }
         echo json_encode(['status' => $status, 'message' => $message]);
+    }
+
+    public function deleteAll(Request $request)
+    {
+        //Log::info($request->all());
+        if ($request->has('delete_all_id')) {
+            $ids = explode(',', $request->delete_all_id);
+
+            Video::whereIn('id', $ids)->delete();
+
+            return redirect()->back()->with('success', 'Selected Videos deleted successfully.');
+        }
+        return redirect()->back()->with('error', 'No Video selected.');
+
     }
 
 }
