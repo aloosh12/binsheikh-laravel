@@ -288,7 +288,7 @@
 
                                     <div class="col-md-6 mt-2">
                                         <div class="form-group">
-                                            <label>Floor Plan</label>
+                                            <label>Unit Layout</label>
                                             <input
                                                 type="file" name="floor_plan" class="form-control"
                                                 data-parsley-trigger="change"
@@ -340,7 +340,7 @@
 
                                     <div class="col-md-6 mt-2">
                                         <div class="form-group">
-                                            <label>Unit Layout</label>
+                                            <label>Floor Plan</label>
                                             <input type="url" name="unit_layout" class="form-control"  value="@if($id){{$property->unit_layout}}@endif" data-parsley-required-message="Enter Unit Layout">
                                         </div>
                                     </div>

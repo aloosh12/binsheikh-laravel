@@ -274,8 +274,45 @@ class CustomerController extends Controller
 
     public function details($id)
     {
-        $customer = User::findOrFail($id);
-        return view('admin.customer.details', compact('customer'));
+        $page_heading = "Customer Details";
+        $customer = User::find($id);
+
+        if (!$customer) {
+            abort(404);
+        }
+        $parts = explode('/', $customer->professional_practice_certificate);
+        $last = end($parts);
+        return view('admin.customer.details', compact('page_heading', 'customer', 'last'));
+    }
+
+    /**
+     * Download a document associated with a customer
+     *
+     * @param string $filename The AWS path of the file to download
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadDocument($filename)
+    {
+        try {
+            // Decode the filename as it may be URL encoded
+            $decodedFilename = "uploads/profile/$filename";
+
+            // Get the file content from AWS
+            $fileUrl = aws_asset_path($decodedFilename);
+           // $fileUrl = 'https://cdn.bsbqa.com/uploads/profile/683f4eff4216c_1748979455.pdf';//aws_asset_path($decodedFilename);
+
+            // Get original file name from the path
+            $originalName = basename($decodedFilename);
+
+            // Create a temporary file
+            $tempFile = tempnam(sys_get_temp_dir(), 'document_');
+            file_put_contents($tempFile, file_get_contents($fileUrl));
+
+            // Return the file as a download
+            return response()->download($tempFile, $originalName)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error downloading file: ' . $e->getMessage());
+        }
     }
 
 }

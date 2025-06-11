@@ -261,6 +261,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
 
     Route::get("customer/edit/{id}", "CustomerController@edit");
 
+    Route::get("customer/download-document/{filename}", "CustomerController@downloadDocument");
     Route::delete("customer/delete/{id}", "CustomerController@destroy");
 
     Route::delete('customer/deleteAll', "CustomerController@deleteAll")->name('customer.deleteAll');

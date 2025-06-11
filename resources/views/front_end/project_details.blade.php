@@ -254,14 +254,15 @@
                                                                     <span><i class="fas fa-camera"></i> {{count($sim_property->images)}}</span>
                                                                 </div>
                                                             </div>
-                                                            <div class="geodir-category-content">
+                                                                                                                            <div class="geodir-category-content">
                                                                 <h3><a href="#">{{$sim_property->name}}</a></h3>
                                                                 <p class="txt-three-linesss">{{$sim_property->short_description}}</p>
                                                                 <div class="geodir-category-content-details">
                                                                     <ul>
-                                                                        <li><i class="fa-light fa-bed"></i><span>{{$sim_property->bedrooms}}</span></li>
-                                                                        <li><i class="fa-light fa-bath"></i><span>{{$sim_property->bathrooms}}</span></li>
-                                                                        <li><i class="fa-light fa-chart-area"></i><span>{{$sim_property->area}}</span></li>
+                                                                        <li><i class="fa-light fa-bed" title="{{__('messages.bedroom')}}"></i><span>{{$sim_property->bedrooms}}</span></li>
+                                                                        <li><i class="fa-light fa-bath" title="{{__('messages.bathroom')}}"></i><span>{{$sim_property->bathrooms}}</span></li>
+                                                                        <li><i class="fa-light fa-chart-area" title="{{__('messages.area')}}"></i><span>{{$sim_property->area}}</span></li>
+                                                                        <li><i class="fa-light fa-building" title="{{__('messages.floor_number')}}"></i><span>{{ __('messages.floor_no') }} {{$sim_property->floor_no}}</span></li>
                                                                     </ul>
                                                                 </div>
                                                             </div>

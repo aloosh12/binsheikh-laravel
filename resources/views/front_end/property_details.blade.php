@@ -209,15 +209,17 @@
                                                 </div>
                                             </div>
 
-                                            <div class="modal fade" id="unit_layout_view" tabindex="-1" aria-labelledby="unit_layoutLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+                                            <div class="modal fade" id="floorPlan" tabindex="-1" aria-labelledby="floorPlanLabel" aria-hidden="true">
+                                                <div class="modal-dialog x modal-fullscreen">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title fs-5 fw-bold" id="exampleModalLabel">{{ __('messages.unit_layout') }}</h5>
+                                                            <h5 class="modal-title fs-5 fw-bold" id="exampleModalLabel">{{ __('messages.floor_plan') }}</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <iframe src="{{$property->unit_layout}}" height="500" width="100%" title="Iframe Example"></iframe>
+                                                        <div class="modal-body cus p-0">
+                                                            <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                                                                <iframe src="{{$property->unit_layout}}" style="width:100%; height:100%; border:0;" title="Floor Plan"></iframe>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -237,16 +239,16 @@
                                                 </div>
                                             </div>
 
-                                            <div class="modal fade" id="floorPlan" tabindex="-1" aria-labelledby="floorPlanLabel" aria-hidden="true">
+                                            <div class="modal fade" id="unit_layout_view" tabindex="-1" aria-labelledby="unit_layoutLabel" aria-hidden="true">
                                                 <div class="modal-dialog x modal-fullscreen "> <!-- fullscreen modal -->
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title">{{ __('messages.floor_plan') }}</h5>
+                                                            <h5 class="modal-title">{{ __('messages.unit_layout') }}</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body cus p-0">
                                                             <div class="d-flex justify-content-center align-items-center w-100 h-100">
-                                                                <img src="{{ aws_asset_path($property->floor_plan) }}" class="floor-plan-img" alt="Floor Plan">
+                                                                <img src="{{ aws_asset_path($property->floor_plan) }}" class="floor-plan-img" alt="Unit Layout">
                                                             </div>
                                                         </div>
                                                     </div>
