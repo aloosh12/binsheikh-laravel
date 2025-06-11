@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Photo;
+use App\Models\Properties;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -48,7 +49,7 @@ class GalleryController extends Controller
             foreach ($gallery as $file) {
                 $name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $path = '/uploads/gallery/photos/' . $name;
-                Storage::disk('s3')->put($path, fopen($file, 'r+')); 
+                Storage::disk('s3')->put($path, fopen($file, 'r+'));
                 $im['created_at'] = gmdate('Y-m-d H:i:s');
                 $im['image'] = '/uploads/gallery/photos/' . $name;
                 Photo::create($im);
@@ -95,6 +96,20 @@ class GalleryController extends Controller
             $message = "Sorry!.. Something went wrong";
         }
         echo json_encode(['status' => $status, 'message' => $message]);
+    }
+
+    public function deleteAll(Request $request)
+    {
+        //Log::info($request->all());
+        if ($request->has('delete_all_id')) {
+            $ids = explode(',', $request->delete_all_id);
+
+            Photo::whereIn('id', $ids)->delete();
+
+            return redirect()->back()->with('success', 'Selected photos deleted successfully.');
+        }
+        return redirect()->back()->with('error', 'No photo selected.');
+
     }
 
 }

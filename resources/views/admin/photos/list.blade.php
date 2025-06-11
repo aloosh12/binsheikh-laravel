@@ -16,10 +16,15 @@
                             <button class="btn btn-primary mb-3" onclick="location.href='{{ url('admin/photos/create') }}'"><i
                                     class="fas fa-plus"></i>
                                 Create Photo</button>
-
+                            <div class="float-right col-md-3  mb-2" >
+                                <button id="deleteSelected" class="btn btn-danger ">Delete Selected</button>
+                            </div>
                             <table class="table table-responsive-sm table-bordered">
                                 <thead>
                                     <tr>
+                                        <th><input  type="checkbox" class="" id="selectAll"
+                                                    onclick="toggleAll(this)">
+                                        </th>
                                         <th>#</th>
                                         <th>Photo</th>
                                         <th>Is Active</th>
@@ -35,6 +40,7 @@
                                             $checked = $item->active ? 'checked' : '';
                                         ?>
                                         <tr role="row">
+                                            <td><input type="checkbox" class="box1" value="{{ $item->id }}"></td>
                                             <td class="trVOE">{{ $i }}</td>
                                             <td class="trVOE">
                                                 <?php if (!empty($item->image)) {?>
@@ -43,7 +49,6 @@
                                             </td>
 
                                             <td>
-
                                                 <input class="toggle_status"
                                                     data-url="{{ url('admin/photos/change_status') }}" type="checkbox"
                                                     {{ $checked }} data-id="{{ $item->id }}" data-toggle="toggle"
@@ -51,8 +56,6 @@
                                                     data-offstyle="danger">
 
                                             </td>
-
-
                                             <td class="trVOE">
                                                 {{ web_date_in_timezone($item->created_at, 'd-M-Y h:i A') }}</td>
 
@@ -62,7 +65,6 @@
                                                     data-message="Do you want to remove this photo?" title="Delete"
                                                     aria-hidden="true"><i class="fas fa-trash-alt fa-1x"></i></a>
                                             </td>
-
 
                                         </tr>
                                     @endforeach
@@ -83,5 +85,65 @@
 @stop
 
 @section('script')
+    <script>
+    function toggleAll(source) {
+    document.querySelectorAll('.box1').forEach(checkbox => checkbox.checked = source.checked);
+    }
 
+
+    // Delete Selected Handler
+    document.getElementById('deleteSelected').addEventListener('click', function () {
+    let selected = [];
+    document.querySelectorAll('.box1:checked').forEach(cb => {
+    selected.push(cb.value);
+    });
+
+    if (selected.length === 0) {
+    Swal.fire('No Selection', 'Please select at least one record to delete.', 'warning');
+    return;
+    }
+
+    Swal.fire({
+    title: 'Are you sure?',
+    text: "Selected applications will be deleted!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete them!'
+    }).then((result) => {
+    if (result.value) {
+    console.log("dd");
+    // Send the request via AJAX or create a form
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ route("admin.photos.deleteAll") }}';
+
+    // Add CSRF token
+    let csrf = document.createElement('input');
+    csrf.type = 'hidden';
+    csrf.name = '_token';
+    csrf.value = '{{ csrf_token() }}';
+    form.appendChild(csrf);
+
+    // Add _method for DELETE
+    let method = document.createElement('input');
+    method.type = 'hidden';
+    method.name = '_method';
+    method.value = 'DELETE';
+    form.appendChild(method);
+
+    // Add selected IDs
+    let input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'delete_all_id';
+    input.value = selected.join(',');
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+    form.submit();
+    }
+    });
+    });
+    </script>
 @stop

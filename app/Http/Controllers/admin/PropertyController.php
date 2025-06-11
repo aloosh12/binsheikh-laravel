@@ -335,4 +335,18 @@ class PropertyController extends Controller
 
     }
 
+    public function deleteAll(Request $request)
+    {
+        //Log::info($request->all());
+        if ($request->has('delete_all_id')) {
+            $ids = explode(',', $request->delete_all_id);
+
+            Properties::whereIn('id', $ids)->delete();
+
+            return redirect()->back()->with('success', 'Selected Properties deleted successfully.');
+        }
+        return redirect()->back()->with('error', 'No Property selected.');
+
+    }
+
 }
