@@ -339,9 +339,9 @@
             <div class="container mb-5">
                 <div class="boxed-container">
                     <div class="row g-3">
-                        <div class="col-md-12 text-center">
+                        <div class="col-md-12 text-center listing-grid_heroheader">
                             <div class="about-title ab-hero mb-3 text-center d-block">
-                                <h2 class="text-center">{{ __("messages.choose_apartment_type") }}</h2  >
+                                <h2 >{{ __("messages.choose_apartment_type") }}</h2  >
                                 <div class="filter-group" id="apartment-type-filter">
                                     <div class="gallery-filters float-end">
                                         <a href="#" class="gallery-filter gallery-filter-active set-filter"  data-sale-type="BUY_RENT">{{ __("messages.rent_buy") }}</a>
