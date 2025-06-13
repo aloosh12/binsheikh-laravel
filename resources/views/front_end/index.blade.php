@@ -249,10 +249,12 @@
                     <div class="boxed-container">
                         <div class="listing-grid_heroheader">
                             <h3>{{ __("messages.recommended_properties") }}</h3>
+                            <div class="filter-group" id="apartment-filter">
                             <div class="gallery-filters">
-                                <a href="#" class="gallery-filter gallery-filter-active" data-filter="*">{{ __("messages.rent_buy") }}</a>
-                                <a href="#" class="gallery-filter" data-filter=".cat-sale">{{ __("messages.buy") }}</a>
-                                <a href="#" class="gallery-filter" data-filter=".cat-rent">{{ __("messages.rent") }}</a>
+                                <a href="#" class="gallery-filter gallery-filter-active " data-filter="*" >{{ __("messages.rent_buy") }}</a>
+                                <a href="#" class="gallery-filter" data-filter=".cat-sale" >{{ __("messages.buy") }}</a>
+                                <a href="#" class="gallery-filter" data-filter=".cat-rent" >{{ __("messages.rent") }}</a>
+                            </div>
                             </div>
                         </div>
                         <!-- listing-grid-->
@@ -340,37 +342,40 @@
                         <div class="col-md-12 text-center">
                             <div class="about-title ab-hero mb-3 text-center d-block">
                                 <h2 class="text-center">{{ __("messages.choose_apartment_type") }}</h2  >
+                                <div class="filter-group" id="apartment-type-filter">
+                                    <div class="gallery-filters float-end">
+                                        <a href="#" class="gallery-filter gallery-filter-active set-filter"  data-sale-type="BUY_RENT">{{ __("messages.rent_buy") }}</a>
+                                        <a href="#" class="gallery-filter set-filter"  data-sale-type="BUY">{{ __("messages.buy") }}</a>
+                                        <a href="#" class="gallery-filter set-filter"  data-sale-type="RENT">{{ __("messages.rent") }}</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-3" onclick="window.location.href='{{url('property-listing')}}?property_type=5'" style="cursor:pointer">
-
+                        <div class="col-md-3 filter-card" data-url="{{url('property-listing')}}?property_type=5" style="cursor:pointer">
                             <div class="category-box" style="background: url({{ asset('') }}front-assets/images/studio.jpg); background-size: cover; background-position: center;">
                                 <h2>{{ __("messages.studio") }}</h2>
                             </div>
                         </div>
 
-                        <div class="col-md-3" onclick="window.location.href='{{url('property-listing')}}?bedrooms=1'" style="cursor:pointer">
-
+                        <div class="col-md-3 filter-card" data-url="{{url('property-listing')}}?bedrooms=1" style="cursor:pointer">
                             <div class="category-box" style="background: url({{ asset('') }}front-assets/images/studio.jpg); background-size: cover; background-position: center;">
                                 <h2>{{ __("messages.1bhk") }}</h2>
                             </div>
                         </div>
 
 
-                        <div class="col-md-3" onclick="window.location.href='{{url('property-listing')}}?bedrooms=2'" style="cursor:pointer">
-
+                        <div class="col-md-3 filter-card" data-url="{{url('property-listing')}}?bedrooms=2" style="cursor:pointer">
                             <div class="category-box" style="background: url({{ asset('') }}front-assets/images/studio.jpg);background-size: cover; background-position: center; ">
                                 <h2>{{ __("messages.2bhk") }}</h2>
                             </div>
                         </div>
-                        <div class="col-md-3" onclick="window.location.href='{{url('property-listing')}}?bedrooms=3'" style="cursor:pointer">
+                        <div class="col-md-3 filter-card" data-url="{{url('property-listing')}}?bedrooms=3" style="cursor:pointer">
 
                             <div class="category-box" style="background: url({{ asset('') }}front-assets/images/studio.jpg); background-size: cover; background-position: center;">
                                 <h2>{{ __("messages.3bhk") }}</h2>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -731,4 +736,54 @@
     // Initial update of button text
     updatePropertyCount();
 </script>
+    <script>
+        var $grid0 = $('#apartment-filter .gallery-items').isotope({
+            itemSelector: '.item',
+            layoutMode: 'fitRows'
+        });
+
+        $('#apartment-filter .gallery-filter').on('click', function(e){
+            e.preventDefault();
+            var filterValue = $(this).attr('data-filter');
+            $grid0.isotope({ filter: filterValue });
+
+            // Optional: toggle active class
+            $('#apartment-filter .gallery-filter').removeClass('gallery-filter-active');
+            $(this).addClass('gallery-filter-active');
+        });
+
+        var $grid1 = $('#apartment-type-filter .gallery-items').isotope({
+            itemSelector: '.item',
+            layoutMode: 'fitRows'
+        });
+
+        $('#apartment-type-filter .gallery-filter').on('click', function(e){
+            e.preventDefault();
+            var filterValue = $(this).attr('data-filter');
+            $grid1.isotope({ filter: filterValue });
+
+            // Optional: toggle active class
+            $('#apartment-type-filter .gallery-filter').removeClass('gallery-filter-active');
+            $(this).addClass('gallery-filter-active');
+        });
+
+
+        let selectedFilter = '';
+            document.querySelectorAll('.set-filter').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                selectedFilter = this.getAttribute('data-sale-type');
+            });
+        });
+        console.log(selectedFilter)
+        document.querySelectorAll('.filter-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const base = card.getAttribute('data-url');
+                const separator = base.includes('?') ? '&' : '?';
+                const finalURL = selectedFilter ? `${base}${separator}filter=${selectedFilter}` : base;
+                window.location.href = finalURL;
+            });
+        });
+
+    </script>
 @stop

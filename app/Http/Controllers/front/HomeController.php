@@ -25,6 +25,7 @@ use App\Models\Video;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use PHPMailer\PHPMailer\PHPMailer;
 use Validator;
 use Illuminate\Support\Facades\App;
@@ -211,9 +212,15 @@ class HomeController extends Controller
         $location_id = $_GET['location'] ?? '';
         $sort = $_GET['sort'] ?? 'order';
         $unit_number = $_GET['unit_number'] ?? '';
+        $type = $_GET['filter'] ?? 'BUY_RENT';
         $pr_text = __('messages.price');
 
         $properties = Properties::select('properties.*')->where(['properties.active' => '1', 'properties.deleted' => 0])->leftjoin('projects','projects.id','properties.project_id');
+        if (isset($type) && $type != 'BUY_RENT') {
+            //Log::info(Properties::saleType[$type]);
+            //$properties = $properties->where('sale_type',Properties::saleType[$type]);
+            $properties = $properties->whereIn('sale_type', [Properties::saleType[$type], 3]);
+        }
         if ($unit_number) {
             $properties = $properties->whereRaw("(properties.apartment_no like '%$unit_number%')");
         }

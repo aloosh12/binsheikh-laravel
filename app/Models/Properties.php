@@ -14,6 +14,7 @@ class Properties extends Model
     const RENT = 2;
     const BUY_RENT = 3;
 
+    const saleType = array('BUY'=>'1', 'RENT'=>'2','BUY_RENT'=>3 );
     protected $guarded = [];
 
     protected $casts = [

@@ -300,11 +300,7 @@
                                 <!--listing-item-container-->
                                 <div class="listing-grid_heroheader ">
                                     <h3>{{ __("messages.properties") }}</h3>
-                                    <div class="gallery-filters mt-2">
-                                        <a href="#" class="gallery-filter gallery-filter-active" data-filter="*">{{ __("messages.rent_buy") }}</a>
-                                        <a href="#" class="gallery-filter" data-filter=".cat-sale">{{ __("messages.buy") }}</a>
-                                        <a href="#" class="gallery-filter" data-filter=".cat-rent">{{ __("messages.rent") }}</a>
-                                    </div>
+
                                 </div>
                                 <div class="listing-grid gisp">
 
