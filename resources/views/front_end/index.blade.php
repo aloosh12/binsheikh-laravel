@@ -340,7 +340,7 @@
                 <div class="boxed-container">
                     <div class="row g-3">
                         <div class="col-md-12 text-center listing-grid_heroheader">
-                            <div class="about-title ab-hero mb-3 text-center d-block">
+                            <div class="about-title ab-hero  text-center d-block" style="margin-bottom: 0px !important;">
                                 <h2 >{{ __("messages.choose_apartment_type") }}</h2  >
                                 <div class="filter-group" id="apartment-type-filter">
                                     <div class="gallery-filters float-end">
