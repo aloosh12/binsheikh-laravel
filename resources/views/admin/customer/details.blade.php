@@ -71,7 +71,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="font-weight-bold">ID Number:</label>
+                                        <label class="font-weight-bold">CONTACT Number:</label>
                                         <p>{{ $customer->id_no }}</p>
                                     </div>
                                 </div>
@@ -107,7 +107,7 @@
                                             <a href="{{ aws_asset_path($customer->license) }}" target="_blank" class="btn btn-sm btn-info">
                                                 <i class="fa fa-eye"></i> View License
                                             </a>
-                                            <a href="{{ url('admin/customer/download-document/' . urlencode($customer->license)) }}" class="btn btn-sm btn-success ml-2">
+                                            <a href="{{ url('admin/customer/download-document/'.$last_license) }}" class="btn btn-sm btn-success ml-2">
                                                 <i class="fa fa-download"></i> Download License
                                             </a>
                                         </p>
@@ -125,7 +125,7 @@
                                             <a href="{{ aws_asset_path($customer->id_card) }}" target="_blank" class="btn btn-sm btn-info">
                                                 <i class="fa fa-eye"></i> View ID Card
                                             </a>
-                                            <a href="{{ url('admin/customer/download-document/' . urlencode($customer->id_card)) }}" class="btn btn-sm btn-success ml-2">
+                                            <a href="{{ url('admin/customer/download-document/'.$last_id_card) }}" class="btn btn-sm btn-success ml-2">
                                                 <i class="fa fa-download"></i> Download ID Card
                                             </a>
                                         </p>

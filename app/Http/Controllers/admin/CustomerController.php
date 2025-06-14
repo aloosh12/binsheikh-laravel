@@ -284,7 +284,12 @@ class CustomerController extends Controller
         }
         $parts = explode('/', $customer->professional_practice_certificate);
         $last = end($parts);
-        return view('admin.customer.details', compact('page_heading', 'customer', 'last'));
+        $parts = explode('/', $customer->license);
+        $last_license = end($parts);
+        $parts = explode('/', $customer->id_card);
+        $last_id_card = end($parts);
+
+        return view('admin.customer.details', compact('page_heading', 'customer', 'last', 'last_license', 'last_id_card'));
     }
 
     /**

@@ -261,7 +261,7 @@
                                                                     <ul>
                                                                         <li><i class="fa-light fa-bed" title="{{__('messages.bedroom')}}"></i><span>{{$sim_property->bedrooms}}</span></li>
                                                                         <li><i class="fa-light fa-bath" title="{{__('messages.bathroom')}}"></i><span>{{$sim_property->bathrooms}}</span></li>
-                                                                        <li><i class="fa-light fa-chart-area" title="{{__('messages.area')}}"></i><span>{{$sim_property->area}}</span></li>
+                                                                        <li><i class="fa-light fa-chart-area" title="{{__('messages.area')}}"></i><span>{{$sim_property->area.' m2'}}</span></li>
                                                                         <li><i class="fa-light fa-building" title="{{__('messages.floor_number')}}"></i><span>{{ __('messages.floor_no') }} {{$sim_property->floor_no}}</span></li>
                                                                     </ul>
                                                                 </div>

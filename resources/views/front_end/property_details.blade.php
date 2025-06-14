@@ -561,7 +561,8 @@
                                 </div>
                                 <div class="limit-box"></div>
                             </div>
-                            <div class="boxed-container">
+                            <?php if ($similar): ?>
+                                <div class="boxed-container">
                                 <div class="boxed-content-title ">
                                     <h3>{{ __('messages.similar_properties') }}</h3>
                                 </div>
@@ -599,7 +600,7 @@
                                                                     <ul>
                                                                         <li><i class="fa-light fa-bed"></i><span>{{$sim_property->bedrooms}}</span></li>
                                                                         <li><i class="fa-light fa-bath"></i><span>{{$sim_property->bathrooms}}</span></li>
-                                                                        <li><i class="fa-light fa-chart-area"></i><span>{{$sim_property->area}}</span></li>
+                                                                        <li><i class="fa-light fa-chart-area"></i><span>{{$sim_property->area.' m2'}}</span></li>
                                                                     </ul>
                                                                 </div>
                                                             </div>
@@ -637,6 +638,7 @@
                                     <div class="ss-carousel-button ss-carousel-button-next"><i class="fas fa-caret-right"></i></div>
                                 </div>
                             </div>
+                            <?php endif; ?>
                         </div>
                         <!--main-content end-->
                          <div class="to_top-btn-wrap">

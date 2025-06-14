@@ -529,7 +529,7 @@
                                                         <!-- Full Name -->
                                                         <div class="cs-intputwrap">
                                                             <i class="fa-light fa-user"></i>
-                                                            <input type="text" placeholder="{{ __('messages.full_name') }}" name="name" required
+                                                            <input type="text" placeholder="{{ __('messages.full_name') }}" name="name" id="name" required
                                                                 data-parsley-required-message="{{ __('messages.enter_your_name') }}"> <!-- Translated Full Name -->
                                                         </div>
 
@@ -548,28 +548,36 @@
                                                         </div>
 
 
-                                                        <div class="cs-intsputwrap agent_agency_div d-none">
-                                                            <input type="text" placeholder="ID" class="form-control agent_agency_inp" name="id_no" data-parsley-required-message="{{ __('messages.enter_id') }}">
+{{--                                                        <div class="cs-intsputwrap agency_div d-none">--}}
+{{--                                                            <input type="text" placeholder="{{ __('messages.contact_number') }}" class="form-control agency_inp" name="id_no" data-parsley-required-message="{{ __('messages.enter_contact_number') }}">--}}
+{{--                                                        </div>--}}
+                                                        <!-- License Upload for Agents/Agencies -->
+                                                        <div class="cs-intsputwrap agent_div d-none">
+                                                            <label for="d" style="float:left" id="id_card_label">{{ __('messages.id_card') }}</label>
+                                                            <input type="file" class="form-control agent_inp" name="id_card" data-parsley-required-message="{{ __('messages.select_id_card') }}"
+                                                                   data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
+                                                                   data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
+                                                                   data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
+                                                                   accept="image/*,application/pdf">
                                                         </div>
-
-                                                        <div class="cs-intsputwrap agent_agency_div d-none">
-                                                            <label for="d" style="float:left">{{ __('messages.professional_practice_certificate') }}</label> <!-- Translated License -->
-                                                            <input type="file" class="form-control agent_agency_inp" name="professional_practice_certificate" data-parsley-required-message="{{ __('messages.select_professional_practice_certificate') }}"
-                                                                data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
-                                                                data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
-                                                                data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
-                                                                accept="image/*,application/pdf">
-                                                        </div>
+{{--                                                        <div class="cs-intsputwrap agent_agency_div d-none">--}}
+{{--                                                            <label for="d" style="float:left">{{ __('messages.professional_practice_certificate') }}</label> <!-- Translated License -->--}}
+{{--                                                            <input type="file" class="form-control agent_agency_inp" name="professional_practice_certificate" data-parsley-required-message="{{ __('messages.select_professional_practice_certificate') }}"--}}
+{{--                                                                data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"--}}
+{{--                                                                data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"--}}
+{{--                                                                data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"--}}
+{{--                                                                accept="image/*,application/pdf">--}}
+{{--                                                        </div>--}}
 
                                                         <!-- License Upload for Agents/Agencies -->
-                                                        {{-- <div class="cs-intsputwrap agent_agency_div d-none">
+                                                         <div class="cs-intsputwrap agent_agency_div d-none">
                                                             <label for="d" style="float:left" id="license_label">{{ __('messages.license') }}</label>
                                                             <input type="file" class="form-control agent_agency_inp" name="license" data-parsley-required-message="{{ __('messages.select_license') }}"
                                                                 data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
                                                                 data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
                                                                 data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
                                                                 accept="image/*,application/pdf">
-                                                        </div> --}}
+                                                        </div>
 
                                                         <div class="cs-intputwrap pass-input-wrap pass_div mt-3">
                                                             <i class="fa-light fa-lock"></i>
@@ -727,25 +735,36 @@
     <script>
         $(".user_type_inp").change(function(){
             if($(this).val()==2){
+                $(".agent_div").addClass("d-none");
                 $(".agent_agency_div").addClass("d-none");
                 $(".agent_agency_inp").removeAttr("required");
+                $(".agent_inp").removeAttr("required");
                 $(".agency_div").addClass("d-none");
                 $(".agency_inp").removeAttr("required");
+                document.getElementById('name').placeholder = "{{__('messages.full_name')}}";
             }else if($(this).val()==3){
+                $(".agent_div").removeClass("d-none");
+                $(".agent_div").attr("required","");
                 $(".agent_agency_div").removeClass("d-none");
                 $(".agent_agency_inp").attr("required","");
-
+                $(".agent_inp").attr("required","");
                 $(".agency_div").addClass("d-none");
                 $(".agency_inp").removeAttr("required");
 
+                document.getElementById('name').placeholder = "{{__('messages.full_name')}}";
                 $("#license_label").text("{{__('messages.license')}}");
             }else{
+                $(".agent_div").addClass("d-none");
+                $(".agent_div").removeAttr("required");
+                $(".agent_inp").removeAttr("required");
+
                 $(".agency_div").removeClass("d-none");
                 $(".agency_inp").attr("required","");
 
                 $(".agent_agency_div").removeClass("d-none");
                 $(".agent_agency_inp").attr("required","");
 
+                 document.getElementById('name').placeholder = "{{__('messages.company_name')}}";
                 $("#license_label").text("{{__('messages.trade_license')}}");
             }
         });

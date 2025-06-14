@@ -358,29 +358,30 @@ class HomeController extends Controller
         }
 
         // If no explicitly linked properties or not enough, fall back to the default criteria
-        if (!$similar || $similar->count() < 6) {
-            $fallback = Properties::with(['property_type', 'images'])
-                ->where(['active' => '1', 'deleted' => 0, 'sale_type' => $property->sale_type, 'category' => $property->category])
-                ->where('id', '!=', $property->id);
-
-            if ($similar) {
-                $fallback->whereNotIn('id', explode(',', $property->similar_properties));
-            }
-
-            $fallback = $fallback->limit(6 - ($similar ? $similar->count() : 0))->get();
-
-            if ($similar) {
-                $similar = $similar->concat($fallback);
-            } else {
-                $similar = $fallback;
-            }
-        }
-
-        foreach ($similar as $key => $val) {
-            $similar[$key]->is_fav = 0;
-            if (Auth::check() && (Auth::user()->role != '1')) {
-                if (FavouriteProperty::where(['user_id' => Auth::user()->id, 'property_id' => $val->id])->first()) {
-                    $similar[$key]->is_fav = 1;
+//        if (!$similar || $similar->count() < 6) {
+//            $fallback = Properties::with(['property_type', 'images'])
+//                ->where(['active' => '1', 'deleted' => 0, 'sale_type' => $property->sale_type, 'category' => $property->category])
+//                ->where('id', '!=', $property->id);
+//
+//            if ($similar) {
+//                $fallback->whereNotIn('id', explode(',', $property->similar_properties));
+//            }
+//
+//            $fallback = $fallback->limit(6 - ($similar ? $similar->count() : 0))->get();
+//
+//            if ($similar) {
+//                $similar = $similar->concat($fallback);
+//            } else {
+//                $similar = $fallback;
+//            }
+//        }
+        if($similar) {
+            foreach ($similar as $key => $val) {
+                $similar[$key]->is_fav = 0;
+                if (Auth::check() && (Auth::user()->role != '1')) {
+                    if (FavouriteProperty::where(['user_id' => Auth::user()->id, 'property_id' => $val->id])->first()) {
+                        $similar[$key]->is_fav = 1;
+                    }
                 }
             }
         }
@@ -814,21 +815,21 @@ class HomeController extends Controller
                 }
 
 
-                // if ($request->user_type == 3 || $request->user_type == 4) {
-                //     if ($request->file("license")) {
-                //         $response = image_upload($request, 'profile', 'license');
-                //         if ($response['status']) {
-                //             $ins['license'] = $response['link'];
-                //         }
-                //     }
+                 if ($request->user_type == 3 || $request->user_type == 4) {
+                     if ($request->file("license")) {
+                         $response = image_upload($request, 'profile', 'license');
+                         if ($response['status']) {
+                             $ins['license'] = $response['link'];
+                         }
+                     }
 
-                //     if ($request->file("id_card")) {
-                //         $response = image_upload($request, 'profile', 'id_card');
-                //         if ($response['status']) {
-                //             $ins['id_card'] = $response['link'];
-                //         }
-                //     }
-                // }
+                     if ($request->file("id_card")) {
+                         $response = image_upload($request, 'profile', 'id_card');
+                         if ($response['status']) {
+                             $ins['id_card'] = $response['link'];
+                         }
+                     }
+                 }
 
                 // if ($request->user_type == 4) {
                 //     if ($request->file("cr")) {
@@ -1785,7 +1786,15 @@ class HomeController extends Controller
                 ];
             }
 
-            // Generate PDF
+            // Get logo and convert to base64
+            $logoPath = public_path('Screenshot_2025-06-14_032432.png');
+            $logoBase64 = '';
+            if (file_exists($logoPath)) {
+                $imageData = file_get_contents($logoPath);
+                $logoBase64 = 'data:image/png;base64,' . base64_encode($imageData);
+            }
+
+            // Generate PDF with bookmarks
             $pdf = PDF::loadView('front_end.pdf.calculator_plan', [
                 'property' => $property,
                 'ser_amt' => $ser_amt,
@@ -1795,7 +1804,31 @@ class HomeController extends Controller
                 'downPaymentPercentage' => $downPaymentPercentage,
                 'months' => $months,
                 'settings' => $settings,
-                'rental_duration' => $rental_duration
+                'rental_duration' => $rental_duration,
+                'logoBase64' => $logoBase64
+            ]);
+
+            // Add bookmarks
+            $pdf->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'isPhpEnabled' => true,
+                'isFontSubsettingEnabled' => true,
+                'defaultFont' => 'Arial',
+                'bookmarks' => [
+                    [
+                        'title' => 'Property Details',
+                        'level' => 0
+                    ],
+                    [
+                        'title' => 'Payment Terms',
+                        'level' => 0
+                    ],
+                    [
+                        'title' => 'Payment Schedule',
+                        'level' => 0
+                    ]
+                ]
             ]);
 
             return $pdf->download('payment_calculator_' . $property->apartment_no . '.pdf');
