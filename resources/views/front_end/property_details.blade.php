@@ -218,7 +218,7 @@
                                                         </div>
                                                         <div class="modal-body cus p-0">
                                                             <div class="d-flex justify-content-center align-items-center w-100 h-100">
-                                                                <iframe src="{{$property->unit_layout}}" style="width:100%; height:100%; border:0;" title="Floor Plan"></iframe>
+                                                                <iframe src="{{$property->unit_layout}}" style="width:70%; height:100%; border:0;" title="Floor Plan"></iframe>
                                                             </div>
                                                         </div>
                                                     </div>
