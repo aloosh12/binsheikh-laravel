@@ -614,7 +614,7 @@
                     <div class="api-container">
                         <div class="api-img">
                             {{--                                    <img src="{{ asset('') }}front-assets/images/api.png" alt="" class="respimg">--}}
-                            <img src="{{ asset('') }}front-assets/images/bin-sheikh.png" alt="" class="respimg">
+                            <img src="{{ asset('') }}front-assets/images/bin-sheikh.png" alt="" class="respimg" style="width:110%">
                         </div>
                         <div class="api-text">
                             <h3>{{ __("messages.home_heading") }}</h3>
