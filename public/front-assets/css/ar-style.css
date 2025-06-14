@@ -6337,7 +6337,7 @@ float: right;
 .api-img {
  	position: absolute;
 	right: 5%;
-	top: 66%;
+	top: 64%;
 	transform: translateY(-50%);
  	width: 700px;
 	z-index: 3;
