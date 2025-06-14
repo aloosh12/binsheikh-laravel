@@ -47,7 +47,8 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="float-right col-md-3  mb-2" >
+                            <div class="float-right col-md-4  mb-4" >
+                                <button id="downloadCSV" class="btn btn-info mr-2">Download Selected</button>
                                 <button id="deleteSelected" class="btn btn-danger ">Delete Selected</button>
                             </div>
 
@@ -120,6 +121,42 @@
             document.querySelectorAll('.box1').forEach(checkbox => checkbox.checked = source.checked);
         }
 
+        // Download CSV Handler
+        document.getElementById('downloadCSV').addEventListener('click', function () {
+            let selected = [];
+            document.querySelectorAll('.box1:checked').forEach(cb => {
+                selected.push(cb.value);
+            });
+
+            if (selected.length === 0) {
+                Swal.fire('No Selection', 'Please select at least one record to download.', 'warning');
+                return;
+            }
+
+            // Create a form and submit it to download the CSV
+            let form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("admin.job_application.downloadCSV") }}';
+            form.target = '_blank';
+
+            // Add CSRF token
+            let csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+            form.appendChild(csrf);
+
+            // Add selected IDs
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'download_csv_id';
+            input.value = selected.join(',');
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        });
 
         // Delete Selected Handler
         document.getElementById('deleteSelected').addEventListener('click', function () {

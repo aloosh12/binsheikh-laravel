@@ -248,7 +248,61 @@ class CareerController extends Controller
             return redirect()->back()->with('success', 'Selected applications deleted successfully.');
         }
         return redirect()->back()->with('error', 'No Application selected.');
+    }
 
+    public function downloadCSV(Request $request)
+    {
+        if ($request->has('download_csv_id')) {
+            $ids = explode(',', $request->download_csv_id);
+            $applications = CareerApplication::with('career')
+                ->whereIn('id', $ids)
+                ->get();
+            
+            if ($applications->isEmpty()) {
+                return redirect()->back()->with('error', 'No applications found.');
+            }
+
+            // Create a temporary file
+            $tempFile = tempnam(sys_get_temp_dir(), 'applications_');
+            $handle = fopen($tempFile, 'w');
+
+            // Add UTF-8 BOM for proper Excel encoding
+            fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Add headers
+            fputcsv($handle, [
+                'Name',
+                'Email',
+                'Phone',
+                'Position',
+                'Applied On',
+                'CV Link'
+            ]);
+
+            // Add data rows
+            foreach ($applications as $application) {
+                fputcsv($handle, [
+                    $application->name,
+                    $application->email,
+                    $application->phone,
+                    $application->career->name ?? 'N/A',
+                    $application->created_at->format('d-M-Y h:i A'),
+                    $application->cv ? url($application->cv) : 'N/A'
+                ]);
+            }
+
+            fclose($handle);
+
+            // Generate filename
+            $filename = 'career_applications_' . date('Y-m-d_H-i-s') . '.csv';
+
+            // Return the file as a download
+            return response()->download($tempFile, $filename, [
+                'Content-Type' => 'text/csv',
+            ])->deleteFileAfterSend(true);
+        }
+        
+        return redirect()->back()->with('error', 'No applications selected.');
     }
 
 }

@@ -247,6 +247,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::post("save_career", "CareerController@store");
     Route::get("job_application", "CareerController@applications");
     Route::delete('job_application/deleteAll', "CareerController@deleteAll")->name('job_application.deleteAll');
+    Route::post('job_application/downloadCSV', "CareerController@downloadCSV")->name('job_application.downloadCSV');
     Route::delete("career/delete_application/{id}", "CareerController@delete_application");
 
 
