@@ -6330,8 +6330,8 @@ nav li ul a:before , nav li ul a:after {
 }
 .api-img {
  	position: absolute;
-	left: 0;
-	top: 50%;
+	left: 5%; /*0*/
+	top: 62%;/*50*/
 	transform: translateY(-50%);
  	width: 700px;
 	z-index: 3;
