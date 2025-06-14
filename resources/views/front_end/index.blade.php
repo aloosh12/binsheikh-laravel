@@ -340,38 +340,36 @@
                 <div class="boxed-container">
                     <div class="row g-3">
                         <div class="col-md-12 text-center listing-grid_heroheader">
-                            <div class="about-title ab-hero  text-center d-block" style="margin-bottom: 0px !important;">
-                                <h2 >{{ __("messages.choose_apartment_type") }}</h2  >
-                                <div class="filter-group" id="apartment-type-filter">
-                                    <div class="gallery-filters float-end">
-                                        <a href="#" class="gallery-filter gallery-filter-active set-filter"  data-sale-type="BUY_RENT">{{ __("messages.rent_buy") }}</a>
-                                        <a href="#" class="gallery-filter set-filter"  data-sale-type="BUY">{{ __("messages.buy") }}</a>
-                                        <a href="#" class="gallery-filter set-filter"  data-sale-type="RENT">{{ __("messages.rent") }}</a>
-                                    </div>
+                            <div class="listing-grid_heroheader">
+                                <h2 style="font-size: 30px; font-weight: 600;margin: 10px 0px 4px;text-align: center !important;" >{{ __("messages.choose_apartment_type") }}</h2>
+                                <div class="gallery-filters" style="top:-9px !important;">
+                                    <a href="javascript:void(0)" class="gallery-filter gallery-filter-active gallery-filter-active-apartment-type gallery-filter-apartment-type" data-filter="*">{{ __("messages.rent_buy") }}</a>
+                                    <a href="javascript:void(0)" class="gallery-filter gallery-filter-apartment-type" data-filter=".cat-sale-apartment-type">{{ __("messages.buy") }}</a>
+                                    <a href="javascript:void(0)" class="gallery-filter gallery-filter-apartment-type"  data-filter=".cat-rent-apartment-type">{{ __("messages.rent") }}</a>
                                 </div>
                             </div>
+
                         </div>
 
-                        <div class="col-md-3 filter-card" data-url="{{url('property-listing')}}?property_type=5" style="cursor:pointer">
+                        <div class="col-md-3" onclick="window.location.href='{{url('property-listing')}}?property_type=5&sale_type=' + getSelectedFilter()" style="cursor:pointer">
                             <div class="category-box" style="background: url({{ asset('') }}front-assets/images/studio.jpg); background-size: cover; background-position: center;">
                                 <h2>{{ __("messages.studio") }}</h2>
                             </div>
                         </div>
 
-                        <div class="col-md-3 filter-card" data-url="{{url('property-listing')}}?bedrooms=1" style="cursor:pointer">
+                        <div class="col-md-3" onclick="window.location.href='{{url('property-listing')}}?bedrooms=1&sale_type=' + getSelectedFilter()" style="cursor:pointer">
                             <div class="category-box" style="background: url({{ asset('') }}front-assets/images/studio.jpg); background-size: cover; background-position: center;">
                                 <h2>{{ __("messages.1bhk") }}</h2>
                             </div>
                         </div>
 
 
-                        <div class="col-md-3 filter-card" data-url="{{url('property-listing')}}?bedrooms=2" style="cursor:pointer">
+                        <div class="col-md-3" onclick="window.location.href='{{url('property-listing')}}?bedrooms=2&sale_type=' + getSelectedFilter()" style="cursor:pointer">
                             <div class="category-box" style="background: url({{ asset('') }}front-assets/images/studio.jpg);background-size: cover; background-position: center; ">
                                 <h2>{{ __("messages.2bhk") }}</h2>
                             </div>
                         </div>
-                        <div class="col-md-3 filter-card" data-url="{{url('property-listing')}}?bedrooms=3" style="cursor:pointer">
-
+                        <div class="col-md-3" onclick="window.location.href='{{url('property-listing')}}?bedrooms=3&sale_type=' + getSelectedFilter()" style="cursor:pointer">
                             <div class="category-box" style="background: url({{ asset('') }}front-assets/images/studio.jpg); background-size: cover; background-position: center;">
                                 <h2>{{ __("messages.3bhk") }}</h2>
                             </div>
@@ -735,55 +733,26 @@
 
     // Initial update of button text
     updatePropertyCount();
+
+    // Add this function to get the selected filter
+    function getSelectedFilter() {
+        var activeFilter = $('.gallery-filter-active-apartment-type').data('filter');
+        if (activeFilter === '.cat-sale-apartment-type') {
+            return '1'; // Buy
+        } else if (activeFilter === '.cat-rent-apartment-type') {
+            return '2'; // Rent
+        }
+        return ''; // Default/All
+    }
+
+    // Add click handler for gallery filters
+    $('.gallery-filter-apartment-type').click(function(e) {
+        e.preventDefault();
+        $('.gallery-filter-apartment-type').removeClass('gallery-filter-active-apartment-type');
+        $('.gallery-filter-apartment-type').removeClass('gallery-filter-active');
+        $(this).addClass('gallery-filter-active-apartment-type');
+        $(this).addClass('gallery-filter-active');
+    });
 </script>
-    <script>
-        var $grid0 = $('#apartment-filter .gallery-items').isotope({
-            itemSelector: '.item',
-            layoutMode: 'fitRows'
-        });
 
-        $('#apartment-filter .gallery-filter').on('click', function(e){
-            e.preventDefault();
-            var filterValue = $(this).attr('data-filter');
-            $grid0.isotope({ filter: filterValue });
-
-            // Optional: toggle active class
-            $('#apartment-filter .gallery-filter').removeClass('gallery-filter-active');
-            $(this).addClass('gallery-filter-active');
-        });
-
-        var $grid1 = $('#apartment-type-filter .gallery-items').isotope({
-            itemSelector: '.item',
-            layoutMode: 'fitRows'
-        });
-
-        $('#apartment-type-filter .gallery-filter').on('click', function(e){
-            e.preventDefault();
-            var filterValue = $(this).attr('data-filter');
-            $grid1.isotope({ filter: filterValue });
-
-            // Optional: toggle active class
-            $('#apartment-type-filter .gallery-filter').removeClass('gallery-filter-active');
-            $(this).addClass('gallery-filter-active');
-        });
-
-
-        let selectedFilter = '';
-            document.querySelectorAll('.set-filter').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                selectedFilter = this.getAttribute('data-sale-type');
-            });
-        });
-        console.log(selectedFilter)
-        document.querySelectorAll('.filter-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const base = card.getAttribute('data-url');
-                const separator = base.includes('?') ? '&' : '?';
-                const finalURL = selectedFilter ? `${base}${separator}filter=${selectedFilter}` : base;
-                window.location.href = finalURL;
-            });
-        });
-
-    </script>
 @stop

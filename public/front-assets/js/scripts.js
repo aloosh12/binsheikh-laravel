@@ -69,14 +69,14 @@ function initRenstate() {
             a.imagesLoaded(function () {
                 a.isotope("layout");
             });
-            $(".gallery-filters").on("click  ", "a.gallery-filter", function (b) {
+            $(".gallery-filters").on("click", "a.gallery-filter:not(.gallery-filter-apartment-type)", function (b) {
                 b.preventDefault();
                 var c = $(this).attr("data-filter"),
                     d = $(this).text();
                 a.isotope({
                     filter: c
                 });
-                $(".gallery-filters a").removeClass("gallery-filter-active");
+                $(".gallery-filters a.gallery-filter:not(.gallery-filter-apartment-type)").removeClass("gallery-filter-active");
                 $(this).addClass("gallery-filter-active");
             });
         }
