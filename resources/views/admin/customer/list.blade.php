@@ -17,14 +17,25 @@
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="mb-3">
-                                                <label class="form-label">Name/Email/Phone/Date</label>
+                                                <label class="form-label">From</label>
+                                                <input class="form-control filter_1" name="from" type="date" value="{{ $from }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label">To</label>
+                                                <input class="form-control filter_1" name="to" type="date" value="{{ $to }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label">Name/Email/Phone</label>
                                                 <input class="form-control filter_1" name="search_text" value="{{$search_text}}">
                                             </div>
                                             <input type="hidden" name="role" value="{{$role}}">
                                         </div>
 
-
-                                        <div class="col-md-5" style="margin-top: 1.8rem !important;">
+                                        <div class="col-md-3" style="margin-top: 1.8rem !important;">
                                             <button class="btn btn-primary" type="submit">Filter</button>
                                             <a href="{{ url('admin/customer') }}" class="btn btn-success dt_tables_filter_button" data-tid="dt-tbl"
                                                type="button">Reset</a>

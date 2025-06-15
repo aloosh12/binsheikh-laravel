@@ -18,6 +18,8 @@ class CustomerController extends Controller
     {
         $search_text = $request->get('search_text')?? '';
         $role = $request->get('role');
+        $from = $request->get('from', \Carbon\Carbon::create(2010, 1, 1)->format('Y-m-d'));
+        $to = $request->get('to', \Carbon\Carbon::today()->format('Y-m-d'));
         $page_heading = "Customer";
         $query = User::where('deleted', 0);
         if ($role !== null) {
@@ -38,24 +40,22 @@ class CustomerController extends Controller
                     }
                 }
             }
-       // $search_text  = $_GET['search_text'] ?? '';
-        $customer       = $query->orderBy('created_at', 'desc');
+        $customer = $query->orderBy('created_at', 'desc');
+        
+        // Apply date range filter
+        $customer = $customer->whereDate('created_at', '>=', $from)
+                           ->whereDate('created_at', '<=', $to);
+
         if ($search_text) {
-           // $customer = $customer->whereRaw("(name like '%$search_text%' OR email like '%$search_text%' OR phone like '%$search_text%' )");
             $customer = $customer->where(function ($query) use ($search_text) {
                 $query->where('name', 'like', "%$search_text%")
                     ->orWhere('email', 'like', "%$search_text%")
                     ->orWhere('phone', 'like', "%$search_text%");
-
-                // Try to match date part only (YYYY-MM-DD)
-                if (strtotime($search_text)) {
-                    $query->orWhereDate('created_at', '=', date('Y-m-d', strtotime($search_text)));
-                }
             });
         }
+        
         $customers = $customer->paginate(10);
-        // dd($customer);
-        return view('admin.customer.list', compact('page_heading', 'customers', 'search_text', 'role'));
+        return view('admin.customer.list', compact('page_heading', 'customers', 'search_text', 'role', 'from', 'to'));
     }
 
     /**
