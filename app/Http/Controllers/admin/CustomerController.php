@@ -41,7 +41,7 @@ class CustomerController extends Controller
                 }
             }
         $customer = $query->orderBy('created_at', 'desc');
-        
+
         // Apply date range filter
         $customer = $customer->whereDate('created_at', '>=', $from)
                            ->whereDate('created_at', '<=', $to);
@@ -53,7 +53,7 @@ class CustomerController extends Controller
                     ->orWhere('phone', 'like', "%$search_text%");
             });
         }
-        
+
         $customers = $customer->paginate(10);
         return view('admin.customer.list', compact('page_heading', 'customers', 'search_text', 'role', 'from', 'to'));
     }
@@ -320,6 +320,34 @@ class CustomerController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Error downloading file: ' . $e->getMessage());
         }
+    }
+
+    public function approve($id)
+    {
+        $status = "0";
+        $message = "";
+        $o_data = [];
+
+        $customer = User::find($id);
+        if ($customer) {
+            // Update verified status
+            $customer->verified = 1;
+            $customer->updated_at = gmdate('Y-m-d H:i:s');
+            $customer->save();
+
+            // Send approval email
+            $mailbody = view('front_end.approve_mail')->render();
+            if(send_email($customer->email, 'Account Approved - Bin Al Sheikh', $mailbody)) {
+                $status = "1";
+                $message = "Customer approved successfully";
+            } else {
+                $message = "Customer approved but email sending failed";
+            }
+        } else {
+            $message = "Something went wrong";
+        }
+
+        return redirect()->back()->with('success', $message);
     }
 
 }

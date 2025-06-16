@@ -266,6 +266,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::delete('customer/deleteAll', "CustomerController@deleteAll")->name('customer.deleteAll');
 
     Route::get('customer/details/{id}', 'CustomerController@details')->name('admin.customer.details');
+    Route::get('customer/approve/{id}', 'CustomerController@approve')->name('admin.customer.approve');
 
 });
 

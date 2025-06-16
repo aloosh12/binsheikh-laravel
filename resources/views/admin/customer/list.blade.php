@@ -107,6 +107,11 @@
                                                 <a href="{{ url('admin/customer/details/' . $cust->id . '?role=' . $role) }}"
                                                     class="btn btn-outline-info active" title="View Details"
                                                     aria-hidden="true"><i class="fas fa-eye fa-1x"></i></a>
+                                                @if(!$cust->verified)
+                                                <a href="{{ url('admin/customer/approve/' . $cust->id) }}"
+                                                    class="btn btn-outline-success active approveCustomer" title="Approve User"
+                                                    data-message="Do you want to approve this user?" aria-hidden="true"><i class="fas fa-check fa-1x"></i></a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -135,7 +140,6 @@
         function toggleAll(source) {
             document.querySelectorAll('.box1').forEach(checkbox => checkbox.checked = source.checked);
         }
-
 
         // Delete Selected Handler
         document.getElementById('deleteSelected').addEventListener('click', function () {
@@ -189,6 +193,29 @@
                     document.body.appendChild(form);
                     form.submit();
                 }
+            });
+        });
+
+        // Approval Handler
+        document.querySelectorAll('.approveCustomer').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const message = this.getAttribute('data-message');
+                const url = this.getAttribute('href');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: message,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, approve!'
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.href = url;
+                    }
+                });
             });
         });
     </script>

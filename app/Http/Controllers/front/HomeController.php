@@ -739,6 +739,9 @@ class HomeController extends Controller
             if (!Auth::user()->active) {
                 return response()->json(['status' => 0, 'message' => __('messages.account_deactivated_by_admin')]);
             }
+            if (!Auth::user()->verified) {
+                return response()->json(['status' => 0, 'message' => __('messages.account_need_approve_from_admin')]);
+            }
 
             $request->session()->put('user_id', Auth::user()->id);
             if ($request->timezone) {
@@ -796,6 +799,7 @@ class HomeController extends Controller
                     'phone' => $request->phone,
                     'role' => $request->user_type,
                     'active' => 1,
+                    'verified' => 0,
                     'created_at' => gmdate('Y-m-d H:i:s'),
                 ];
                 if ($request->file("image")) {
