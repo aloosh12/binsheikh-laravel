@@ -16,6 +16,17 @@
         vertical-align: middle;
         font-size: 13px;
     }
+
+
+    .unzoom {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
 </style>
 @stop
 
@@ -526,9 +537,10 @@
                                 <!--city-carousel-item-->
                                 @foreach($recommended_prj as $project)
                                     <div class="swiper-slide">
+
                                         <div class="city-carousel-item">
                                             <div class="bg-wrap fs-wrapper">
-                                                <div class="bg"  data-bg="{{aws_asset_path($project->image)}}" data-swiper-parallax="10%"></div>
+                                                <div class="bg unzoom"  data-bg="{{aws_asset_path($project->image)}}" data-swiper-parallax="10%"></div>
                                                 <div class="overlay"></div>
                                             </div>
                                             <div class="city-carousel-content">
@@ -614,7 +626,7 @@
                     <div class="api-container">
                         <div class="api-img">
                             {{--                                    <img src="{{ asset('') }}front-assets/images/api.png" alt="" class="respimg">--}}
-                            <img src="{{ asset('') }}front-assets/images/bin-sheikh.png" alt="" class="respimg" style="width:110%">
+                            <img src="{{ asset('') }}front-assets/images/bin-sheikh.png" alt="" class="respimg" style="width:100%">
                         </div>
                         <div class="api-text">
                             <h3>{{ __("messages.home_heading") }}</h3>
