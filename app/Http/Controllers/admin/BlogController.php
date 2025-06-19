@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Folder;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -46,11 +47,11 @@ class BlogController extends Controller
         $short_description = "";
         $short_description_ar = "";
 
-        
+
         $image = "";
         $active = "1";
-
-        return view("admin.blog.create", compact('page_heading', 'mode', 'id', 'name', 'active', 'name_ar','description','description_ar','image','short_description','short_description_ar'));
+        $folders = Folder::all();
+        return view("admin.blog.create", compact('page_heading', 'mode', 'id', 'name', 'active', 'name_ar','description','description_ar','image','short_description','short_description_ar','folders'));
     }
 
     public function store(Request $request)
@@ -84,6 +85,7 @@ class BlogController extends Controller
                 'description_ar' => $request->description_ar,
                 'short_description' => $request->short_description,
                 'short_description_ar' => $request->short_description_ar,
+                'folder_id' => $request->folder_id != "" ? $request->folder_id : NULL
             ];
             if ($request->file("image")) {
                 $response = image_upload($request, 'blog', 'image');
@@ -91,7 +93,7 @@ class BlogController extends Controller
                     $ins['image'] = $response['link'];
                 }
             }
-           
+
             if ($request->id != "") {
                 $dest_id = $request->id;
                 $blog = Blog::find($request->id);
@@ -140,7 +142,7 @@ class BlogController extends Controller
 
             $name = $blog->name;
             $name_ar = $blog->name_ar;
-            
+
             $active = $blog->active;
             $description = $blog->description;
             $description_ar = $blog->description_ar;

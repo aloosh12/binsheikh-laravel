@@ -24,8 +24,6 @@
 
                                 <div class="row">
 
-
-
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Title<b class="text-danger">&nbsp;</b></label>
@@ -88,6 +86,19 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-md-6 ">
+                                        <div class="form-group">
+                                            <label>Folder<b class="text-danger">&nbsp;</b></label>
+                                            <select name="folder_id" class="form-control select2" required
+                                                    data-parsley-required-message="Select Folder">
+                                                <option  value="">Select</option>
+                                                @foreach($folders as $val)
+                                                    <option value="{{$val->id}}">{{$val->title}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Description<b class="text-danger">&nbsp;</b></label>
@@ -106,7 +117,7 @@
                                     <div class="col-md-12 mt-2">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary">Submit</button>
-                                            <a href="{{url('admin/blogs')}}" class="btn btn-secondary"  data-bs-dismiss="modal">{{__('Back')}}  </a>
+                                            <a href="{{url('admin/blog')}}" class="btn btn-secondary"  data-bs-dismiss="modal">{{__('Back')}}  </a>
                                         </div>
                                     </div>
 

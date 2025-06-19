@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Folder;
 use App\Models\Photo;
 use App\Models\Properties;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
@@ -26,7 +28,8 @@ class GalleryController extends Controller
     {
 
         $page_heading = "Photos";
-        return view("admin.photos.create", compact('page_heading'));
+        $folders = Folder::all();
+        return view("admin.photos.create", compact('page_heading','folders'));
     }
 
     public function store(Request $request)
@@ -47,11 +50,13 @@ class GalleryController extends Controller
             //     Photo::create($im);
             // }
             foreach ($gallery as $file) {
+                Log::info($request->folder_id );
                 $name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $path = '/uploads/gallery/photos/' . $name;
                 Storage::disk('s3')->put($path, fopen($file, 'r+'));
                 $im['created_at'] = gmdate('Y-m-d H:i:s');
                 $im['image'] = '/uploads/gallery/photos/' . $name;
+                $im['folder_id'] = ($request->folder_id != '')?$request->folder_id:NULL;
                 Photo::create($im);
             }
         }

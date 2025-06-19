@@ -39,6 +39,7 @@
                                         <th>#</th>
                                         <th>Title</th>
                                         <th>Title Ar</th>
+                                        <th>Folder</th>
                                         <th>Is Active</th>
                                         <th>Created Date</th>
                                         <th>Action</th>
@@ -55,6 +56,7 @@
                                             <td class="trVOE">{{ $i }}</td>
                                             <td class="trVOE">{{ $c->name }}</td>
                                             <td class="trVOE">{{ $c->name_ar }}</td>
+                                            <td class="trVOE">{{ $c->folder->title ?? '' }}</td>
 
                                             <td>
                                                 <input class="toggle_status"
@@ -84,7 +86,7 @@
                                 </tbody>
 
                             </table>
-                        
+
 
                         </div>
                     </div>

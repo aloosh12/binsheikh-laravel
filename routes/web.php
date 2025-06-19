@@ -153,17 +153,20 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
 
 
     Route::get("videos", "VideoController@index");
-
     Route::get("videos/create", "VideoController@create");
-
     Route::post("videos/change_status", "VideoController@change_status");
-
     Route::get("videos/edit/{id}", "VideoController@edit");
-
     Route::delete("videos/delete/{id}", "VideoController@destroy");
-
     Route::post("save_videos", "VideoController@store");
     Route::delete('videos/deleteAll', "VideoController@deleteAll")->name('videos.deleteAll');
+
+    Route::get("folders", "FolderController@index");
+    Route::get("folders/create", "FolderController@create");
+    Route::post("folders/change_status", "FolderController@change_status");
+    Route::get("folders/edit/{id}", "FolderController@edit");
+    Route::delete("folders/delete/{id}", "FolderController@destroy");
+    Route::post("save_folders", "FolderController@store");
+    Route::delete('folders/deleteAll', "FolderController@deleteAll")->name('folders.deleteAll');
 
     Route::get("projects", "ProjectController@index");
 

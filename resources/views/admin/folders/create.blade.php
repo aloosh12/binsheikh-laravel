@@ -14,45 +14,54 @@
                                     Edit
                                 @else
                                     Add
-                                @endif Video
+                                @endif Folder
                             </strong></div>
-                        <form method="post" id="admin-form" action="{{ url('admin/save_videos') }}"
+                        <form method="post" id="admin-form" action="{{ url('admin/save_folders') }}"
                             enctype="multipart/form-data" data-parsley-validate="true">
                             <div class="card-body">
                                 <input type="hidden" name="id" id="cid" value="{{ $id }}">
                                 @csrf()
 
                                 <div class="row">
-
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Youtube Embed Link<b class="text-danger">&nbsp;</b></label>
-                                            <input type="url" name="link" class="form-control" required    data-parsley-pattern="^https:\/\/www\.youtube\.com\/embed\/([a-zA-Z0-9_-]{11})(\?[\w=&]*)?$"
-                                            data-parsley-pattern-message="Please enter a valid YouTube embed URL."
-                                                data-parsley-required-message="Enter Embed Link" value="@if($id){{ $videos->link }} @endif">
+                                            <label>Title<b class="text-danger">&nbsp;</b></label>
+                                            <input type="text" name="title" class="form-control" required
+                                                   data-parsley-required-message="Enter Title" value="@if($id){{$folder->title}}@endif">
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Status</label>
-                                            <select name="active" class="form-control">
-                                                <option <?= ($id && $videos->active == 1) ? 'selected' : '' ?> value="1">Active</option>
-                                                <option <?= ($id && $videos->active == 0) ? 'selected' : '' ?> value="0">Inactive
+                                            <label>Title Ar<b class="text-danger">&nbsp;</b></label>
+                                            <input type="text" name="title_ar" class="form-control" required
+                                                   data-parsley-required-message="Enter Arabic Title" value="@if($id){{$folder->title_ar}}@endif">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 mt-2">
+                                        <div class="form-group">
+                                            <label>Cover Image<b class="text-danger">&nbsp;</b></label>
+                                            <input <?=!$id ? 'required' : '' ?>
+                                                   data-parsley-required-message="Select Image"
+                                                   type="file" name="cover_image" class="form-control"
+                                                   accept="image/*" data-parsley-trigger="change"
+                                                   data-parsley-fileextension="jpg,png,gif,jpeg"
+                                                   data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported"
+                                                   data-parsley-max-file-size="5120"
+                                                   data-parsley-max-file-size-message="Max file size should be 5MB">
+                                            @if($id && $folder->cover_image) <a href=" {{aws_asset_path($folder->cover_image) }}" target="_blank" rel="noopener noreferrer">View Image</a> @endif
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Pinned ?</label>
+                                            <select name="is_pinned" class="form-control">
+                                                <option <?= ($id && $folder->is_pinned == 1) ? 'selected' : '' ?> value="1">Yes</option>
+                                                <option <?= ($id && $folder->is_pinned == 0) ? 'selected' : '' ?> value="0">No
                                                 </option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 ">
-                                        <div class="form-group">
-                                            <label>Folder<b class="text-danger">&nbsp;</b></label>
-                                            <select name="folder_id" class="form-control select2" required
-                                                    data-parsley-required-message="Select Folder">
-                                                <option  value="">Select</option>
-                                                @foreach($folders as $val)
-                                                    <option value="{{$val->id}}">{{$val->title}}</option>
-                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -60,7 +69,7 @@
                                     <div class="col-md-12 mt-2">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary">Submit</button>
-                                            <a href="{{url('admin/videos')}}" class="btn btn-secondary"  data-bs-dismiss="modal">{{__('Back')}}  </a>
+                                            <a href="{{url('admin/folders')}}" class="btn btn-secondary"  data-bs-dismiss="modal">{{__('Back')}}  </a>
                                         </div>
                                     </div>
 
@@ -126,14 +135,14 @@
                             });
                         } else {
                             var m = res['message'] ||
-                                'Unable to save videos. Please try again later.';
+                                'Unable to save folders. Please try again later.';
                             show_msg(0, m)
                         }
                     } else {
                         var m = res['message'];
                         show_msg(1, m)
                         setTimeout(function() {
-                            window.location.href = "{{ url('/admin/videos') }}";
+                            window.location.href = "{{ url('/admin/folders') }}";
                         }, 1500);
 
                     }

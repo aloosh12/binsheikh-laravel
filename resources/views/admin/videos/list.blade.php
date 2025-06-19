@@ -27,6 +27,7 @@
                                         </th>
                                         <th>#</th>
                                         <th>Video</th>
+                                        <th>Folder</th>
                                         <th>Is Active</th>
                                         <th>Created Date</th>
                                         <th>Action</th>
@@ -47,7 +48,7 @@
                                                     <iframe width="200" heightt="315" src="{{$item->link}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                                                 <?php }?>
                                             </td>
-
+                                            <td class="trVOE">{{$item->folder->title ?? ''}}</td>
                                             <td>
 
                                                 <input class="toggle_status"

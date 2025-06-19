@@ -625,7 +625,6 @@
                 <div class="api-wrap">
                     <div class="api-container">
                         <div class="api-img">
-                            {{--                                    <img src="{{ asset('') }}front-assets/images/api.png" alt="" class="respimg">--}}
                             <img src="{{ asset('') }}front-assets/images/bin-sheikh.png" alt="" class="respimg" style="width:100%">
                         </div>
                         <div class="api-text">

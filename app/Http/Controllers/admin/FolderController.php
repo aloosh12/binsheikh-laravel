@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Models\Folder;
-use App\Models\Properties;
+use App\Models\Photo;
 use App\Models\Video;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Validator;
-
-class VideoController extends Controller
+class FolderController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,9 +20,9 @@ class VideoController extends Controller
     public function index()
     {
 
-        $page_heading = "Videos";
-        $list = Video::where(['deleted' => 0])->orderBy('created_at', 'desc')->paginate(10);
-        return view('admin.videos.list', compact('page_heading', 'list'));
+        $page_heading = "Folders";
+        $list = Folder::where(['deleted' => 0])->orderBy('created_at', 'desc')->paginate(10);
+        return view('admin.folders.list', compact('page_heading', 'list'));
     }
 
     /**
@@ -32,11 +33,11 @@ class VideoController extends Controller
     public function create()
     {
 
-        $page_heading = "Videos";
+        $page_heading = "Folders";
         $mode = "create";
         $id = "";
-        $folders = Folder::all();
-        return view("admin.videos.create", compact('page_heading', 'mode', 'id','folders'));
+
+        return view("admin.folders.create", compact('page_heading', 'mode', 'id'));
     }
 
     public function store(Request $request)
@@ -46,9 +47,11 @@ class VideoController extends Controller
         $o_data = [];
         $errors = [];
         $redirectUrl = '';
-
+        //Log::info($request->all());
         $validator = Validator::make($request->all(), [
-            'link' => 'required',
+            'title' => 'required',
+            'title_ar' => 'required',
+            'cover_image' => 'required',
         ]);
         if ($validator->fails()) {
             $status = "0";
@@ -56,27 +59,37 @@ class VideoController extends Controller
             $errors = $validator->messages();
         } else {
             $input = $request->all();
-
+            Log::info($input);
             $ins = [
-                'link' => $request->link,
-                'active' => $request->active,
-                'folder_id' => $request->folder_id != "" ? $request->folder_id : NULL
+                'title' => $request->title,
+                'title_ar' => $request->title_ar,
+                'is_pinned' =>isset($request->is_pinned) ? 1 : 0,
             ];
+            $ins['cover_image'] = '';
+            if ($request->file('cover_image')) {
+                Log::info("--");
+                $response = image_upload($request, 'folder/image', 'cover_image');
+                if ($response['status']) {
+                    $ins['cover_image'] = $response['link'];
+                }
+            }
             if ($request->id != "") {
-                $data = Video::find($request->id);
+                $data = Folder::find($request->id);
                 $ins['updated_at'] = gmdate('Y-m-d H:i:s');
                 $data->update($ins);
                 $status = "1";
-                $message = "Video updated succesfully";
+                $message = "Folder updated succesfully";
             } else {
                 $ins['created_at'] = gmdate('Y-m-d H:i:s');
-                $res = Video::create($ins);
+                $res = Folder::create($ins);
                 $status = "1";
-                $message = "Video added successfully";
+                $message = "Folder added successfully";
             }
         }
         echo json_encode(['status' => $status, 'message' => $message, 'errors' => $errors]);
     }
+
+
     public function edit($id)
     {
 
@@ -93,18 +106,30 @@ class VideoController extends Controller
 
     public function destroy($id)
     {
+        Log::info($id);
         $status = "0";
         $message = "";
         $o_data = [];
+        $related = false;
+        $data = Folder::find($id);
+        $videos = Video::where('folder_id',$id)->get();
+        if($videos->isNotEmpty()) $related = true;
 
-        $data = Video::find($id);
-        if ($data) {
+        $blogs = Blog::where('folder_id',$id)->get();
+        if($blogs->isNotEmpty()) $related = true;
+
+        $photos = Photo::where('folder_id',$id)->get();
+        if($photos->isNotEmpty()) $related = true;
+
+        if ($data && !$related) {
             $data->deleted = 1;
-            $data->active = 0;
+            //$data->active = 0;
             $data->updated_at = gmdate('Y-m-d H:i:s');
             $data->save();
             $status = "1";
             $message = "Video removed successfully";
+        }elseif($related) {
+            $message = "The Folder contain some media!!";
         } else {
             $message = "Something went wrong";
         }
@@ -116,11 +141,11 @@ class VideoController extends Controller
     {
         $status = "0";
         $message = "";
-        if (Video::where('id', $request->id)->update(['active' => $request->status])) {
+        if (Folder::where('id', $request->id)->update(['is_pinned' => $request->status])) {
             $status = "1";
-            $msg = "Successfully activated";
+            $msg = "Successfully updated";
             if (!$request->status) {
-                $msg = "Successfully deactivated";
+                $msg = "Successfully updated";
             }
             $message = $msg;
         } else {
@@ -142,5 +167,4 @@ class VideoController extends Controller
         return redirect()->back()->with('error', 'No Video selected.');
 
     }
-
 }

@@ -5,11 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Country extends Model
+class Folder extends Model
 {
     use HasFactory;
+    protected $table = 'folders';
     protected $guarded = [];
-    public $table = "country";
+    protected $fillable = [
+        'title',
+        'title_ar',
+        'cover_image',
+        'is_pinned'
+    ];
+
+
     public function __get($key)
     {
         if (\Request::is('admin/*')) {

@@ -39,7 +39,6 @@ class Blog extends Model
         return parent::__get($key);
     }
     public static function getSlug($value, $exclude = '')
-
     {
 
         if (static::whereSlug($slug = Str::slug($value, '-'))->exists()) {
@@ -80,8 +79,11 @@ class Blog extends Model
 
         return $slug;
 
+    }
 
-
+    public function folder()
+    {
+        return $this->belongsTo(Folder::class, 'folder_id');
     }
 
 }
