@@ -141,8 +141,9 @@ class PropertyController extends Controller
                         $path = 'uploads/property/' . $name;
 
                         Storage::disk('s3')->put($path, fopen($file->getRealPath(), 'r+'));
+                        $imgs[] = '/'.$path;
                     }
-                    $imgs[] = '/'.$path;
+
                 }
             }
             if ($request->file("broucher")) {
