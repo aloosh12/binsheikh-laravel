@@ -186,6 +186,37 @@
                                                             </div>
                                                             <button class="commentssubmit">{{ __('messages.update') }}</button>
                                                         </form>
+
+                                                        @if(\Auth::user()->role == 3 || \Auth::user()->role == 4)
+
+                                                                <form  style="margin-top: 20px"  data-parsley-validate="true">
+
+                                                                    <div class="dashboard-widget-title-single">{{ __('messages.additional_information') }}</div>
+                                                                    <div class="cs-intputwrap pass-input-wrap">
+                                                                        <label class="font-weight-bold">{{ __('messages.commission_number') }}</label>
+                                                                        <p class="mt-2" style="text-align: center">{{ \Auth::user()->commission_number ?? __('messages.not_set') }}</p>
+                                                                    </div>
+
+                                                                    <div class="cs-intputwrap pass-input-wrap">
+                                                                        <label class="font-weight-bold">{{ __('messages.discount_number') }}</label>
+                                                                        <p class="mt-2" style="text-align: center">{{ \Auth::user()->discount_number ?? __('messages.not_set') }}</p>
+                                                                    </div>
+
+                                                                    <div class="cs-intputwrap pass-input-wrap">
+                                                                        <label class="font-weight-bold">{{ __('messages.apartments_for_sale') }}</label>
+                                                                        <div class="mt-2">
+                                                                            @php
+                                                                                $apartment_ids = explode(',', \Auth::user()->apartment_sell);
+                                                                                $apartments = \App\Models\Properties::whereIn('id', $apartment_ids)->get();
+                                                                            @endphp
+                                                                            @foreach($apartments as $apartment)
+                                                                                <span style="text-align: left" class="badge badge-info mr-2 mb-2">{{ $apartment->name }} ({{ $apartment->apartment_no }})</span>
+                                                                            @endforeach
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>

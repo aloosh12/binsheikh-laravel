@@ -353,4 +353,8 @@ return [
     'please_fill_in_all_required_fields_and_calculate_emi_first' => 'يرجى ملء جميع الحقول المطلوبة وحساب EMI أولاً',
     'payment_schedule'=>'جدول الدفعات',
     'download_pdf'=>'تحميل كـ pdf',
+    'additional_information' => 'معلومات اضافية',
+    'commission_number' => 'العمولة',
+    'discount_number' => 'الخصم',
+    'apartments_for_sale' => 'العقارات',
 ];

@@ -342,4 +342,8 @@ return [
     'please_fill_in_all_required_fields_and_calculate_emi_first' =>'please fill in all required fields and calculate emi first',
     'payment_schedule'=>'Payment Schedule',
     'download_pdf'=>'Download PDF',
+    'additional_information' => 'additional information',
+    'commission_number' => 'Commission',
+    'discount_number' => 'Discount',
+    'apartments_for_sale' => 'Apartments For Sale',
 ];

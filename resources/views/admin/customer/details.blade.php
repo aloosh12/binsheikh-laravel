@@ -77,7 +77,73 @@
                                 </div>
                             </div>
                             @endif
+                            @if(isset($customer->role) && ($customer->role == 3 || $customer->role == 4))
+                            <!-- Commission Number -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold">Commission(%)</label>
+                                            <form action="{{ url('admin/customer/update-commission') }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <input type="hidden" name="user_id" value="{{ $customer->id }}">
+                                                <div class="input-group">
+                                                    <input type="text" name="commission_number" class="form-control" value="{{ $customer->commission_number ?? '' }}" placeholder="%">
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <!-- Discount Number -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold">Discount(QAR):</label>
+                                            <form action="{{ url('admin/customer/update-discount') }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <input type="hidden" name="user_id" value="{{ $customer->id }}">
+                                                <div class="input-group">
+                                                    <input type="text" name="discount_number" class="form-control" value="{{ $customer->discount_number ?? '' }}" placeholder="QAR">
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Apartment Sell -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold">Apartments for Sale:</label>
+                                            <form action="{{ url('admin/customer/update-apartments') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="user_id" value="{{ $customer->id }}">
+                                                <div class="input-group">
+                                                    <select name="apartment_sell[]" class="form-control select2" multiple>
+                                                        @php
+                                                            $selected_apartments = $customer->apartment_sell ? explode(',', $customer->apartment_sell) : [];
+                                                        @endphp
+                                                        @foreach(\App\Models\Properties::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get() as $apartment)
+                                                            <option value="{{ $apartment->id }}" @if(in_array($apartment->id, $selected_apartments)) selected @endif>
+                                                                {{ $apartment->name }} ({{ $apartment->apartment_no }})
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                             <!-- Professional Practice Certificate -->
                             @if(isset($customer->professional_practice_certificate) && $customer->professional_practice_certificate)
                             <div class="row">
@@ -179,4 +245,7 @@
 @stop
 
 @section('script')
+<script>
+    $(".select2").select2();
+</script>
 @stop

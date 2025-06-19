@@ -267,6 +267,9 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
 
     Route::get('customer/details/{id}', 'CustomerController@details')->name('admin.customer.details');
     Route::get('customer/approve/{id}', 'CustomerController@approve')->name('admin.customer.approve');
+    Route::post('customer/update-commission', 'CustomerController@updateCommission')->name('admin.customer.update-commission');
+    Route::post('customer/update-discount', 'CustomerController@updateDiscount')->name('admin.customer.update-discount');
+    Route::post('customer/update-apartments', 'CustomerController@updateApartments')->name('admin.customer.update-apartments');
 
 });
 

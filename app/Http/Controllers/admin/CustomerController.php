@@ -350,4 +350,61 @@ class CustomerController extends Controller
         return redirect()->back()->with('success', $message);
     }
 
+    public function updateCommission(Request $request)
+    {
+        $status = "0";
+        $message = "";
+
+        $customer = User::find($request->user_id);
+        if ($customer) {
+            $customer->commission_number = $request->commission_number;
+            $customer->updated_at = gmdate('Y-m-d H:i:s');
+            $customer->save();
+            $status = "1";
+            $message = "Commission number updated successfully";
+        } else {
+            $message = "Something went wrong";
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function updateDiscount(Request $request)
+    {
+        $status = "0";
+        $message = "";
+
+        $customer = User::find($request->user_id);
+        if ($customer) {
+            $customer->discount_number = $request->discount_number;
+            $customer->updated_at = gmdate('Y-m-d H:i:s');
+            $customer->save();
+            $status = "1";
+            $message = "Discount number updated successfully";
+        } else {
+            $message = "Something went wrong";
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function updateApartments(Request $request)
+    {
+        $status = "0";
+        $message = "";
+
+        $customer = User::find($request->user_id);
+        if ($customer) {
+            $customer->apartment_sell = implode(',', $request->apartment_sell ?? []);
+            $customer->updated_at = gmdate('Y-m-d H:i:s');
+            $customer->save();
+            $status = "1";
+            $message = "Apartments updated successfully";
+        } else {
+            $message = "Something went wrong";
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
 }
