@@ -357,4 +357,5 @@ return [
     'commission_number' => 'العمولة',
     'discount_number' => 'الخصم',
     'apartments_for_sale' => 'العقارات',
+    'photos_media' => 'الصور والميديا'
 ];

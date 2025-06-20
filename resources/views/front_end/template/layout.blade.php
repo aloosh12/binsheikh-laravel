@@ -158,12 +158,12 @@
                                         <!--second level end-->
                                     </li>
                                     <li>
-                                        <a href="{{url('photos')}}" @if($currentRouteUri=="photos" || $currentRouteUri=="videos" || $currentRouteUri=="blogs" || $currentRouteUri=="blog-details/{slug}") class="act-link" @endif>{{ __("messages.news_media") }} <i class="fa-solid fa-caret-down"></i></a>
-                                        <ul>
-                                            <li><a href="{{url('photos')}}">{{ __("messages.photos") }}</a></li>
-                                            <li><a href="{{url('videos')}}">{{ __("messages.videos") }}</a></li>
-                                            <li><a href="{{url('blogs')}}">{{ __("messages.blog") }}</a></li>
-                                        </ul>
+                                        <a href="{{url('photos')}}" @if($currentRouteUri=="photos" || $currentRouteUri=="videos" || $currentRouteUri=="blogs" || $currentRouteUri=="blog-details/{slug}") class="act-link" @endif>{{ __("messages.news_media") }} <i class="fa-solid "></i></a>
+{{--                                        <ul>--}}
+{{--                                            <li><a href="{{url('photos')}}">{{ __("messages.photos") }}</a></li>--}}
+{{--                                            <li><a href="{{url('videos')}}">{{ __("messages.videos") }}</a></li>--}}
+{{--                                            <li><a href="{{url('blogs')}}">{{ __("messages.blog") }}</a></li>--}}
+{{--                                        </ul>--}}
                                         <!--second level end-->
                                     </li>
                                     <li>

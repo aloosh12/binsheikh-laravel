@@ -1,6 +1,29 @@
 @extends('front_end.template.layout')
 @section('header')
+    <style>
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+        }
 
+        .grid-item-holder img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .folder-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            z-index: 2;
+        }
+    </style>
 @stop
 
 @section('content')
@@ -16,14 +39,13 @@
                             <div class="hero-section-wrap-item">
                                 <div class="container">
                                     <div class="hero-section-container">
-                                     
+
                                         <div class="hero-section-title_container">
-                                           
+
                                             <div class="hero-section-title">
                                                 <h2 style="text-transform: uppercase;">{{ __('messages.photos') }} </h2>
-                                               
+
                                             </div>
-                                          
                                         </div>
                                         <div class="hs-scroll-down-wrap">
                                             <div class="scroll-down-item">
@@ -34,8 +56,7 @@
                                             </div>
                                             <div class="svg-corner svg-corner_white"  style="bottom:0;left:-40px;"></div>
                                         </div>
-                                       
-                                       
+
                                     </div>
                                 </div>
                                 <div class="bg-wrap bg-hero bg-parallax-wrap-gradien fs-wrapper" data-scrollax-parent="true">
@@ -45,10 +66,10 @@
                             </div>
                         </div>
                     </div>
-                    
-                    
-              
-                    <!--section-end-->				
+
+
+
+                    <!--section-end-->
                     <!--container-->
                     <div class="container">
                         <!--breadcrumbs-list-->
@@ -56,52 +77,54 @@
                             <a href="#">Home</a><span>NEWS & MEDIA</span>
                             <div class="breadcrumbs-list_dec"><i class="fa-thin fa-arrow-up"></i></div>
                         </div> -->
-                        <!--breadcrumbs-list end-->					
+                        <!--breadcrumbs-list end-->
                     </div>
-                    <!--container end-->	
+                    <!--container end-->
                     <!--main-content-->
                     <div class="main-content  ms_vir_height">
                         <!--boxed-container-->
                         <div class="container">
                             <div class="row">
-                                <!-- user-dasboard-menu_wrap -->  
+                                <!-- user-dasboard-menu_wrap -->
                                 <div class="col-lg-3">
                                     <div class="boxed-content btf_init">
                                         <div class="user-dasboard-menu_wrap">
                                             <div class="user-dasboard-menu faq-nav">
                                                 <ul>
-                                                    <li><a href="{{url('photos')}}" class="act-scrlink">{{ __('messages.photos') }}</a></li>
-                                                    <li><a href="{{url('videos')}}" >{{ __('messages.videos') }} </a></li>
-                                                    <li><a href="{{url('blogs')}}" >{{ __('messages.blog') }}</a></li>
+                                                    <li><a href="{{url('photos')}}" class="act-scrlink">{{ __('messages.photos_media') }}</a></li>
+{{--                                                    <li><a href="{{url('videos')}}" >{{ __('messages.videos') }} </a></li>--}}
+{{--                                                    <li><a href="{{url('blogs')}}" >{{ __('messages.blog') }}</a></li>--}}
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- user-dasboard-menu_wrap end-->
-                                
-                                <!-- pricing-column -->  
+
+                                <!-- pricing-column -->
                                 <div class="col-lg-9">
                                     <div class="dashboard-title">
-                                        <!-- Tariff Plan menu-->
-                                        <!-- Tariff Plan menu end-->						
+                                        <!-- Folders Gallery -->
                                     </div>
                                     <div class="db-container">
-                                        <div class="gallery-items gisp grid-small-pad list-single-gallery three-coulms lightgallery">
-                                            <!-- 1 -->
-                                            @foreach ($photos as $pht)
-                                            <div class="gallery-item ">
-                                                <div class="grid-item-holder hovzoom">
-                                                    <img  src="{{aws_asset_path($pht->image)}}"   alt="">
-                                                    <a href="{{aws_asset_path($pht->image)}}" class="gal-link popup-image"><i class="fa fa-search"></i></a>
+                                        <div class="gallery-items grid-small-pad list-single-gallery three-coulms">
+                                            @foreach ($folders as $folder)
+                                                <div class="gallery-item">
+                                                    <div class="grid-item-holder hovzoom" style="position: relative;">
+                                                        <a href="{{ url('folder/'.$folder->id) }}">
+                                                            <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}">
+                                                            <div class="folder-title">
+                                                                <h4>{{ $folder->title }}</h4>
+                                                            </div>
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             @endforeach
-                                            <!-- 1 end -->
                                         </div>
                                     </div>
                                 </div>
-                                <!-- pricing-column end-->											
+
+                                <!-- pricing-column end-->
                             </div>
                             <div class="limit-box"></div>
                         </div>

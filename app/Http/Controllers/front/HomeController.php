@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Booking;
+use App\Models\Folder;
 use App\Models\Reservation;
 use App\Models\Reviews;
 use App\Models\Categories;
@@ -533,7 +534,8 @@ class HomeController extends Controller
     {
         $page_heading = "Photos";
         $photos = Photo::where(['deleted' => 0, 'active' => 1])->latest()->get();
-        return view('front_end.photos', compact('page_heading', 'photos'));
+        $folders = Folder::where(['deleted' => 0,'is_pinned' => 1])->get();
+        return view('front_end.photos', compact('page_heading', 'photos', 'folders'));
     }
 
     public function videos()

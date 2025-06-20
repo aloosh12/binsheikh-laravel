@@ -49,6 +49,7 @@ Route::get('/photos', 'App\Http\Controllers\front\HomeController@photos');
 Route::get('/videos', 'App\Http\Controllers\front\HomeController@videos');
 Route::get('/blog-details/{slug}', 'App\Http\Controllers\front\HomeController@blog_details');
 Route::get('/blogs', 'App\Http\Controllers\front\HomeController@blogs');
+Route::get('/folder/{id}', 'App\Http\Controllers\front\FolderController@folder');
 
 Route::get('/service-details/{slug}', 'App\Http\Controllers\front\HomeController@service_details');
 Route::get('/services', 'App\Http\Controllers\front\HomeController@services');
