@@ -43,7 +43,7 @@
                                         <div class="hero-section-title_container">
 
                                             <div class="hero-section-title">
-                                                <h2 style="text-transform: uppercase;">{{ __('messages.photos') }} </h2>
+                                                <h2 style="text-transform: uppercase;">{{ __('messages.photos_media') }}</h2>
 
                                             </div>
                                         </div>

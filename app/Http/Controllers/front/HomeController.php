@@ -533,9 +533,9 @@ class HomeController extends Controller
     public function photos()
     {
         $page_heading = "Photos";
-        $photos = Photo::where(['deleted' => 0, 'active' => 1])->latest()->get();
-        $folders = Folder::where(['deleted' => 0,'is_pinned' => 1])->get();
-        return view('front_end.photos', compact('page_heading', 'photos', 'folders'));
+        //$photos = Photo::where(['deleted' => 0, 'active' => 1])->latest()->get();
+        $folders = Folder::where(['deleted' => 0])->orderBy('is_pinned','DESC')->get();
+        return view('front_end.photos', compact('page_heading', 'folders'));
     }
 
     public function videos()
