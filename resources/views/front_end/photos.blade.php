@@ -1,27 +1,48 @@
 @extends('front_end.template.layout')
 @section('header')
     <style>
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
+        /*.gallery-item {*/
+        /*    position: relative;*/
+        /*    overflow: hidden;*/
+        /*}*/
+
+        /*.grid-item-holder img {*/
+        /*    width: 100%;*/
+        /*    height: auto;*/
+        /*    display: block;*/
+        /*}*/
+
+        /*.folder-title {*/
+        /*    position: absolute;*/
+        /*    bottom: 0;*/
+        /*    left: 0;*/
+        /*    width: 100%;*/
+        /*    background: rgba(0, 0, 0, 0.6);*/
+        /*    color: #fff;*/
+        /*    text-align: center;*/
+        /*    padding: 8px;*/
+        /*    z-index: 2;*/
+        /*}*/
+        .gallery-items {
+            gap: 24px; /* Increases space between items */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Ensure proper 3-column layout */
         }
 
-        .grid-item-holder img {
+        .gallery-item {
+            border-radius: 20px;
+            overflow: hidden; /* Ensure child elements respect border radius */
+        }
+
+        .gallery-item img {
+            border-radius: 20px;
             width: 100%;
             height: auto;
             display: block;
         }
 
-        .folder-title {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            color: #fff;
-            text-align: center;
-            padding: 8px;
-            z-index: 2;
+        .grid-item-holder {
+            padding: 10px; /* Optional: adds padding inside each item */
         }
     </style>
 @stop
@@ -44,7 +65,6 @@
 
                                             <div class="hero-section-title">
                                                 <h2 style="text-transform: uppercase;">{{ __('messages.photos_media') }}</h2>
-
                                             </div>
                                         </div>
                                         <div class="hs-scroll-down-wrap">
@@ -114,7 +134,7 @@
                                                         <a href="{{ url('folder/'.$folder->id) }}">
                                                             <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}">
                                                             <div class="folder-title">
-                                                                <h4>{{ $folder->title }}</h4>
+                                                                <h4 class="mt-1">{{ $folder->title }}</h4>
                                                             </div>
                                                         </a>
                                                     </div>
