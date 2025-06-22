@@ -175,9 +175,9 @@
         </table>
 
         <div class="footer">
-            <p>This document is for informational purposes only and does not constitute a binding agreement.</p>
-            <p>&copy; {{ date('Y') }} Bin Al Sheikh Real Estate Brokerage. All rights reserved.</p>
-            <p>Generated on {{ date('d-m-Y H:i:s') }}</p>
+            <p>www.bsbqa.com | +974 4001 1911 - +974 3066 6004</p>
+{{--            <p>&copy; {{ date('Y') }} Bin Al Sheikh Real Estate Brokerage. All rights reserved.</p>--}}
+{{--            <p>Generated on {{ date('d-m-Y H:i:s') }}</p>--}}
         </div>
     </div>
 </div>
