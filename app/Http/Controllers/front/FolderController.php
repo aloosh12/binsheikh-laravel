@@ -27,13 +27,13 @@ class FolderController extends Controller
             return redirect()->route('home');
         }
         $folder = Folder::find($id);
-        $videos = Video::where('folder_id',$id)->get();
+        $videos = Video::where(['deleted' => 0,'folder_id' => $id, 'active' => 1])->get();
         if($videos->isNotEmpty()) $related = true;
 
-        $blogs = Blog::where('folder_id',$id)->latest()->paginate(10);
+        $blogs = Blog::where(['deleted' => 0, 'folder_id'=> $id, 'active' => 1])->latest()->paginate(10);
         if($blogs->isNotEmpty()) $related = true;
 
-        $photos = Photo::where('folder_id',$id)->get();
+        $photos = Photo::where(['deleted' => 0, 'folder_id'=> $id])->get();
         if($photos->isNotEmpty()) $related = true;
         return view('front_end.folder', compact('folder','photos','blogs','videos', 'page_heading'));
     }

@@ -43,26 +43,25 @@
                 </div>
             </div>
 
-
-
-            <!--section-end-->
-            <!--container-->
-            <div class="container">
-                <!--breadcrumbs-list-->
-                <!-- <div class="breadcrumbs-list bl_flat">
-                    <a href="#">Home</a><span>NEWS & MEDIA</span>
-                    <div class="breadcrumbs-list_dec"><i class="fa-thin fa-arrow-up"></i></div>
-                </div> -->
-                <!--breadcrumbs-list end-->
-            </div>
-            <!--container end-->
-            <!--main-content-->
             <div class="main-content  ms_vir_height">
                 <!--boxed-container-->
                 <div class="container">
                     <div class="row">
-                        <!-- videos -->
-                        <div class="col-lg-12">
+                        <div class="col-lg-3">
+                            <div class="boxed-content btf_init">
+                                <div class="user-dasboard-menu_wrap">
+                                    <div class="user-dasboard-menu faq-nav">
+                                        <ul>
+                                            <li><a href="#" class="tab-btn act-scrlink" data-target="photos">{{ __('messages.photos') }}</a></li>
+                                            <li><a href="#" class="tab-btn " data-target="videos">{{ __('messages.videos') }} </a></li>
+                                            <li><a href="#" class="tab-btn" data-target="blogs">{{ __('messages.blog') }}</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- photos -->
+                        <div class="col-lg-9 section-content"  id="photos-section">
                             <div class="dashboard-title">
                                {{__('messages.photos')}}
                             </div>
@@ -82,7 +81,7 @@
                             </div>
                         </div>
                         <!-- videos -->
-                        <div class="col-lg-12">
+                        <div class="col-lg-9 section-content"  id="videos-section" style="display: none;">
                             <div class="dashboard-title">
                                 {{ __('messages.videos') }}
                             </div>
@@ -97,7 +96,7 @@
                             </div>
                         </div>
                         <!-- bogs -->
-                        <div class="col-lg-12">
+                        <div class="col-lg-9 section-content" id="blogs-section" style="display: none;">
                             <div class="dashboard-title">
                                 {{__('messages.blog')}}
                             </div>
@@ -146,5 +145,18 @@
 @stop
 
 @section('script')
+        <script>
+            $(document).ready(function(){
+                $('.tab-btn').on('click', function(e){
+                    e.preventDefault();
+                    let target = $(this).data('target');
 
+                    $('.section-content').hide();
+                    $('#'+target+'-section').show();
+
+                    $('.tab-btn').removeClass('act-scrlink');
+                    $(this).addClass('act-scrlink');
+                });
+            });
+        </script>
 @stop
