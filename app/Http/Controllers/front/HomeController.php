@@ -1794,10 +1794,17 @@ class HomeController extends Controller
 
             // Get logo and convert to base64
             $logoPath = public_path('Screenshot_2025-06-14_032432.png');
+            $waterMarkPath = public_path('watermark.png');
+
             $logoBase64 = '';
+            $waterMarkBase64 = '';
             if (file_exists($logoPath)) {
                 $imageData = file_get_contents($logoPath);
                 $logoBase64 = 'data:image/png;base64,' . base64_encode($imageData);
+            }
+            if (file_exists($waterMarkPath)) {
+                $imageData = file_get_contents($waterMarkPath);
+                $waterMarkBase64 = 'data:image/png;base64,' . base64_encode($imageData);
             }
 
             // Generate PDF with bookmarks
@@ -1811,7 +1818,9 @@ class HomeController extends Controller
                 'months' => $months,
                 'settings' => $settings,
                 'rental_duration' => $rental_duration,
-                'logoBase64' => $logoBase64
+                'logoBase64' => $logoBase64,
+                'waterMarkBase64' => $waterMarkBase64
+
             ]);
 
             // Add bookmarks
