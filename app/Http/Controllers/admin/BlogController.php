@@ -151,9 +151,9 @@ class BlogController extends Controller
             $short_description_ar = $blog->short_description_ar;
 
             $image = $blog->image;
+            $folders = Folder::all();
 
-
-            return view("admin.blog.create", compact('page_heading', 'mode', 'id', 'name', 'name_ar', 'active','description','description_ar','image','short_description','short_description_ar'));
+            return view("admin.blog.create", compact('page_heading', 'mode', 'id', 'name', 'name_ar', 'active','description','description_ar','image','short_description','short_description_ar','folders'));
         } else {
             abort(404);
         }

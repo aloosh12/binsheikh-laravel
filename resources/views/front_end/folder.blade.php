@@ -18,7 +18,6 @@
                             <div class="hero-section-container">
 
                                 <div class="hero-section-title_container">
-
                                     <div class="hero-section-title">
                                         <h2 style="text-transform: uppercase;">{{$folder->title}} </h2>
 
@@ -62,8 +61,6 @@
                 <!--boxed-container-->
                 <div class="container">
                     <div class="row">
-
-
                         <!-- videos -->
                         <div class="col-lg-12">
                             <div class="dashboard-title">
