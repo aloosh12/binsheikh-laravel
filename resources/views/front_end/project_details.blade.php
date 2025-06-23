@@ -151,6 +151,8 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="limit-box"></div>
+                            </div>
 <div class="row">
     <div class="col-md-8">
     <h4 class="fw-bold mt-4 mb-3 fs-4  text-start ar-text-end">Available Apartments</h4>
@@ -217,8 +219,6 @@
     </div>
 </div>
 
-                                <div class="limit-box"></div>
-                            </div>
 
                             <!-- Additional section for Apartments -->
                             <div class="boxed-container">
