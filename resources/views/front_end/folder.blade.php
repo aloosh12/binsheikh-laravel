@@ -53,7 +53,7 @@
                                     <div class="user-dasboard-menu faq-nav">
                                         <ul>
                                             <li><a href="#" class="tab-btn act-scrlink" data-target="photos">{{ __('messages.photos') }}</a></li>
-                                            <li><a href="#" class="tab-btn " data-target="videos">{{ __('messages.videos') }} </a></li>
+                                            <li><a href="#" class="tab-btn" data-target="videos">{{ __('messages.videos') }} </a></li>
                                             <li><a href="#" class="tab-btn" data-target="blogs">{{ __('messages.blog') }}</a></li>
                                         </ul>
                                     </div>
@@ -147,16 +147,35 @@
 @section('script')
         <script>
             $(document).ready(function(){
+                // Handle tab switching
                 $('.tab-btn').on('click', function(e){
                     e.preventDefault();
                     let target = $(this).data('target');
-
+                    switchTab(target);
+                });
+                
+                // Check for filter parameter in URL
+                function getUrlParameter(name) {
+                    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+                    var results = regex.exec(location.search);
+                    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+                }
+                
+                // Initialize with filter from URL if present
+                var filterParam = getUrlParameter('filter');
+                if (filterParam) {
+                    switchTab(filterParam);
+                }
+                
+                // Function to switch tabs
+                function switchTab(target) {
                     $('.section-content').hide();
                     $('#'+target+'-section').show();
-
+                    
                     $('.tab-btn').removeClass('act-scrlink');
-                    $(this).addClass('act-scrlink');
-                });
+                    $('.tab-btn[data-target="'+target+'"]').addClass('act-scrlink');
+                }
             });
         </script>
 @stop

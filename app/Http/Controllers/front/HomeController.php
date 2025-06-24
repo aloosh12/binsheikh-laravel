@@ -535,6 +535,14 @@ class HomeController extends Controller
         $page_heading = "Photos";
         //$photos = Photo::where(['deleted' => 0, 'active' => 1])->latest()->get();
         $folders = Folder::where(['deleted' => 0])->orderBy('is_pinned','DESC')->get();
+        
+        // Add has_photos, has_videos, and has_blogs properties to each folder
+        foreach ($folders as $folder) {
+            $folder->has_photos = Photo::where(['folder_id' => $folder->id, 'deleted' => 0])->exists();
+            $folder->has_videos = Video::where(['folder_id' => $folder->id, 'deleted' => 0, 'active' => 1])->exists();
+            $folder->has_blogs = Blog::where(['folder_id' => $folder->id, 'deleted' => 0, 'active' => 1])->exists();
+        }
+        
         return view('front_end.photos', compact('page_heading', 'folders'));
     }
 

@@ -111,9 +111,9 @@
                                         <div class="user-dasboard-menu_wrap">
                                             <div class="user-dasboard-menu faq-nav">
                                                 <ul>
-                                                    <li><a href="{{url('photos')}}" class="act-scrlink">{{ __('messages.photos_media') }}</a></li>
-{{--                                                    <li><a href="{{url('videos')}}" >{{ __('messages.videos') }} </a></li>--}}
-{{--                                                    <li><a href="{{url('blogs')}}" >{{ __('messages.blog') }}</a></li>--}}
+                                                    <li><a href="#" class="tab-btn act-scrlink" data-target="photos">{{ __('messages.photos') }}</a></li>
+                                                    <li><a href="#" class="tab-btn" data-target="videos">{{ __('messages.videos') }}</a></li>
+                                                    <li><a href="#" class="tab-btn" data-target="blogs">{{ __('messages.blog') }}</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -121,17 +121,18 @@
                                 </div>
                                 <!-- user-dasboard-menu_wrap end-->
 
-                                <!-- pricing-column -->
-                                <div class="col-lg-9">
+                                <!-- Photos Folders Section -->
+                                <div class="col-lg-9 section-content" id="photos-section">
                                     <div class="dashboard-title">
-                                        <!-- Folders Gallery -->
+                                        <h4>{{ __('messages.photos') }}</h4>
                                     </div>
                                     <div class="db-container">
                                         <div class="gallery-items grid-small-pad list-single-gallery three-coulms">
                                             @foreach ($folders as $folder)
+                                                @if($folder->has_photos)
                                                 <div class="gallery-item">
                                                     <div class="grid-item-holder hovzoom" style="position: relative;">
-                                                        <a href="{{ url('folder/'.$folder->id) }}">
+                                                        <a href="{{ url('folder/'.$folder->id) }}?filter=photos">
                                                             <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}">
                                                             <div class="folder-title">
                                                                 <h4 class="mt-1">{{ $folder->title }}</h4>
@@ -139,12 +140,61 @@
                                                         </a>
                                                     </div>
                                                 </div>
+                                                @endif
                                             @endforeach
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- pricing-column end-->
+                                <!-- Videos Folders Section -->
+                                <div class="col-lg-9 section-content" id="videos-section" style="display: none;">
+                                    <div class="dashboard-title">
+                                        <h4>{{ __('messages.videos') }}</h4>
+                                    </div>
+                                    <div class="db-container">
+                                        <div class="gallery-items grid-small-pad list-single-gallery three-coulms">
+                                            @foreach ($folders as $folder)
+                                                @if($folder->has_videos)
+                                                <div class="gallery-item">
+                                                    <div class="grid-item-holder hovzoom" style="position: relative;">
+                                                        <a href="{{ url('folder/'.$folder->id) }}?filter=videos">
+                                                            <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}">
+                                                            <div class="folder-title">
+                                                                <h4 class="mt-1">{{ $folder->title }}</h4>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Blogs Folders Section -->
+                                <div class="col-lg-9 section-content" id="blogs-section" style="display: none;">
+                                    <div class="dashboard-title">
+                                        <h4>{{ __('messages.blog') }}</h4>
+                                    </div>
+                                    <div class="db-container">
+                                        <div class="gallery-items grid-small-pad list-single-gallery three-coulms">
+                                            @foreach ($folders as $folder)
+                                                @if($folder->has_blogs)
+                                                <div class="gallery-item">
+                                                    <div class="grid-item-holder hovzoom" style="position: relative;">
+                                                        <a href="{{ url('folder/'.$folder->id) }}?filter=blogs">
+                                                            <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}">
+                                                            <div class="folder-title">
+                                                                <h4 class="mt-1">{{ $folder->title }}</h4>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="limit-box"></div>
                         </div>
@@ -156,5 +206,18 @@
 @stop
 
 @section('script')
+<script>
+    $(document).ready(function(){
+        $('.tab-btn').on('click', function(e){
+            e.preventDefault();
+            let target = $(this).data('target');
 
+            $('.section-content').hide();
+            $('#'+target+'-section').show();
+
+            $('.tab-btn').removeClass('act-scrlink');
+            $(this).addClass('act-scrlink');
+        });
+    });
+</script>
 @stop
