@@ -44,6 +44,21 @@
         .grid-item-holder {
             padding: 10px; /* Optional: adds padding inside each item */
         }
+        
+        /* Override any JavaScript positioning */
+        .no-js-layout {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 24px !important;
+            height: auto !important;
+        }
+        
+        .no-js-layout .gallery-item {
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
+            width: 100% !important;
+        }
     </style>
 @stop
 
@@ -127,14 +142,14 @@
                                         <h4>{{ __('messages.photos') }}</h4>
                                     </div>
                                     <div class="db-container">
-                                        <div class="gallery-items grid-small-pad list-single-gallery three-coulms">
+                                        <div class="gallery-items grid-small-pad list-single-gallery three-coulms no-js-layout">
                                             @foreach ($folders as $folder)
                                                 @if($folder->has_photos)
                                                 <div class="gallery-item">
-                                                    <div class="grid-item-holder hovzoom" style="position: relative;">
+                                                    <div class="grid-item-holder hovzoom" style="position: relative; width: 100%;">
                                                         <a href="{{ url('folder/'.$folder->id) }}?filter=photos">
-                                                            <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}">
-                                                            <div class="folder-title">
+                                                            <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}" style="width: 100%;">
+                                                            <div class="folder-title" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.6); color: #fff; text-align: center; padding: 8px; z-index: 2;">
                                                                 <h4 class="mt-1">{{ $folder->title }}</h4>
                                                             </div>
                                                         </a>
@@ -152,14 +167,14 @@
                                         <h4>{{ __('messages.videos') }}</h4>
                                     </div>
                                     <div class="db-container">
-                                        <div class="gallery-items grid-small-pad list-single-gallery three-coulms">
+                                        <div class="gallery-items grid-small-pad list-single-gallery three-coulms no-js-layout">
                                             @foreach ($folders as $folder)
                                                 @if($folder->has_videos)
                                                 <div class="gallery-item">
-                                                    <div class="grid-item-holder hovzoom" style="position: relative;">
+                                                    <div class="grid-item-holder hovzoom" style="position: relative; width: 100%;">
                                                         <a href="{{ url('folder/'.$folder->id) }}?filter=videos">
-                                                            <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}">
-                                                            <div class="folder-title">
+                                                            <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}" style="width: 100%;">
+                                                            <div class="folder-title" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.6); color: #fff; text-align: center; padding: 8px; z-index: 2;">
                                                                 <h4 class="mt-1">{{ $folder->title }}</h4>
                                                             </div>
                                                         </a>
@@ -177,14 +192,14 @@
                                         <h4>{{ __('messages.blog') }}</h4>
                                     </div>
                                     <div class="db-container">
-                                        <div class="gallery-items grid-small-pad list-single-gallery three-coulms">
+                                        <div class="gallery-items grid-small-pad list-single-gallery three-coulms no-js-layout">
                                             @foreach ($folders as $folder)
                                                 @if($folder->has_blogs)
                                                 <div class="gallery-item">
-                                                    <div class="grid-item-holder hovzoom" style="position: relative;">
+                                                    <div class="grid-item-holder hovzoom" style="position: relative; width: 100%;">
                                                         <a href="{{ url('folder/'.$folder->id) }}?filter=blogs">
-                                                            <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}">
-                                                            <div class="folder-title">
+                                                            <img src="{{ aws_asset_path($folder->cover_image) }}" alt="{{ $folder->title }}" style="width: 100%;">
+                                                            <div class="folder-title" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.6); color: #fff; text-align: center; padding: 8px; z-index: 2;">
                                                                 <h4 class="mt-1">{{ $folder->title }}</h4>
                                                             </div>
                                                         </a>
@@ -208,16 +223,53 @@
 @section('script')
 <script>
     $(document).ready(function(){
+        // Fix for tab switching
         $('.tab-btn').on('click', function(e){
             e.preventDefault();
             let target = $(this).data('target');
-
+            
+            // Debug to console
+            console.log("Switching to tab:", target);
+            
+            // Hide all sections
             $('.section-content').hide();
-            $('#'+target+'-section').show();
-
+            
+            // Show the selected section
+            $('#'+target+'-section').css('display', 'block');
+            
+            // Update active tab
             $('.tab-btn').removeClass('act-scrlink');
             $(this).addClass('act-scrlink');
         });
+        
+        // Make sure sections are properly initialized
+        setTimeout(function() {
+            // Show the active tab section
+            let activeTab = $('.tab-btn.act-scrlink').data('target');
+            if (activeTab) {
+                $('.section-content').hide();
+                $('#'+activeTab+'-section').css('display', 'block');
+            }
+            
+            // Disable any JavaScript layout manipulation for our gallery
+            $('.no-js-layout').each(function() {
+                // Force grid layout
+                $(this).css({
+                    'display': 'grid',
+                    'grid-template-columns': 'repeat(3, 1fr)',
+                    'gap': '24px',
+                    'height': 'auto'
+                });
+                
+                // Fix each gallery item
+                $(this).find('.gallery-item').css({
+                    'position': 'relative',
+                    'left': 'auto',
+                    'top': 'auto',
+                    'width': '100%'
+                });
+            });
+        }, 100);
     });
 </script>
 @stop
