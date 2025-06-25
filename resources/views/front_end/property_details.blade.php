@@ -275,7 +275,7 @@
                                                 </div>
                                                 <!-- Description block -->
                                                 <div class="pp-description">
-                                                    <p>{{trim(strip_tags($property->description)) }}</p>
+                                                    <p>{!! html_entity_decode(trim(strip_tags($property->description))) !!}</p>
                                                 </div>
                                                 <!--boxed-content-item end-->
                                             </div>
@@ -595,7 +595,7 @@
                                                             </div>
                                                             <div class="geodir-category-content">
                                                                 <h3><a href="#">{{$sim_property->name}}</a></h3>
-                                                                <p class="txt-three-linesss">{{$sim_property->short_description}}</p>
+                                                                <p class="txt-three-linesss">{!! html_entity_decode($sim_property->short_description) !!}</p>
                                                                 <div class="geodir-category-content-details">
                                                                     <ul>
                                                                         <li><i class="fa-light fa-bed"></i><span>{{$sim_property->bedrooms}}</span></li>
