@@ -52,9 +52,9 @@
                                 <div class="user-dasboard-menu_wrap">
                                     <div class="user-dasboard-menu faq-nav">
                                         <ul>
-                                            <li><a href="#" class="tab-btn act-scrlink" data-target="photos">{{ __('messages.photos') }}</a></li>
-                                            <li><a href="#" class="tab-btn" data-target="videos">{{ __('messages.videos') }} </a></li>
-                                            <li><a href="#" class="tab-btn" data-target="blogs">{{ __('messages.blog') }}</a></li>
+                                            <li><a href="{{ url('photos') }}?filter=photos" class="tab-btn {{ request()->get('filter') == 'photos' || !request()->has('filter') ? 'act-scrlink' : '' }}">{{ __('messages.photos') }}</a></li>
+                                            <li><a href="{{ url('photos') }}?filter=videos" class="tab-btn {{ request()->get('filter') == 'videos' ? 'act-scrlink' : '' }}">{{ __('messages.videos') }} </a></li>
+                                            <li><a href="{{ url('photos') }}?filter=blogs" class="tab-btn {{ request()->get('filter') == 'blogs' ? 'act-scrlink' : '' }}">{{ __('messages.blog') }}</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -147,13 +147,6 @@
 @section('script')
         <script>
             $(document).ready(function(){
-                // Handle tab switching
-                $('.tab-btn').on('click', function(e){
-                    e.preventDefault();
-                    let target = $(this).data('target');
-                    switchTab(target);
-                });
-                
                 // Check for filter parameter in URL
                 function getUrlParameter(name) {
                     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');

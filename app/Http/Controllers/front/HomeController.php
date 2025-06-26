@@ -543,7 +543,10 @@ class HomeController extends Controller
             $folder->has_blogs = Blog::where(['folder_id' => $folder->id, 'deleted' => 0, 'active' => 1])->exists();
         }
         
-        return view('front_end.photos', compact('page_heading', 'folders'));
+        // Get the filter parameter from the URL (default to 'photos' if not provided)
+        $filter = request()->get('filter', 'photos');
+        
+        return view('front_end.photos', compact('page_heading', 'folders', 'filter'));
     }
 
     public function videos()

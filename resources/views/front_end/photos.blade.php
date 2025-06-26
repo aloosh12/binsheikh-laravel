@@ -44,7 +44,7 @@
         .grid-item-holder {
             padding: 10px; /* Optional: adds padding inside each item */
         }
-        
+
         /* Override any JavaScript positioning */
         .no-js-layout {
             display: grid !important;
@@ -52,7 +52,7 @@
             gap: 24px !important;
             height: auto !important;
         }
-        
+
         .no-js-layout .gallery-item {
             position: relative !important;
             left: auto !important;
@@ -79,7 +79,7 @@
                                         <div class="hero-section-title_container">
 
                                             <div class="hero-section-title">
-                                                <h2 style="text-transform: uppercase;">{{ __('messages.photos_media') }}</h2>
+                                                <h2 style="text-transform: uppercase;">{{ __('messages.news_media') }}</h2>
                                             </div>
                                         </div>
                                         <div class="hs-scroll-down-wrap">
@@ -126,9 +126,9 @@
                                         <div class="user-dasboard-menu_wrap">
                                             <div class="user-dasboard-menu faq-nav">
                                                 <ul>
-                                                    <li><a href="#" class="tab-btn act-scrlink" data-target="photos">{{ __('messages.photos') }}</a></li>
-                                                    <li><a href="#" class="tab-btn" data-target="videos">{{ __('messages.videos') }}</a></li>
-                                                    <li><a href="#" class="tab-btn" data-target="blogs">{{ __('messages.blog') }}</a></li>
+                                                    <li><a href="#" class="{{ request()->get('filter') == 'photos' || !request()->has('filter') ? 'tab-btn  act-scrlink': 'tab-btn'}}" data-target="photos">{{ __('messages.photos') }}</a></li>
+                                                    <li><a href="#" class="{{ request()->get('filter') == 'videos' ? 'tab-btn  act-scrlink' : 'tab-btn' }}" data-target="videos">{{ __('messages.videos') }}</a></li>
+                                                    <li><a href="#" class="{{ request()->get('filter') == 'blogs' ? 'tab-btn  act-scrlink' : 'tab-btn' }}" data-target="blogs">{{ __('messages.blog') }}</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -137,7 +137,7 @@
                                 <!-- user-dasboard-menu_wrap end-->
 
                                 <!-- Photos Folders Section -->
-                                <div class="col-lg-9 section-content" id="photos-section">
+                                <div class="col-lg-9 section-content" id="photos-section" style="{{ request()->get('filter') == 'photos' || !request()->has('filter') ? 'display:block;' : 'display:none;' }}">
                                     <div class="dashboard-title">
                                         <h4>{{ __('messages.photos') }}</h4>
                                     </div>
@@ -162,7 +162,7 @@
                                 </div>
 
                                 <!-- Videos Folders Section -->
-                                <div class="col-lg-9 section-content" id="videos-section" style="display: none;">
+                                <div class="col-lg-9 section-content" id="videos-section" style="{{ request()->get('filter') == 'videos' ? 'display:block;' : 'display:none;' }}">
                                     <div class="dashboard-title">
                                         <h4>{{ __('messages.videos') }}</h4>
                                     </div>
@@ -187,7 +187,7 @@
                                 </div>
 
                                 <!-- Blogs Folders Section -->
-                                <div class="col-lg-9 section-content" id="blogs-section" style="display: none;">
+                                <div class="col-lg-9 section-content" id="blogs-section" style="{{ request()->get('filter') == 'blogs' ? 'display:block;' : 'display:none;' }}">
                                     <div class="dashboard-title">
                                         <h4>{{ __('messages.blog') }}</h4>
                                     </div>
@@ -227,49 +227,49 @@
         $('.tab-btn').on('click', function(e){
             e.preventDefault();
             let target = $(this).data('target');
-            
+
             // Debug to console
             console.log("Switching to tab:", target);
-            
+
             // Hide all sections
             $('.section-content').hide();
-            
+
             // Show the selected section
             $('#'+target+'-section').css('display', 'block');
-            
+
             // Update active tab
             $('.tab-btn').removeClass('act-scrlink');
             $(this).addClass('act-scrlink');
         });
-        
+
         // Make sure sections are properly initialized
-        setTimeout(function() {
-            // Show the active tab section
-            let activeTab = $('.tab-btn.act-scrlink').data('target');
-            if (activeTab) {
-                $('.section-content').hide();
-                $('#'+activeTab+'-section').css('display', 'block');
-            }
-            
-            // Disable any JavaScript layout manipulation for our gallery
-            $('.no-js-layout').each(function() {
-                // Force grid layout
-                $(this).css({
-                    'display': 'grid',
-                    'grid-template-columns': 'repeat(3, 1fr)',
-                    'gap': '24px',
-                    'height': 'auto'
-                });
-                
-                // Fix each gallery item
-                $(this).find('.gallery-item').css({
-                    'position': 'relative',
-                    'left': 'auto',
-                    'top': 'auto',
-                    'width': '100%'
-                });
-            });
-        }, 100);
+        // setTimeout(function() {
+        //     // Show the active tab section
+        //     let activeTab = $('.tab-btn.act-scrlink').data('target');
+        //     if (activeTab) {
+        //         $('.section-content').hide();
+        //         $('#'+activeTab+'-section').css('display', 'block');
+        //     }
+        //
+        //     // Disable any JavaScript layout manipulation for our gallery
+        //     $('.no-js-layout').each(function() {
+        //         // Force grid layout
+        //         $(this).css({
+        //             'display': 'grid',
+        //             'grid-template-columns': 'repeat(3, 1fr)',
+        //             'gap': '24px',
+        //             'height': 'auto'
+        //         });
+        //
+        //         // Fix each gallery item
+        //         $(this).find('.gallery-item').css({
+        //             'position': 'relative',
+        //             'left': 'auto',
+        //             'top': 'auto',
+        //             'width': '100%'
+        //         });
+        //     });
+        // }, 100);
     });
 </script>
 @stop
