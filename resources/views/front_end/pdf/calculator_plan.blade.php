@@ -52,12 +52,11 @@
             position: relative;
         }
         .watermark {
-            position: absolute;
+            position: fixed;
             opacity: 0.7;
-            z-index: 0;
             width: 100%;
             height: 60%;
-            top: 50%;
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
@@ -116,96 +115,96 @@
     </style>
 </head>
 <body>
-    <!-- Fixed Header - Will repeat on every page -->
-    <div class="header">
-        <div class="header-content">
-            <div class="logo">
-                <img src="{{$logoBase64}}" alt="Bin Al Sheikh Real Estate Brokerage Logo">
-            </div>
+<!-- Watermark Image - Will repeat on every page -->
+<img class="watermark" src="{{$waterMarkBase64}}" alt="Watermark">
+
+<!-- Fixed Header - Will repeat on every page -->
+<div class="header">
+    <div class="header-content">
+        <div class="logo">
+            <img src="{{$logoBase64}}" alt="Bin Al Sheikh Real Estate Brokerage Logo">
         </div>
-        <hr class="header-divider">
     </div>
+    <hr class="header-divider">
+</div>
 
-    <!-- Fixed Footer - Will repeat on every page -->
-    <div class="footer">
-        <p>www.bsbqa.com | +974 4001 1911 - +974 3066 6004</p>
-    </div>
+<!-- Fixed Footer - Will repeat on every page -->
+<div class="footer">
+    <p>www.bsbqa.com | +974 4001 1911 - +974 3066 6004</p>
+</div>
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Watermark Image -->
-        <img class="watermark" src="{{$waterMarkBase64}}" alt="Watermark">
+<!-- Main Content -->
+<div class="container">
+    <div class="content">
+        <div class="title">Custom Payment Plan</div>
+        <div class="property-name">{{ $property->name }}</div>
 
-        <div class="content">
-            <div class="title">Custom Payment Plan</div>
-            <div class="property-name">{{ $property->name }}</div>
-
-            <div class="property-details">
-                <h3>Property Details</h3>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Unit Number</th>
-                        <th>Gross Area</th>
-                        <th>Size Net</th>
-                        <th>Full Price</th>
-                        <th>Management Fees</th>
-                        <th>Total</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>{{ $property->apartment_no }}</td>
-                        <td>{{ $property->gross_area }}</td>
-                        <td>{{ $property->area }} m2</td>
-                        <td>{{ moneyFormat($full_price) }}</td>
-                        <td>{{ moneyFormat($ser_amt) }}</td>
-                        <td>{{ moneyFormat($total) }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div>
-                <h3>Custom Payment Terms</h3>
-                <p><strong>Down Payment:</strong> {{ moneyFormat($down_payment) }} ({{ number_format($downPaymentPercentage, 2) }}%)</p>
-                <p><strong>Payment Duration:</strong> {{ $rental_duration }} months</p>
-            </div>
-
-            <h3>Payment Schedule</h3>
+        <div class="property-details">
+            <h3>Property Details</h3>
             <table>
                 <thead>
                 <tr>
-                    <th>Payment</th>
-                    <th>Month</th>
-                    <th>Amount</th>
-                    <th>Percentage</th>
+                    <th>Unit Number</th>
+                    <th>Gross Area</th>
+                    <th>Size Net</th>
+                    <th>Full Price</th>
+                    <th>Management Fees</th>
+                    <th>Total</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="payment-highlight">
-                    <td>Down Payment</td>
-                    <td>{{ date('M-y') }}</td>
-                    <td>{{ moneyFormat($down_payment) }}</td>
-                    <td>{{ number_format($downPaymentPercentage, 2) }}%</td>
-                </tr>
-                <tr class="payment-highlight">
-                    <td>Management Fees</td>
-                    <td>{{ date('M-y') }}</td>
+                <tr>
+                    <td>{{ $property->apartment_no }}</td>
+                    <td>{{ $property->gross_area }}</td>
+                    <td>{{ $property->area }} m2</td>
+                    <td>{{ moneyFormat($full_price) }}</td>
                     <td>{{ moneyFormat($ser_amt) }}</td>
-                    <td></td>
+                    <td>{{ moneyFormat($total) }}</td>
                 </tr>
-                @foreach($months as $mnth)
-                    <tr>
-                        <td>{{ $mnth['ordinal'] }} Installment</td>
-                        <td>{{ $mnth['month'] }}</td>
-                        <td>{{ moneyFormat($mnth['payment']) }}</td>
-                        <td>{{ $mnth['total_percentage'] }}%</td>
-                    </tr>
-                @endforeach
                 </tbody>
             </table>
         </div>
+
+        <div>
+            <h3>Custom Payment Terms</h3>
+            <p><strong>Down Payment:</strong> {{ moneyFormat($down_payment) }} ({{ number_format($downPaymentPercentage, 2) }}%)</p>
+            <p><strong>Payment Duration:</strong> {{ $rental_duration }} months</p>
+        </div>
+
+        <h3>Payment Schedule</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Payment</th>
+                <th>Month</th>
+                <th>Amount</th>
+                <th>Percentage</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="payment-highlight">
+                <td>Down Payment</td>
+                <td>{{ date('M-y') }}</td>
+                <td>{{ moneyFormat($down_payment) }}</td>
+                <td>{{ number_format($downPaymentPercentage, 2) }}%</td>
+            </tr>
+            <tr class="payment-highlight">
+                <td>Management Fees</td>
+                <td>{{ date('M-y') }}</td>
+                <td>{{ moneyFormat($ser_amt) }}</td>
+                <td></td>
+            </tr>
+            @foreach($months as $mnth)
+                <tr>
+                    <td>{{ $mnth['ordinal'] }} Installment</td>
+                    <td>{{ $mnth['month'] }}</td>
+                    <td>{{ moneyFormat($mnth['payment']) }}</td>
+                    <td>{{ $mnth['total_percentage'] }}%</td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
     </div>
+</div>
 </body>
 </html>
