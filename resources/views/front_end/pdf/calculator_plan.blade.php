@@ -100,7 +100,6 @@
         }
         tr {
             page-break-inside: avoid;
-            page-break-after: auto;
         }
         thead {
             display: table-header-group;
@@ -111,6 +110,20 @@
         .payment-highlight {
             background-color: #f2f2f2;
             font-weight: bold;
+        }
+        .first-schedule-page {
+            page-break-before: always;
+            padding-top: 20px;
+        }
+        .continued-schedule-page {
+            page-break-before: always;
+            padding-top: 20px;
+        }
+        .schedule-table {
+            margin-top: 0;
+        }
+        .schedule-title {
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -171,39 +184,93 @@
             <p><strong>Payment Duration:</strong> {{ $rental_duration }} months</p>
         </div>
 
-        <h3>Payment Schedule</h3>
-        <table>
-            <thead>
-            <tr>
-                <th>Payment</th>
-                <th>Month</th>
-                <th>Amount</th>
-                <th>Percentage</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr class="payment-highlight">
-                <td>Down Payment</td>
-                <td>{{ date('M-y') }}</td>
-                <td>{{ moneyFormat($down_payment) }}</td>
-                <td>{{ number_format($downPaymentPercentage, 2) }}%</td>
-            </tr>
-            <tr class="payment-highlight">
-                <td>Management Fees</td>
-                <td>{{ date('M-y') }}</td>
-                <td>{{ moneyFormat($ser_amt) }}</td>
-                <td></td>
-            </tr>
-            @foreach($months as $mnth)
+        <!-- Payment Schedule Sections -->
+        @php
+            // Combine all payment rows
+            $allRows = [
+                [
+                    'type' => 'Down Payment',
+                    'month' => date('M-y'),
+                    'amount' => $down_payment,
+                    'percentage' => number_format($downPaymentPercentage, 2) . '%',
+                    'highlight' => true
+                ],
+                [
+                    'type' => 'Management Fees',
+                    'month' => date('M-y'),
+                    'amount' => $ser_amt,
+                    'percentage' => '',
+                    'highlight' => true
+                ]
+            ];
+
+            // Add all installment rows
+            foreach($months as $mnth) {
+                $allRows[] = [
+                    'type' => $mnth['ordinal'] . ' Installment',
+                    'month' => $mnth['month'],
+                    'amount' => $mnth['payment'],
+                    'percentage' => $mnth['total_percentage'] . '%',
+                    'highlight' => false
+                ];
+            }
+
+            // Calculate rows per page (adjust based on your content height)
+            $rowsPerPage = 17;
+            $totalPages = ceil(count($allRows) / $rowsPerPage);
+        @endphp
+
+            <!-- First Payment Schedule Page -->
+        <div class="first-schedule-page">
+            <h3 class="schedule-title">Payment Schedule</h3>
+            <table class="schedule-table">
+                <thead>
                 <tr>
-                    <td>{{ $mnth['ordinal'] }} Installment</td>
-                    <td>{{ $mnth['month'] }}</td>
-                    <td>{{ moneyFormat($mnth['payment']) }}</td>
-                    <td>{{ $mnth['total_percentage'] }}%</td>
+                    <th>Payment</th>
+                    <th>Month</th>
+                    <th>Amount</th>
+                    <th>Percentage</th>
                 </tr>
-            @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                @for($i = 0; $i < min($rowsPerPage, count($allRows)); $i++)
+                    <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
+                        <td>{{ $allRows[$i]['type'] }}</td>
+                        <td>{{ $allRows[$i]['month'] }}</td>
+                        <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>
+                        <td>{{ $allRows[$i]['percentage'] }}</td>
+                    </tr>
+                @endfor
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Continued Payment Schedule Pages -->
+        @for($page = 1; $page < $totalPages; $page++)
+            <div class="continued-schedule-page">
+                <h3 class="schedule-title"></h3>
+                <table class="schedule-table">
+                    <thead>
+                    <tr>
+                        <th>Payment</th>
+                        <th>Month</th>
+                        <th>Amount</th>
+                        <th>Percentage</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @for($i = $page * $rowsPerPage; $i < min(($page + 1) * $rowsPerPage, count($allRows)); $i++)
+                        <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
+                            <td>{{ $allRows[$i]['type'] }}</td>
+                            <td>{{ $allRows[$i]['month'] }}</td>
+                            <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>
+                            <td>{{ $allRows[$i]['percentage'] }}</td>
+                        </tr>
+                    @endfor
+                    </tbody>
+                </table>
+            </div>
+        @endfor
     </div>
 </div>
 </body>
