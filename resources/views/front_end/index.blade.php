@@ -27,6 +27,25 @@
         background-repeat: no-repeat;
         background-size: cover;
     }
+
+    /* Responsive styles for api-img */
+    @media screen and (min-width: 992px) {
+        .api-img {
+            height: 71.6%; !important;
+        }
+    }
+
+    @media screen and (max-width: 991px) and (min-width: 768px) {
+        .api-img {
+            height: 78%;
+        }
+    }
+
+    @media screen and (max-width: 767px) {
+        .api-img {
+            height: 80%;
+        }
+    }
 </style>
 @stop
 
