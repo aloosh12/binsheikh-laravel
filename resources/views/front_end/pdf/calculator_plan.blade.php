@@ -149,7 +149,7 @@
 <!-- Main Content -->
 <div class="container">
     <div class="content">
-        <div class="title">Custom Payment Plan</div>
+        <div class="title">{{$payment_plan}}</div>
         <div class="property-name">{{ $property->name }}</div>
 
         <div class="property-details">
@@ -179,7 +179,7 @@
         </div>
 
         <div>
-            <h3>Custom Payment Terms</h3>
+            <h3>{{$payment_term}}</h3>
             <p><strong>Down Payment:</strong> {{ moneyFormat($down_payment) }} ({{ number_format($downPaymentPercentage, 2) }}%)</p>
             <p><strong>Payment Duration:</strong> {{ $rental_duration }} months</p>
         </div>

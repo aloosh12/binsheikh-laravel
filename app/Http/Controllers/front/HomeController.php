@@ -535,17 +535,17 @@ class HomeController extends Controller
         $page_heading = "Photos";
         //$photos = Photo::where(['deleted' => 0, 'active' => 1])->latest()->get();
         $folders = Folder::where(['deleted' => 0])->orderBy('is_pinned','DESC')->get();
-        
+
         // Add has_photos, has_videos, and has_blogs properties to each folder
         foreach ($folders as $folder) {
             $folder->has_photos = Photo::where(['folder_id' => $folder->id, 'deleted' => 0])->exists();
             $folder->has_videos = Video::where(['folder_id' => $folder->id, 'deleted' => 0, 'active' => 1])->exists();
             $folder->has_blogs = Blog::where(['folder_id' => $folder->id, 'deleted' => 0, 'active' => 1])->exists();
         }
-        
+
         // Get the filter parameter from the URL (default to 'photos' if not provided)
         $filter = request()->get('filter', 'photos');
-        
+
         return view('front_end.photos', compact('page_heading', 'folders', 'filter'));
     }
 
@@ -1717,11 +1717,13 @@ class HomeController extends Controller
 
             $payableEmiAmount = $pending_amt;
             $monthCount = $monthsDifference;//$settings->month_count;
+            $rental_duration = $monthCount;
             $monthlyPayment = $payableEmiAmount / $monthCount;
             $percentageRate = (100 - $settings->advance_perc) / $monthCount;
 
             $months = [];
             $totalPercentage = $settings->advance_perc;
+            $downPaymentPercentage = $settings->advance_perc;
             $remainingAmount = $payableEmiAmount;
 
             for ($i = 0; $i < $monthCount; $i++) {
@@ -1737,15 +1739,25 @@ class HomeController extends Controller
                 $months[$i]['total_percentage'] = round($totalPercentage, 2);
             }
 
-            // Generate PDF
-            $pdf = PDF::loadView('front_end.pdf.payment_plan', [
-                'property' => $property,
-                'ser_amt' => $ser_amt,
-                'total' => $total,
-                'down_payment' => $down_payment,
-                'months' => $months,
-                'settings' => $settings
-            ]);
+            // Get logo and convert to base64
+            $logoPath = public_path('Screenshot_2025-06-14_032432.png');
+            $waterMarkPath = public_path('watermark.png');
+
+            $logoBase64 = '';
+            $waterMarkBase64 = '';
+            if (file_exists($logoPath)) {
+                $imageData = file_get_contents($logoPath);
+                $logoBase64 = 'data:image/png;base64,' . base64_encode($imageData);
+            }
+            if (file_exists($waterMarkPath)) {
+                $imageData = file_get_contents($waterMarkPath);
+                $waterMarkBase64 = 'data:image/png;base64,' . base64_encode($imageData);
+            }
+            $payment_plan = 'Property Payment Plan';
+            $payment_term = 'Property Payment Terms';
+            // Generate PDF with bookmarks
+            $pdf = $this->getPdf($payment_plan, $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, $months, $settings, $rental_duration, $logoBase64, $waterMarkBase64);
+
 
             return $pdf->download('payment_plan_' . $property->apartment_no . '.pdf');
 
@@ -1755,6 +1767,78 @@ class HomeController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+//    public function downloadPaymentPlan(Request $request)
+//    {
+//        try {
+//            // Get property details
+//            $property = Properties::findOrFail($request->property_id);
+//
+//            // Get settings
+//            $settings = Settings::first();
+//
+//            // Get calculation parameters from request
+//            $advance_amount = $request->advance_amount;
+//            $rental_duration = $request->rental_duration;
+//
+//            // Calculate payment details
+//            $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
+//            $total = $property->price + $ser_amt;
+//            $full_price_calc = $property->price;
+//            $down_payment = $advance_amount;
+//            $pending_amt = $full_price_calc - $down_payment;
+//
+//            // Calculate percentages
+//            $downPaymentPercentage = ($down_payment / $full_price_calc) * 100;
+//            $monthlyPercentage = (100 - $downPaymentPercentage) / $rental_duration;
+//
+//            // Generate months and payment schedule
+//            $cur_month = Carbon::now();
+//            $cur_month->startOfMonth();
+//
+//            $monthlyPayment = $pending_amt / $rental_duration;
+//
+//            $months = [];
+//            $totalPercentage = $downPaymentPercentage;
+//            $remainingAmount = $pending_amt;
+//
+//            for ($i = 0; $i < $rental_duration; $i++) {
+//                $remainingAmount -= $monthlyPayment;
+//                $totalPercentage += $monthlyPercentage;
+//                $month = $cur_month->copy()->addMonths($i+1)->format('M-y');
+//                $months[] = [
+//                    'ordinal' => $this->getOrdinalSuffix($i + 1),
+//                    'month' => $month,
+//                    'payment' => round($monthlyPayment, 2),
+//                    'remaining_amount' => round($remainingAmount, 2),
+//                    'total_percentage' => round($totalPercentage, 2)
+//                ];
+//            }
+//
+//            // Get logo and convert to base64
+//            $logoPath = public_path('Screenshot_2025-06-14_032432.png');
+//            $waterMarkPath = public_path('watermark.png');
+//
+//            $logoBase64 = '';
+//            $waterMarkBase64 = '';
+//            if (file_exists($logoPath)) {
+//                $imageData = file_get_contents($logoPath);
+//                $logoBase64 = 'data:image/png;base64,' . base64_encode($imageData);
+//            }
+//            if (file_exists($waterMarkPath)) {
+//                $imageData = file_get_contents($waterMarkPath);
+//                $waterMarkBase64 = 'data:image/png;base64,' . base64_encode($imageData);
+//            }
+//            $payment_plan = 'Property Payment Plan';
+//            $payment_term = 'Property Payment Terms';
+//            // Generate PDF with bookmarks
+//            $pdf = $this->getPdf($payment_plan, $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, $months, $settings, $rental_duration, $logoBase64, $waterMarkBase64);
+//
+//            return $pdf->download('payment_plan_' . $property->apartment_no . '.pdf');
+//
+//        } catch (\Exception $e) {
+//            return response()->json(['error' => $e->getMessage()], 500);
+//        }
+//    }
 
     public function downloadCalculatorResult(Request $request)
     {
@@ -1817,50 +1901,75 @@ class HomeController extends Controller
                 $imageData = file_get_contents($waterMarkPath);
                 $waterMarkBase64 = 'data:image/png;base64,' . base64_encode($imageData);
             }
-
+            $payment_plan = 'Custom Payment Plan';
+            $payment_term = 'Custom Payment Terms';
             // Generate PDF with bookmarks
-            $pdf = PDF::loadView('front_end.pdf.calculator_plan', [
-                'property' => $property,
-                'ser_amt' => $ser_amt,
-                'total' => $total,
-                'full_price' => $full_price_calc,
-                'down_payment' => $down_payment,
-                'downPaymentPercentage' => $downPaymentPercentage,
-                'months' => $months,
-                'settings' => $settings,
-                'rental_duration' => $rental_duration,
-                'logoBase64' => $logoBase64,
-                'waterMarkBase64' => $waterMarkBase64
-
-            ]);
-
-            // Add bookmarks
-            $pdf->setOptions([
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => true,
-                'isPhpEnabled' => true,
-                'isFontSubsettingEnabled' => true,
-                'defaultFont' => 'Arial',
-                'bookmarks' => [
-                    [
-                        'title' => 'Property Details',
-                        'level' => 0
-                    ],
-                    [
-                        'title' => 'Payment Terms',
-                        'level' => 0
-                    ],
-                    [
-                        'title' => 'Payment Schedule',
-                        'level' => 0
-                    ]
-                ]
-            ]);
+            $pdf = $this->getPdf($payment_plan, $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, $months, $settings, $rental_duration, $logoBase64, $waterMarkBase64);
 
             return $pdf->download('payment_calculator_' . $property->apartment_no . '.pdf');
 
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * @param string $payment_plan
+     * @param string $payment_term
+     * @param $property
+     * @param $ser_amt
+     * @param $total
+     * @param $full_price_calc
+     * @param $down_payment
+     * @param $downPaymentPercentage
+     * @param array $months
+     * @param $settings
+     * @param $rental_duration
+     * @param string $logoBase64
+     * @param string $waterMarkBase64
+     * @return mixed
+     */
+    public function getPdf(string $payment_plan, string $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, array $months, $settings, $rental_duration, string $logoBase64, string $waterMarkBase64)
+    {
+        $pdf = PDF::loadView('front_end.pdf.calculator_plan', [
+            'payment_plan' => $payment_plan,
+            'payment_term' => $payment_term,
+            'property' => $property,
+            'ser_amt' => $ser_amt,
+            'total' => $total,
+            'full_price' => $full_price_calc,
+            'down_payment' => $down_payment,
+            'downPaymentPercentage' => $downPaymentPercentage,
+            'months' => $months,
+            'settings' => $settings,
+            'rental_duration' => $rental_duration,
+            'logoBase64' => $logoBase64,
+            'waterMarkBase64' => $waterMarkBase64
+
+        ]);
+
+        // Add bookmarks
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'isPhpEnabled' => true,
+            'isFontSubsettingEnabled' => true,
+            'defaultFont' => 'Arial',
+            'bookmarks' => [
+                [
+                    'title' => 'Property Details',
+                    'level' => 0
+                ],
+                [
+                    'title' => 'Payment Terms',
+                    'level' => 0
+                ],
+                [
+                    'title' => 'Payment Schedule',
+                    'level' => 0
+                ]
+            ]
+        ]);
+        return $pdf;
     }
 }
