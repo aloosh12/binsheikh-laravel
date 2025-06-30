@@ -29,21 +29,15 @@
     }
 
     /* Responsive styles for api-img */
-    @media screen and (min-width: 992px) {
+    @media screen and (min-width: 1367px) {
         .api-img {
             height: 71.6%; !important;
         }
     }
 
-    @media screen and (max-width: 991px) and (min-width: 768px) {
+    @media screen and (max-width: 1366px) and (min-width: 800px) {
         .api-img {
-            height: 78%;
-        }
-    }
-
-    @media screen and (max-width: 767px) {
-        .api-img {
-            height: 80%;
+            height: 29.4%; !important;
         }
     }
 </style>
