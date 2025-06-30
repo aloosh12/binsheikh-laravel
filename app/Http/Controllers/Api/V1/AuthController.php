@@ -58,6 +58,9 @@ class AuthController extends Controller
                     'message' => __('messages.account_deactivated_by_admin'),
                 ], 401);
             }
+            if (!Auth::user()->verified) {
+                return response()->json(['message' => __('messages.account_need_approve_from_admin')], 401);
+            }
             $user = User::find(auth()->user()->id);
             $user->user_device_token = $request->fcm_token;
             $user->user_device_type = $request->device_type;
@@ -291,7 +294,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
             'phone' => $request->phone,
             'role' => $request->user_type,
-
+            'verified' => 0,
             'user_device_type' => $request->device_type,
             'user_device_token' => $request->fcm_token,
             'active' => 1,
