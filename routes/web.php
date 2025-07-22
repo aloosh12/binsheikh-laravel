@@ -40,6 +40,10 @@ Route::get('/login/google', function () {
     return Socialite::driver('google')->redirect();
 });
 
+// Phone verification routes
+Route::post('/send-otp', 'App\Http\Controllers\front\HomeController@sendOtp');
+Route::post('/verify-otp', 'App\Http\Controllers\front\HomeController@verifyOtp');
+
 Route::get('/google/callback', 'App\Http\Controllers\front\HomeController@google_callback');
 Route::get('/facebook/callback', 'App\Http\Controllers\front\HomeController@facebook_callback');
 

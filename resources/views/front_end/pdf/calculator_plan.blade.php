@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar-en">
 <head>
     <meta charset="UTF-8">
-    <title>Payment Template</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Payment ص عربي تج Template</title>
     <style>
         @page {
             margin: 120px 50px 80px 50px;
@@ -23,7 +24,7 @@
         }
         .header-content {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             margin-bottom: 10px;
         }
@@ -64,8 +65,13 @@
             position: relative;
             z-index: 1;
         }
+        .logo {
+            text-align: center;
+            width: 100%;
+        }
         .logo img {
             height: 80px;
+            margin: 0 auto; /* This centers the image horizontally */
         }
         .title {
             text-align: center;
@@ -75,10 +81,18 @@
             color: #333;
         }
         .property-name {
-            text-align: center;
-            font-size: 20px;
-            color: #666;
+            text-align: left;
+            font-size: 12px;
+            color: #ff0000; /* Red color */
+            font-weight: bold;
+        }
+        .note-ar {
+            text-align: right;
+            font-size: 12px;
+            color: #ff0000; /* Red color */
+            font-weight: bold;
             margin-bottom: 30px;
+            direction: rtl;  font-family: Arial, sans-serif;
         }
         .property-details {
             margin-bottom: 30px;
@@ -150,39 +164,73 @@
 <div class="container">
     <div class="content">
         <div class="title">{{$payment_plan}}</div>
-        <div class="property-name">{{ $property->name }}</div>
+        <div class="property-name">{{ $payment_note_en_part1 }}</div>
+        <div style="text-align: center;font-size: 12px;  color: #ff0000;font-weight: bold;">{{ $payment_note_en_part2 }}</div>
+        <div class="note-ar">{{ $payment_note_ar }}</div>
 
         <div class="property-details">
             <h3>Property Details</h3>
             <table>
                 <thead>
                 <tr>
+                    <th>Project </th>
                     <th>Unit Number</th>
-                    <th>Gross Area</th>
-                    <th>Size Net</th>
-                    <th>Full Price</th>
-                    <th>Management Fees</th>
-                    <th>Total</th>
+                    <th>Floor Number</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
+                    <td>{{$project}}</td>
                     <td>{{ $property->apartment_no }}</td>
-                    <td>{{ $property->gross_area }}</td>
+                    <td>{{ $property->floor_no }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <table>
+                <thead>
+                <tr>
+                    <th>Gross Area</th>
+                    <th>Size Net</th>
+                    <th>Balcony Siz</th>
+                    <th>Handover</th>
+                    <th>Instalment</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ $property->gross_area }} m2</td>
                     <td>{{ $property->area }} m2</td>
+                    <td>{{ $property->balcony_size }} m2</td>
+                    <td>{{ moneyFormat($full_price) }}</td>
+                    <td>{{ moneyFormat($ser_amt) }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <table>
+                <thead>
+                <tr>
+                    <th>Full Price</th>
+                    <th>Management Fees</th>
+                    <th>Total</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
                     <td>{{ moneyFormat($full_price) }}</td>
                     <td>{{ moneyFormat($ser_amt) }}</td>
                     <td>{{ moneyFormat($total) }}</td>
+                    <td>{{ date('d-M-y') }}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
-        <div>
-            <h3>{{$payment_term}}</h3>
-            <p><strong>Down Payment:</strong> {{ moneyFormat($down_payment) }} ({{ number_format($downPaymentPercentage, 2) }}%)</p>
-            <p><strong>Payment Duration:</strong> {{ $rental_duration }} months</p>
-        </div>
+{{--        <div>--}}
+{{--            <h3>{{$payment_term}}</h3>--}}
+{{--            <p><strong>Down Payment:</strong> {{ moneyFormat($down_payment) }} ({{ number_format($downPaymentPercentage, 2) }}%)</p>--}}
+{{--            <p><strong>Payment Duration:</strong> {{ $rental_duration }} months</p>--}}
+{{--        </div>--}}
 
         <!-- Payment Schedule Sections -->
         @php
@@ -226,17 +274,18 @@
             <table class="schedule-table">
                 <thead>
                 <tr>
+                    <th>Timeline</th>
+                    <th>Monthly %</th>
                     <th>Payment</th>
-                    <th>Month</th>
-                    <th>Amount</th>
-                    <th>Percentage</th>
+                    <th>Total Accumulated</th>
+                    <th>Total</th>
                 </tr>
                 </thead>
                 <tbody>
                 @for($i = 0; $i < min($rowsPerPage, count($allRows)); $i++)
                     <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
-                        <td>{{ $allRows[$i]['type'] }}</td>
                         <td>{{ $allRows[$i]['month'] }}</td>
+                        <td>{{ $allRows[$i]['type'] }}</td>
                         <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>
                         <td>{{ $allRows[$i]['percentage'] }}</td>
                     </tr>
@@ -252,17 +301,19 @@
                 <table class="schedule-table">
                     <thead>
                     <tr>
+                        <th>Timeline</th>
+                        <th>Monthly %</th>
                         <th>Payment</th>
-                        <th>Month</th>
-                        <th>Amount</th>
-                        <th>Percentage</th>
+                        <th>Total Accumulated</th>
+                        <th>Total</th>
                     </tr>
                     </thead>
                     <tbody>
                     @for($i = $page * $rowsPerPage; $i < min(($page + 1) * $rowsPerPage, count($allRows)); $i++)
                         <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
-                            <td>{{ $allRows[$i]['type'] }}</td>
                             <td>{{ $allRows[$i]['month'] }}</td>
+                            <td>{{ $allRows[$i]['type'] }}</td>
+
                             <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>
                             <td>{{ $allRows[$i]['percentage'] }}</td>
                         </tr>

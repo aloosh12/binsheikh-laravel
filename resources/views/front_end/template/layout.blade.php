@@ -95,6 +95,45 @@
         .select2-selection {
             width: 100% !important;
         }
+
+        /* Phone verification styles */
+        .verify-phone-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 1;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .otp-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 18px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        .otp-input:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
         </style>
         @yield('header')
 
@@ -538,6 +577,7 @@
                                                             <i class="fa-light fa-mobile"></i>
                                                             <input type="text" placeholder="{{ __('messages.phone_number') }}" name="phone" required
                                                                 data-parsley-required-message="{{ __('messages.enter_your_phone') }}"> <!-- Translated Phone Number -->
+                                                            <button type="button" class="verify-phone-btn">{{ __('messages.verify') }}</button>
                                                         </div>
 
                                                         <!-- Email Address -->
@@ -1262,4 +1302,202 @@
         const propertyId = $('input[name="property_id"]').val();
         window.location.href = `/specific-checkout/${propertyId}?advance_amount=${advanceAmount}&rental_duration=${rentalDuration}`;
     }
+</script>
+
+<!-- Phone Verification Modal -->
+<div class="modal fade" id="phoneVerificationModal" tabindex="-1" aria-labelledby="phoneVerificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="phoneVerificationModalLabel">{{ __('messages.verify_phone') ?? 'Verify Phone' }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="otp-container">
+                    <p class="text-center">{{ __('messages.verification_code_sent') ?? 'A verification code has been sent to your phone number' }}</p>
+                    <div class="otp-inputs d-flex justify-content-center gap-2 mb-4">
+                        <input type="text" class="otp-input form-control" maxlength="1" autofocus>
+                        <input type="text" class="otp-input form-control" maxlength="1">
+                        <input type="text" class="otp-input form-control" maxlength="1">
+                        <input type="text" class="otp-input form-control" maxlength="1">
+                        <input type="text" class="otp-input form-control" maxlength="1">
+                        <input type="text" class="otp-input form-control" maxlength="1">
+                    </div>
+                    <div class="text-center mb-3">
+                        <span id="resendCountdown">{{ __('messages.resend_code_in') ?? 'Resend code in' }} <span id="countdown">60</span> {{ __('messages.seconds') ?? 'seconds' }}</span>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" id="resendOtpBtn" class="btn btn-link" disabled>{{ __('messages.resend_code') ?? 'Resend Code' }}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.close') ?? 'Close' }}</button>
+                <button type="button" class="btn btn-primary" id="verifyOtpBtn">{{ __('messages.verify') ?? 'Verify' }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Style for the verify button
+    $(".verify-phone-btn").css({
+        'position': 'absolute',
+        'right': '10px',
+        'top': '50%',
+        'transform': 'translateY(-50%)',
+        'background-color': '#4CAF50',
+        'color': 'white',
+        'border': 'none',
+        'border-radius': '4px',
+        'padding': '5px 10px',
+        'cursor': 'pointer',
+        'font-size': '14px'
+    });
+
+    // Handle click on verify phone button
+    $(".verify-phone-btn").click(function() {
+        const phoneNumber = $(this).siblings("input[name='phone']").val();
+
+        if (!phoneNumber) {
+            show_msg(0, "{{ __('messages.enter_phone_first') ?? 'Please enter your phone number first' }}");
+            return;
+        }
+
+        // Send OTP to the phone number
+        sendOTP(phoneNumber);
+
+        // Show the OTP verification modal
+        $("#phoneVerificationModal").modal("show");
+
+        // Start countdown timer
+        startCountdown();
+    });
+
+    // Handle OTP input focus change
+    $(".otp-input").on("input", function() {
+        if ($(this).val().length === 1) {
+            $(this).next(".otp-input").focus();
+        }
+    });
+
+    // Handle backspace in OTP inputs
+    $(".otp-input").on("keydown", function(e) {
+        if (e.keyCode === 8 && $(this).val() === "") {
+            $(this).prev(".otp-input").focus();
+        }
+    });
+
+    // Handle verify OTP button click
+    $("#verifyOtpBtn").click(function() {
+        let otp = "";
+        $(".otp-input").each(function() {
+            otp += $(this).val();
+        });
+
+        if (otp.length !== 6) {
+            show_msg(0, "{{ __('messages.enter_complete_otp') ?? 'Please enter the complete verification code' }}");
+            return;
+        }
+
+        const phoneNumber = $("input[name='phone']").val();
+
+        // Verify OTP
+        verifyOTP(phoneNumber, otp);
+    });
+
+    // Handle resend OTP button click
+    $("#resendOtpBtn").click(function() {
+        if (!$(this).prop("disabled")) {
+            const phoneNumber = $("input[name='phone']").val();
+            sendOTP(phoneNumber);
+            startCountdown();
+            $(this).prop("disabled", true);
+        }
+    });
+
+    // Function to send OTP
+    function sendOTP(phoneNumber) {
+        // Here you would make an AJAX call to your backend to send the OTP
+        // For now, we'll just simulate success
+        console.log("Sending OTP to " + phoneNumber);
+
+        $.ajax({
+            url: "{{ url('send-otp') }}", // You'll need to create this endpoint
+            method: "POST",
+            data: {
+                phone: phoneNumber,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function(response) {
+                if (response.success) {
+                    show_msg(1, "{{ __('messages.otp_sent_success') ?? 'Verification code sent successfully' }}");
+                } else {
+                    show_msg(0, response.message || "{{ __('messages.otp_sent_failed') ?? 'Failed to send verification code' }}");
+                }
+            },
+            error: function(xhr) {
+                console.log(xhr);
+                show_msg(0, "{{ __('messages.server_error') ?? 'Server error occurred' }}");
+            }
+        });
+    }
+
+    // Function to verify OTP
+    function verifyOTP(phoneNumber, otp) {
+        // Here you would make an AJAX call to your backend to verify the OTP
+        // For now, we'll just simulate success
+        console.log("Verifying OTP " + otp + " for phone " + phoneNumber);
+
+        $.ajax({
+            url: "{{ url('verify-otp') }}", // You'll need to create this endpoint
+            method: "POST",
+            data: {
+                phone: phoneNumber,
+                otp: otp,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function(response) {
+                if (response.success) {
+                    show_msg(1, "{{ __('messages.phone_verified') ?? 'Phone number verified successfully' }}");
+                    $("#phoneVerificationModal").modal("hide");
+
+                    // Visual indication that the phone is verified
+                    $("input[name='phone']").css("border-color", "#4CAF50");
+                    $(".verify-phone-btn")
+                        .text("{{ __('messages.verified') ?? 'Verified' }}")
+                        .css("background-color", "#4CAF50")
+                        .prop("disabled", true);
+
+                    // You may want to store the verification status
+                    $("form").append('<input type="hidden" name="phone_verified" value="1">');
+                } else {
+                    show_msg(0, response.message || "{{ __('messages.invalid_otp') ?? 'Invalid verification code' }}");
+                }
+            },
+            error: function(xhr) {
+                show_msg(0, "{{ __('messages.server_error') ?? 'Server error occurred' }}");
+            }
+        });
+    }
+
+    // Function to start countdown timer
+    function startCountdown() {
+        let seconds = 60;
+        $("#countdown").text(seconds);
+        $("#resendOtpBtn").prop("disabled", true);
+
+        const timer = setInterval(function() {
+            seconds--;
+            $("#countdown").text(seconds);
+
+            if (seconds <= 0) {
+                clearInterval(timer);
+                $("#resendCountdown").hide();
+                $("#resendOtpBtn").prop("disabled", false);
+            }
+        }, 1000);
+    }
+});
 </script>

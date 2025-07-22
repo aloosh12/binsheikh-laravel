@@ -454,12 +454,12 @@ class HomeController extends Controller
             'deleted' => 0,
             'project_id' => $project->id
         ])
-        ->whereNotNull('floor_no')
-        ->where('floor_no', '!=', '')
-        ->distinct('floor_no')
-        ->orderByRaw('CAST(floor_no AS UNSIGNED) ASC')
-        ->pluck('floor_no')
-        ->toArray();
+            ->whereNotNull('floor_no')
+            ->where('floor_no', '!=', '')
+            ->distinct('floor_no')
+            ->orderByRaw('CAST(floor_no AS UNSIGNED) ASC')
+            ->pluck('floor_no')
+            ->toArray();
 
         $floors_with_properties = [];
 
@@ -832,21 +832,21 @@ class HomeController extends Controller
                 }
 
 
-                 if ($request->user_type == 3 || $request->user_type == 4) {
-                     if ($request->file("license")) {
-                         $response = image_upload($request, 'profile', 'license');
-                         if ($response['status']) {
-                             $ins['license'] = $response['link'];
-                         }
-                     }
+                if ($request->user_type == 3 || $request->user_type == 4) {
+                    if ($request->file("license")) {
+                        $response = image_upload($request, 'profile', 'license');
+                        if ($response['status']) {
+                            $ins['license'] = $response['link'];
+                        }
+                    }
 
-                     if ($request->file("id_card")) {
-                         $response = image_upload($request, 'profile', 'id_card');
-                         if ($response['status']) {
-                             $ins['id_card'] = $response['link'];
-                         }
-                     }
-                 }
+                    if ($request->file("id_card")) {
+                        $response = image_upload($request, 'profile', 'id_card');
+                        if ($response['status']) {
+                            $ins['id_card'] = $response['link'];
+                        }
+                    }
+                }
 
                 // if ($request->user_type == 4) {
                 //     if ($request->file("cr")) {
@@ -1387,6 +1387,225 @@ class HomeController extends Controller
         $this->thmx_currency_convert();
         return redirect()->back();
     }
+
+    /**
+     * Send an SMS using the API with Basic Authentication
+     *
+     * @param string $username API username
+     * @param string $password API password
+     * @param string $from Sender name/number
+     * @param string $to Recipient numbers (comma-separated)
+     * @param string $text Message content
+     * @param int $type Encoding type (0 or 1)
+     * @param string|null $deferred (Optional) Scheduled send time
+     * @param bool $flash (Optional) Flash message
+     * @param bool $blink (Optional) Blink message
+     * @param bool $private (Optional) Private message
+     * @return array API response (includes message ID if successful)
+     */
+    public function sendSmsWithAuth(
+        string $username,
+        string $password,
+        string $from,
+        string $to,
+        string $text,
+        int $type = 0,
+        ?string $deferred = null,
+        bool $flash = false,
+        bool $blink = false,
+        bool $private = false
+    ): array {
+        $apiUrl = "https://messaging.ooredoo.qa/bms/api/Sms"; // Adjust base URL if needed
+        $data = [
+            "From" => $from,
+            "To" => $to,
+            "Text" => $text,
+            "Type" => $type,
+            "Deferred" => $deferred,
+            "Flash" => $flash,
+            "Blink" => $blink,
+            "Private" => $private
+        ];
+
+        $ch = curl_init($apiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Content-Type: application/json",
+            "Authorization: Basic " . base64_encode("$username:$password") // Basic Auth
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 201) {
+            throw new Exception("Failed to send SMS. HTTP Code: $httpCode. Response: $response");
+        }
+
+        return json_decode($response, true);
+    }
+    /**
+     * Check the status of an SMS with Basic Authentication
+     *
+     * @param string $username API username
+     * @param string $password API password
+     * @param string $messageId UUID of the sent message
+     * @param bool $detailed (Optional) Fetch detailed per-recipient status
+     * @return array API response (status summary or detailed report)
+     */
+    function checkSmsStatusWithAuth(
+        string $username,
+        string $password,
+        string $messageId,
+        bool $detailed = false
+    ): array {
+        $endpoint = $detailed ? "/detailed" : "";
+        $apiUrl = "https://messaging.ooredoo.qa/bms/api/Sms/" . urlencode($messageId) . $endpoint;
+
+        $ch = curl_init($apiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Accept: application/json",
+            "Authorization: Basic " . base64_encode("$username:$password") // Basic Auth
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            throw new Exception("Failed to check status. HTTP Code: $httpCode. Response: $response");
+        }
+
+        return json_decode($response, true);
+    }
+    public function sendOtp(Request $request)
+    {
+     //   return response()->json(['success' => true, 'message' => 'sdada'], 200);
+        try {
+            // Validate request
+            $validator = Validator::make($request->all(), [
+                'phone' => 'required|string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
+            }
+            $phone = $request->phone;
+            // Generate OTP code (6 digits)
+            $otp = rand(100000, 999999);
+            // Store OTP in session for later verification
+            Session::put('phone_verification_otp', [
+                'phone' => $phone,
+                'otp' => $otp,
+                'expires_at' => now()->addMinutes(5)
+            ]);
+            // Send SMS using Ooredoo API (same as in check_sms method)
+            $url = 'https://messaging.ooredoo.qa/bms/soap/Messenger.asmx';
+            try {
+                $result =$this->sendSmsWithAuth(
+                    username: "BinAlSheikh",
+                    password: "Qatar@123#",
+                    from: "MyApp",
+                    to: $phone,
+                    text: $otp,
+                    type: 0
+                );
+                $message_id =  $result['data']['id'];
+                sleep(2);
+
+                try {
+                    $status = $this->checkSmsStatusWithAuth(
+                        username: "BinAlSheikh",
+                        password: "Qatar@123#",
+                        messageId: $message_id
+                    );
+                    if (isset($status['data']['status']['SMSC_DELIVERED'])) {
+                        return response()->json(['success' => true, 'message' => 'OTP sent successfully'], 200);
+                    }
+
+                } catch (Exception $e) {
+                    return response()->json(['success' => false, 'message' => 'Failed to send OTP: ' . $e->getMessage()], 500);
+                }
+
+                // Check if delivered
+                if (isset($status['data']['status']['SMSC_DELIVERED'])) {
+                    echo "Delivered to " . $status['data']['status']['SMSC_DELIVERED'] . " recipient(s).";
+                }
+
+// Check for failures
+                if (isset($status['data']['status']['REJECTED_BLACKLISTED'])) {
+                    echo "Failed (blacklisted): " . $status['data']['status']['REJECTED_BLACKLISTED'];
+                }
+            } catch (Exception $e) {
+                return response()->json(['success' => false, 'message' => 'Failed to send OTP: ' . $e->getMessage()], 500);
+            }
+
+
+            // For testing/development, just log the OTP
+            Log::info("OTP sent to $phone: $otp");
+
+            return response()->json(['success' => true, 'message' => 'OTP sent successfully'], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error sending OTP: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to send OTP: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Verify OTP for phone verification
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verifyOtp(Request $request)
+    {
+        try {
+            // Validate request
+            $validator = Validator::make($request->all(), [
+                'phone' => 'required|string',
+                'otp' => 'required|string|size:6',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
+            }
+
+            $phone = $request->phone;
+            $otp = $request->otp;
+
+            // Retrieve stored OTP from session
+            $storedData = Session::get('phone_verification_otp');
+
+            if (!$storedData || $storedData['phone'] !== $phone) {
+                return response()->json(['success' => false, 'message' => 'No OTP was sent to this number'], 400);
+            }
+
+            // Check if OTP has expired
+            if (now()->isAfter($storedData['expires_at'])) {
+                Session::forget('phone_verification_otp');
+                return response()->json(['success' => false, 'message' => 'OTP has expired'], 400);
+            }
+
+            // Verify OTP
+            if ($storedData['otp'] !== $otp) {
+                return response()->json(['success' => false, 'message' => 'Invalid OTP'], 400);
+            }
+
+            // OTP is valid, mark phone as verified in session
+            Session::put('phone_verified', $phone);
+            Session::forget('phone_verification_otp');
+
+            return response()->json(['success' => true, 'message' => 'Phone verified successfully'], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error verifying OTP: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to verify OTP: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function thmx_currency_convert()
     {
         $url = 'https://api.exchangerate-api.com/v4/latest/QAR';
@@ -1515,7 +1734,7 @@ class HomeController extends Controller
 
         $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
 
-       // $total = $property->price + $ser_amt;
+        // $total = $property->price + $ser_amt;
         $full_price_calc = $property->price;
 
         // Set the down payment (advance amount from user)
@@ -1736,6 +1955,7 @@ class HomeController extends Controller
                 $months[$i]['ordinal'] = $this->getOrdinalSuffix($i + 1);
                 $months[$i]['payment'] = round($monthlyPayment, 2);
                 $months[$i]['remaining_amount'] = round($remainingAmount, 2);
+                $months[$i]['$percentage_rate'] = round($totalPercentage, 2);
                 $months[$i]['total_percentage'] = round($totalPercentage, 2);
             }
 
@@ -1904,7 +2124,13 @@ class HomeController extends Controller
             $payment_plan = 'Custom Payment Plan';
             $payment_term = 'Custom Payment Terms';
             // Generate PDF with bookmarks
-            $pdf = $this->getPdf($payment_plan, $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, $months, $settings, $rental_duration, $logoBase64, $waterMarkBase64);
+            $unit_number =  $property->apartment_no;
+            $balcony_size =  $property->balcony_size;
+            $gross_area =  $property->gross_area;
+            $floor_no =  $property->floor_no;
+            $project_name = $property->project ? $property->project->name : '';
+
+            $pdf = $this->getPdf($payment_plan, $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, $months, $settings, $rental_duration, $logoBase64, $waterMarkBase64, $project_name, $unit_number, $floor_no, $balcony_size,$gross_area);
 
             return $pdf->download('payment_calculator_' . $property->apartment_no . '.pdf');
 
@@ -1929,10 +2155,15 @@ class HomeController extends Controller
      * @param string $waterMarkBase64
      * @return mixed
      */
-    public function getPdf(string $payment_plan, string $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, array $months, $settings, $rental_duration, string $logoBase64, string $waterMarkBase64)
+    public function getPdf(string $payment_plan, string $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, array $months, $settings, $rental_duration, string $logoBase64, string $waterMarkBase64, string $project_name)
     {
+        $ppp = $project_name;
         $pdf = PDF::loadView('front_end.pdf.calculator_plan', [
             'payment_plan' => $payment_plan,
+            'payment_note_en_part1' => 'Note: This plan is just a preview and is not considered an official final plan. The official final plan',
+            'payment_note_en_part2' => 'is generated with the contract',
+            'payment_note_ar' => 'تنويه: هذا المستند لا يعتبر جدول الدفع النهائي والمعتمد. جدول الدفع النهائي يصدر مع طباعة العقد',
+
             'payment_term' => $payment_term,
             'property' => $property,
             'ser_amt' => $ser_amt,
@@ -1944,7 +2175,8 @@ class HomeController extends Controller
             'settings' => $settings,
             'rental_duration' => $rental_duration,
             'logoBase64' => $logoBase64,
-            'waterMarkBase64' => $waterMarkBase64
+            'waterMarkBase64' => $waterMarkBase64,
+            'project' => $project_name,
 
         ]);
 
