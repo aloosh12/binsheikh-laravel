@@ -279,6 +279,10 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::post('customer/update-discount', 'CustomerController@updateDiscount')->name('admin.customer.update-discount');
     Route::post('customer/update-apartments', 'CustomerController@updateApartments')->name('admin.customer.update-apartments');
 
+    // Popups routes
+    Route::resource('popups', 'PopupController');
+    Route::post('popups/change_status', 'PopupController@changeStatus');
+
 });
 
 Route::any('/check_sms', 'App\Http\Controllers\front\HomeController@check_sms')
