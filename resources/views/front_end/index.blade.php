@@ -47,6 +47,32 @@
 
     <div class="body-overlay fs-wrapper search-form-overlay close-search-form"></div>
     <!--header-end-->
+
+    <!-- Popup Modal -->
+    @if(isset($popup) && $popup)
+    <div class="modal fade" id="popupModal" tabindex="-1" aria-labelledby="popupModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="popupModalLabel">{{ $popup->title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    @if($popup->subtitle)
+                        <p class="mb-3">{{ $popup->subtitle }}</p>
+                    @endif
+                    <img src="{{ aws_asset_path($popup->image) }}" class="img-fluid" alt="{{ $popup->title }}">
+                    @if($popup->link)
+                        <div class="mt-3">
+                            <a href="{{ $popup->link }}" class="btn btn-primary" target="_blank">Learn More</a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!--warpper-->
     <div class="wrapper">
         <div class="content bg-gray">
@@ -672,6 +698,12 @@
 
 @section('script')
 <script>
+    // Show popup modal on page load
+    $(document).ready(function() {
+        var popupModal = new bootstrap.Modal(document.getElementById('popupModal'));
+        popupModal.show();
+    });
+
     $(".pr_range").change(function(){
         pr_text = "Price"
         if($(this).val()){

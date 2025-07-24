@@ -13,6 +13,7 @@ use App\Models\ContactUsModel;
 use App\Models\Country;
 use App\Models\FavouriteProperty;
 use App\Models\Photo;
+use App\Models\Popup;
 use App\Models\Projects;
 use App\Models\ProjectCountry;
 use App\Models\Properties;
@@ -195,8 +196,17 @@ class HomeController extends Controller
         $locations = ProjectCountry::select('id', 'name','name_ar')->where(['active' => '1', 'deleted' => 0])->orderBy('created_at', 'desc')->get();
 
         $reviews = Reviews::where(['deleted' => 0, 'active' => 1])->limit(10)->latest()->get();
+        
+        // Get active popup for home page if not shown in this session
+        $popup = null;
+        if (!Session::has('popup_shown')) {
+            $popup = Popup::where('is_active', 1)->latest()->first();
+            if ($popup) {
+                Session::put('popup_shown', true);
+            }
+        }
 
-        return view('front_end.index', compact('page_heading', 'recommended', 'categories', 'recommended_prj', 'recommended_ser', 'prj','locations','reviews'));
+        return view('front_end.index', compact('page_heading', 'recommended', 'categories', 'recommended_prj', 'recommended_ser', 'prj','locations','reviews', 'popup'));
     }
 
     public function property_listing()

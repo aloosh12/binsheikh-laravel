@@ -285,7 +285,9 @@
                 @for($i = 0; $i < min($rowsPerPage, count($allRows)); $i++)
                     <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                         <td>{{ $allRows[$i]['month'] }}</td>
+
                         <td>{{ $allRows[$i]['type'] }}</td>
+
                         <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>
                         <td>{{ $allRows[$i]['percentage'] }}</td>
                     </tr>
@@ -312,6 +314,7 @@
                     @for($i = $page * $rowsPerPage; $i < min(($page + 1) * $rowsPerPage, count($allRows)); $i++)
                         <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                             <td>{{ $allRows[$i]['month'] }}</td>
+
                             <td>{{ $allRows[$i]['type'] }}</td>
 
                             <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>

@@ -39,7 +39,8 @@
                                             <td>{{ $i }}</td>
                                             <td>
                                                 @if(!empty($popup->image))
-                                                    <img src="{{ asset('storage/' . $popup->image) }}" width="100">
+                                                    <img src="{{aws_asset_path($popup->image) }}"
+                                                         width="100">
                                                 @endif
                                             </td>
                                             <td>{{ $popup->title }}</td>
@@ -63,7 +64,7 @@
                                                 <form action="{{ url('admin/popups/' . $popup->id) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-outline-danger active deleteListItem" 
+                                                    <button type="submit" class="btn btn-outline-danger active deleteListItem"
                                                         data-message="Do you want to remove this popup?" title="Delete"
                                                         aria-hidden="true"><i class="fas fa-trash-alt fa-1x"></i></button>
                                                 </form>
@@ -81,4 +82,4 @@
 @stop
 
 @section('script')
-@stop 
+@stop

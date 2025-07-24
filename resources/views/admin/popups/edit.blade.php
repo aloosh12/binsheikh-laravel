@@ -23,21 +23,21 @@
                                         <input type="text" name="title" class="form-control" required value="{{ $popup->title }}">
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Subtitle</label>
                                         <input type="text" name="subtitle" class="form-control" value="{{ $popup->subtitle }}">
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Link</label>
                                         <input type="text" name="link" data-parsley-type="url" class="form-control" value="{{ $popup->link }}">
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-6 form-group">
                                     <label>Status</label>
                                     <select name="is_active" class="form-control">
@@ -45,26 +45,26 @@
                                         <option value="0" {{ !$popup->is_active ? 'selected' : '' }}>Inactive</option>
                                     </select>
                                 </div>
-        
+
                                 <div class="col-md-12 form-group">
-                                    <img id="image-preview" src="{{ asset('storage/' . $popup->image) }}" style="width:192px; height:108px;" class="img-responsive mb-1">
+                                    <img id="image-preview" src="{{ aws_asset_path($popup->image) }}" style="width:192px; height:108px;" class="img-responsive mb-1">
                                 </div>
-        
+
                                 <div class="col-md-6 form-group">
                                     <label>Upload Image</label>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input jqv-input" name="image"
                                             data-role="file-image" data-preview="image-preview"
-                                            id="popup-image" 
+                                            id="popup-image"
                                             data-parsley-trigger="change" data-parsley-fileextension="jpg,png,gif,jpeg"
-                                            data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported" 
-                                            data-parsley-max-file-size="2048" data-parsley-max-file-size-message="Max file size should be 2MB" 
-                                            accept="image/*" data-parsley-errors-container="#img_err"> 
+                                            data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported"
+                                            data-parsley-max-file-size="2048" data-parsley-max-file-size-message="Max file size should be 2MB"
+                                            accept="image/*" data-parsley-errors-container="#img_err">
                                         <label class="custom-file-label" for="customFile">Choose file</label>
                                     </div>
                                     <span id="img_err"></span>
                                 </div>
-                             
+
                                 <div class="col-md-12 mt-3">
                                     <button type="submit" class="btn btn-primary">Update</button>
                                 </div>
@@ -125,4 +125,4 @@
         });
     });
 </script>
-@stop 
+@stop

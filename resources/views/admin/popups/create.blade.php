@@ -22,21 +22,21 @@
                                         <input type="text" name="title" class="form-control" required>
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Subtitle</label>
                                         <input type="text" name="subtitle" class="form-control">
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Link</label>
                                         <input type="text" name="link" data-parsley-type="url" class="form-control">
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-6 form-group">
                                     <label>Status</label>
                                     <select name="is_active" class="form-control">
@@ -44,26 +44,26 @@
                                         <option value="0">Inactive</option>
                                     </select>
                                 </div>
-        
+
                                 <div class="col-md-12 form-group">
                                     <img id="image-preview" style="width:192px; height:108px;" class="img-responsive mb-1">
                                 </div>
-        
+
                                 <div class="col-md-6 form-group">
                                     <label>Upload Image <span class="text-danger">*</span></label>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input jqv-input" name="image"
                                             data-role="file-image" data-preview="image-preview" required
-                                            data-parsley-required-message="Image is required" id="popup-image" 
+                                            data-parsley-required-message="Image is required" id="popup-image"
                                             data-parsley-trigger="change" data-parsley-fileextension="jpg,png,gif,jpeg"
-                                            data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported" 
-                                            data-parsley-max-file-size="2048" data-parsley-max-file-size-message="Max file size should be 2MB" 
-                                            accept="image/*" data-parsley-errors-container="#img_err"> 
+                                            data-parsley-fileextension-message="Only files with type jpg,png,gif,jpeg are supported"
+                                            data-parsley-max-file-size="2048" data-parsley-max-file-size-message="Max file size should be 2MB"
+                                            accept="image/*" data-parsley-errors-container="#img_err">
                                         <label class="custom-file-label" for="customFile">Choose file</label>
                                     </div>
                                     <span id="img_err"></span>
                                 </div>
-                             
+
                                 <div class="col-md-12 mt-3">
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
@@ -103,7 +103,8 @@
                     $form.find('button[type="submit"]')
                         .text('Submit')
                         .attr('disabled', false);
-                    toastr.error(response.message);
+                    show_msg(0, e.responseText)
+                  //  toastr.error(response.message);
                 }
             },
             error: function(xhr) {
@@ -118,10 +119,10 @@
                         input.after('<div class="invalid-feedback d-block">' + value[0] + '</div>');
                     });
                 } else {
-                    toastr.error('Something went wrong. Please try again.');
+                    show_msg(0, 'Something went wrong. Please try again.');
                 }
             }
         });
     });
 </script>
-@stop 
+@stop

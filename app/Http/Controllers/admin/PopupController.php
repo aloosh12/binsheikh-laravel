@@ -50,8 +50,14 @@ class PopupController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
-        $imagePath = $request->file('image')->store('popups', 'public');
+        $imagePath  = '';
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $imagePath = '/uploads/popup/photos/' . $name;
+            Storage::disk('s3')->put($imagePath, fopen($file, 'r+'));
+        }
+      //  $imagePath = $request->file('image')->store('popups', 'public');
 
         Popup::create([
             'title' => $request->title,
@@ -110,14 +116,19 @@ class PopupController extends Controller
         }
 
         $popup = Popup::findOrFail($id);
-        
+
         if ($request->hasFile('image')) {
             // Delete old image
-            if ($popup->image) {
-                Storage::disk('public')->delete($popup->image);
+//            if ($popup->image) {
+//                Storage::disk('public')->delete($popup->image);
+//            }
+            $response = image_upload($request, 'popup/image', 'image');
+            if ($response['status']) {
+                $imagePath = $response['link'];
+                $popup->image = $imagePath;
             }
-            $imagePath = $request->file('image')->store('popups', 'public');
-            $popup->image = $imagePath;
+
+
         }
 
         $popup->title = $request->title;
@@ -138,17 +149,17 @@ class PopupController extends Controller
     public function destroy($id)
     {
         $popup = Popup::findOrFail($id);
-        
+
         // Delete image file
         if ($popup->image) {
             Storage::disk('public')->delete($popup->image);
         }
-        
+
         $popup->delete();
-        
+
         return redirect()->route('admin.popups.index')->with('success', 'Popup deleted successfully.');
     }
-    
+
     /**
      * Change the active status of a popup.
      *
@@ -160,7 +171,7 @@ class PopupController extends Controller
         $popup = Popup::findOrFail($request->id);
         $popup->is_active = $request->status;
         $popup->save();
-        
+
         return response()->json(['status' => true, 'message' => 'Status changed successfully.']);
     }
 }

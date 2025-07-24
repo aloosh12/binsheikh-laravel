@@ -136,6 +136,14 @@ $CurrentUrl = url()->current();
                     </div> Folders
                 </a>
             </li>
+            <li class="c-sidebar-nav-item"><a
+                    class="c-sidebar-nav-link {{ preg_match('/admin\/popups/', $CurrentUrl)  ? 'c-active' : null }}"
+                    href="{{ url('admin/popups') }}">
+                    <div class="c-sidebar-nav-icon">
+                        <i class="fa fa-folder"></i>
+                    </div> PopUp
+                </a>
+            </li>
 
             <li class="c-sidebar-nav-item"><a
                     class="c-sidebar-nav-link {{ preg_match('/admin\/settings/', $CurrentUrl)  ? 'c-active' : null }}"
