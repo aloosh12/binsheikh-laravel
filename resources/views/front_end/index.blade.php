@@ -50,27 +50,48 @@
 
     <!-- Popup Modal -->
     @if(isset($popup) && $popup)
-    <div class="modal fade" id="popupModal" tabindex="-1" aria-labelledby="popupModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="popupModalLabel">{{ $popup->title }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    @if($popup->subtitle)
-                        <p class="mb-3">{{ $popup->subtitle }}</p>
-                    @endif
-                    <img src="{{ aws_asset_path($popup->image) }}" class="img-fluid" alt="{{ $popup->title }}">
-                    @if($popup->link)
-                        <div class="mt-3">
-                            <a href="{{ $popup->link }}" class="btn btn-primary" target="_blank">Learn More</a>
+        <div class="modal fade" id="popupModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 rounded-0" style="background-color: #f8f5f0; max-width: 600px;">
+                    <!-- Close Button -->
+                    <button type="button" class="btn-close position-absolute end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    <div class="modal-body p-0">
+                        <div class="row g-0">
+                            <!-- Left Column - Image -->
+                            <div class="col-md-6">
+                                <img src="{{ aws_asset_path($popup->image) }}" class="img-fluid h-100 w-100 object-fit-cover" alt="Special Offer">
+                            </div>
+
+                            <!-- Right Column - Content -->
+                            <div class="col-md-6 p-4 d-flex flex-column justify-content-center">
+                                <div class="text-center">
+                                    <!-- "enro" text (assuming this is a logo/brand) -->
+                                    <p class="mb-1" style="font-size: 14px; letter-spacing: 2px;">enro</p>
+
+                                    <!-- Main Offer Text -->
+                                    <h2 class="mb-3" style="font-size: 32px; font-weight: 300; letter-spacing: 1px;">
+                                        Unlock<br>
+                                        <span style="font-weight: 700;">OVER 30% OFF</span><br>
+                                        your first mask
+                                    </h2>
+
+                                    <!-- Disclaimer -->
+                                    <p class="mb-4" style="font-size: 10px; font-style: italic;">"Exclusions apply!</p>
+
+
+
+                                    <!-- Sign Up Button -->
+                                    <button class="btn btn-dark rounded-0 w-100 py-2" style="letter-spacing: 1px;">
+                                        SIGN UP
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
 
     <!--warpper-->
