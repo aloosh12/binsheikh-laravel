@@ -492,8 +492,11 @@
                                                                                             <label for="loanAmount" class="form-label">{{ __('messages.advance_amount') }}</label>
                                                                                             <input type="text" data-parsley-type="integer" class="form-control" id="AdvanceAmount" required max="{{$total}}" data-parsley-type-message="{{ __('messages.this_value_should_be_a_valid_integer') }}" data-parsley-required-message="" name="advance_amount" data-parsley-greater-than-zero="true">
                                                                                         </div>
-
                                                                                         <div class="col-md-3">
+                                                                                            <label for="handoveramount" class="form-label">{{ __('messages.handover_amount') }}</label>
+                                                                                            <input type="text" data-parsley-type="integer" class="form-control" id="HandOverAmount" required max="{{$total}}" data-parsley-type-message="{{ __('messages.this_value_should_be_a_valid_integer') }}" data-parsley-required-message="" name="hand_over_amount" data-parsley-greater-than-zero="true">
+                                                                                        </div>
+                                                                                        <div class="col-md-2">
                                                                                             <label for="interestRate" class="form-label">{{ __('messages.rental_duration') }}</label>
                                                                                             <select data-parsley-type="integer" class="form-control " id="" required max="{{$monthCount}}" data-parsley-max-message="{{ __('messages.month_count_limit', ['monthCount' => $monthCount]) }}" data-parsley-type-message="{{ __('messages.this_value_should_be_a_valid_integer') }}" data-parsley-required-message="" name="rental_duration" data-parsley-greater-than-zero="true">
                                                                                                 <option value="">{{ __('messages.rental_duration') }}</option>
@@ -504,10 +507,10 @@
 
                                                                                         </div>
 
-                                                                                        <div class="col-md-3">
+                                                                                        <div class="col-md-2">
                                                                                             <button type="submit" class="btn btn-warning w-100" style="border-radius: 4px; margin-top: 30px">{{ __('messages.calculate_emi') }}</button>
                                                                                         </div>
-                                                                                        <div class="col-md-3">
+                                                                                        <div class="col-md-2">
                                                                                             @if(Auth::check() && (Auth::user()->role != '1'))
                                                                                                 <a href="#" class="btn btn-warning w-100" style="border-radius: 4px; margin-top: 30px" id="bookNowBtn" onclick="redirectToSpecificCheckout(event)">
                                                                                                     {{ __('messages.book_now') }}
@@ -660,9 +663,10 @@
         $('#downloadCalculationPdf').click(function() {
             var property_id = $('input[name="property_id"]').val();
             var advance_amount = $('#AdvanceAmount').val();
+            var hand_over_amount = $('#HandOverAmount').val();
             var rental_duration = $('select[name="rental_duration"]').val();
 
-            if (!advance_amount || !rental_duration) {
+            if (!advance_amount || !hand_over_amount || !rental_duration) {
                 show_msg(0, "{{ __('messages.please_fill_in_all_required_fields_and_calculate_emi_first') }}");
                 return;
             }
@@ -690,7 +694,11 @@
                 'value': advance_amount,
                 'type': 'hidden'
             }));
-
+            form.append($('<input>', {
+                'name': 'hand_over_amount',
+                'value': hand_over_amount,
+                'type': 'hidden'
+            }));
             form.append($('<input>', {
                 'name': 'rental_duration',
                 'value': rental_duration,

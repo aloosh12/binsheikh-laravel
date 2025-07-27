@@ -196,7 +196,7 @@ class HomeController extends Controller
         $locations = ProjectCountry::select('id', 'name','name_ar')->where(['active' => '1', 'deleted' => 0])->orderBy('created_at', 'desc')->get();
 
         $reviews = Reviews::where(['deleted' => 0, 'active' => 1])->limit(10)->latest()->get();
-        
+
         // Get active popup for home page if not shown in this session
         $popup = null;
         if (!Session::has('popup_shown')) {
@@ -2081,6 +2081,7 @@ class HomeController extends Controller
 
             // Get calculation parameters from request
             $advance_amount = $request->advance_amount;
+            $hand_over_amount = $request->hand_over_amount;
             $rental_duration = $request->rental_duration;
 
             // Calculate payment details
@@ -2088,11 +2089,13 @@ class HomeController extends Controller
             $total = $property->price + $ser_amt;
             $full_price_calc = $property->price;
             $down_payment = $advance_amount;
-            $pending_amt = $full_price_calc - $down_payment;
+            $hand_over_payment = $hand_over_amount;
+            $pending_amt = $full_price_calc - $down_payment - $hand_over_payment;
 
             // Calculate percentages
             $downPaymentPercentage = ($down_payment / $full_price_calc) * 100;
-            $monthlyPercentage = (100 - $downPaymentPercentage) / $rental_duration;
+            $handOverPaymentPercentage = ($hand_over_payment / $full_price_calc) * 100;
+            $monthlyPercentage = (100 - $downPaymentPercentage - $handOverPaymentPercentage) / $rental_duration;
 
             // Generate months and payment schedule
             $cur_month = Carbon::now();
@@ -2102,17 +2105,21 @@ class HomeController extends Controller
 
             $months = [];
             $totalPercentage = $downPaymentPercentage;
+            $totalPayment = $down_payment;
             $remainingAmount = $pending_amt;
 
             for ($i = 0; $i < $rental_duration; $i++) {
                 $remainingAmount -= $monthlyPayment;
                 $totalPercentage += $monthlyPercentage;
+                $totalPayment += $monthlyPayment;
                 $month = $cur_month->copy()->addMonths($i+1)->format('M-y');
                 $months[] = [
                     'ordinal' => $this->getOrdinalSuffix($i + 1),
                     'month' => $month,
                     'payment' => round($monthlyPayment, 2),
+                    'total_payment' => round($totalPayment, 2),
                     'remaining_amount' => round($remainingAmount, 2),
+                    'percentage' => round($monthlyPercentage, 2),
                     'total_percentage' => round($totalPercentage, 2)
                 ];
             }
@@ -2140,7 +2147,7 @@ class HomeController extends Controller
             $floor_no =  $property->floor_no;
             $project_name = $property->project ? $property->project->name : '';
 
-            $pdf = $this->getPdf($payment_plan, $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, $months, $settings, $rental_duration, $logoBase64, $waterMarkBase64, $project_name, $unit_number, $floor_no, $balcony_size,$gross_area);
+            $pdf = $this->getPdfCalulator($payment_plan, $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, $months, $settings, $rental_duration, $logoBase64, $waterMarkBase64, $project_name, $hand_over_amount, $handOverPaymentPercentage);
 
             return $pdf->download('payment_calculator_' . $property->apartment_no . '.pdf');
 
@@ -2168,6 +2175,56 @@ class HomeController extends Controller
     public function getPdf(string $payment_plan, string $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, array $months, $settings, $rental_duration, string $logoBase64, string $waterMarkBase64, string $project_name)
     {
         $ppp = $project_name;
+        $pdf = PDF::loadView('front_end.pdf.payment_plan', [
+            'payment_plan' => $payment_plan,
+            'payment_note_en_part1' => 'Note: This plan is just a preview and is not considered an official final plan. The official final plan',
+            'payment_note_en_part2' => 'is generated with the contract',
+            'payment_note_ar' => 'تنويه: هذا المستند لا يعتبر جدول الدفع النهائي والمعتمد. جدول الدفع النهائي يصدر مع طباعة العقد',
+
+            'payment_term' => $payment_term,
+            'property' => $property,
+            'ser_amt' => $ser_amt,
+            'total' => $total,
+            'full_price' => $full_price_calc,
+            'down_payment' => $down_payment,
+            'downPaymentPercentage' => $downPaymentPercentage,
+            'months' => $months,
+            'settings' => $settings,
+            'rental_duration' => $rental_duration,
+            'logoBase64' => $logoBase64,
+            'waterMarkBase64' => $waterMarkBase64,
+            'project' => $project_name,
+
+        ]);
+
+        // Add bookmarks
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'isPhpEnabled' => true,
+            'isFontSubsettingEnabled' => true,
+            'defaultFont' => 'Arial',
+            'bookmarks' => [
+                [
+                    'title' => 'Property Details',
+                    'level' => 0
+                ],
+                [
+                    'title' => 'Payment Terms',
+                    'level' => 0
+                ],
+                [
+                    'title' => 'Payment Schedule',
+                    'level' => 0
+                ]
+            ]
+        ]);
+        return $pdf;
+    }
+
+    public function getPdfCalulator(string $payment_plan, string $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, array $months, $settings, $rental_duration, string $logoBase64, string $waterMarkBase64, string $project_name, string $handOverPayment, string $handOverPaymentPercentage )
+    {
+        $ppp = $project_name;
         $pdf = PDF::loadView('front_end.pdf.calculator_plan', [
             'payment_plan' => $payment_plan,
             'payment_note_en_part1' => 'Note: This plan is just a preview and is not considered an official final plan. The official final plan',
@@ -2181,6 +2238,8 @@ class HomeController extends Controller
             'full_price' => $full_price_calc,
             'down_payment' => $down_payment,
             'downPaymentPercentage' => $downPaymentPercentage,
+            'hand_over_amount' => $handOverPayment,
+            'hand_over_percentage' => $handOverPaymentPercentage,
             'months' => $months,
             'settings' => $settings,
             'rental_duration' => $rental_duration,

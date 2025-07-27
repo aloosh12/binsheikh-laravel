@@ -166,7 +166,7 @@
         <div class="title">{{$payment_plan}}</div>
         <div class="property-name">{{ $payment_note_en_part1 }}</div>
         <div style="text-align: center;font-size: 12px;  color: #ff0000;font-weight: bold;">{{ $payment_note_en_part2 }}</div>
-        <div class="note-ar">{{ $payment_note_ar }}</div>
+{{--        <div class="note-ar">{{ $payment_note_ar }}</div>--}}
 
         <div class="property-details">
             <h3>Property Details</h3>
@@ -201,8 +201,8 @@
                     <td>{{ $property->gross_area }} m2</td>
                     <td>{{ $property->area }} m2</td>
                     <td>{{ $property->balcony_size }} m2</td>
-                    <td>{{ moneyFormat($full_price) }}</td>
-                    <td>{{ moneyFormat($ser_amt) }}</td>
+                    <td>{{ $full_price }}</td>
+                    <td>{{ $ser_amt }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -217,9 +217,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{ moneyFormat($full_price) }}</td>
-                    <td>{{ moneyFormat($ser_amt) }}</td>
-                    <td>{{ moneyFormat($total) }}</td>
+                    <td>{{ $full_price }}</td>
+                    <td>{{ $ser_amt }}</td>
+                    <td>{{ $total }}</td>
                     <td>{{ date('d-M-y') }}</td>
                 </tr>
                 </tbody>
@@ -235,33 +235,44 @@
         <!-- Payment Schedule Sections -->
         @php
             // Combine all payment rows
-            $allRows = [
-                [
-                    'type' => 'Down Payment',
-                    'month' => date('M-y'),
-                    'amount' => $down_payment,
-                    'percentage' => number_format($downPaymentPercentage, 2) . '%',
-                    'highlight' => true
-                ],
-                [
-                    'type' => 'Management Fees',
-                    'month' => date('M-y'),
-                    'amount' => $ser_amt,
-                    'percentage' => '',
-                    'highlight' => true
-                ]
-            ];
+
+ $allRows[] = [
+    'month' => 'Down Payment',
+    'payment' => $down_payment,
+    'total_payment' => $down_payment,
+    'percentage' => number_format($downPaymentPercentage, 2) . '%',
+    'total_percentage' => number_format($downPaymentPercentage, 2) . '%',
+    'highlight' => true
+];
 
             // Add all installment rows
             foreach($months as $mnth) {
                 $allRows[] = [
-                    'type' => $mnth['ordinal'] . ' Installment',
                     'month' => $mnth['month'],
-                    'amount' => $mnth['payment'],
-                    'percentage' => $mnth['total_percentage'] . '%',
+                    'percentage' => $mnth['percentage']. '%',
+                    'payment' => $mnth['payment'],
+                    'total_payment' => $mnth['total_payment'],
+                    'total_percentage' => $mnth['total_percentage'] . '%',
                     'highlight' => false
                 ];
             }
+
+$allRows[] = [
+    'month' => 'Handover Payment',
+    'payment' => $hand_over_amount,
+    'percentage' => number_format($hand_over_percentage, 2) . '%',
+    'total_payment' => $full_price,
+    'total_percentage' => '100%',
+    'highlight' => true
+];
+$allRows[] = [
+    'month' => 'Management Fees',
+    'payment' => $ser_amt,
+    'percentage' => $downPaymentPercentage,
+        'total_payment' => '',
+    'total_percentage' => '',
+    'highlight' => true
+];
 
             // Calculate rows per page (adjust based on your content height)
             $rowsPerPage = 17;
@@ -275,21 +286,20 @@
                 <thead>
                 <tr>
                     <th>Timeline</th>
-                    <th>Monthly %</th>
+                    <th>Monthly%</th>
                     <th>Payment</th>
                     <th>Total Accumulated</th>
-                    <th>Total</th>
+                    <th>Total%</th>
                 </tr>
                 </thead>
                 <tbody>
                 @for($i = 0; $i < min($rowsPerPage, count($allRows)); $i++)
                     <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                         <td>{{ $allRows[$i]['month'] }}</td>
-
-                        <td>{{ $allRows[$i]['type'] }}</td>
-
-                        <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>
                         <td>{{ $allRows[$i]['percentage'] }}</td>
+                        <td>{{ $allRows[$i]['payment'] }}</td>
+                        <td>{{ $allRows[$i]['total_payment'] }}</td>
+                        <td>{{ $allRows[$i]['total_percentage'] }}</td>
                     </tr>
                 @endfor
                 </tbody>
@@ -304,21 +314,20 @@
                     <thead>
                     <tr>
                         <th>Timeline</th>
-                        <th>Monthly %</th>
+                        <th>Monthly%</th>
                         <th>Payment</th>
                         <th>Total Accumulated</th>
-                        <th>Total</th>
+                        <th>Total%</th>
                     </tr>
                     </thead>
                     <tbody>
                     @for($i = $page * $rowsPerPage; $i < min(($page + 1) * $rowsPerPage, count($allRows)); $i++)
                         <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                             <td>{{ $allRows[$i]['month'] }}</td>
-
-                            <td>{{ $allRows[$i]['type'] }}</td>
-
-                            <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>
                             <td>{{ $allRows[$i]['percentage'] }}</td>
+                            <td>{{ $allRows[$i]['payment'] }}</td>
+                            <td>{{ $allRows[$i]['total_payment'] }}</td>
+                            <td>{{ $allRows[$i]['total_percentage'] }}</td>
                         </tr>
                     @endfor
                     </tbody>
