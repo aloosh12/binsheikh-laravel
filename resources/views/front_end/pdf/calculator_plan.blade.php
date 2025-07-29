@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Payment ص عربي تج Template</title>
+    <title>Payment Template</title>
     <style>
         @page {
             margin: 120px 50px 80px 50px;
@@ -33,18 +33,6 @@
             border-top: 2px solid #c0a96e;
             margin: 0;
             width: 100%;
-        }
-        .footer {
-            position: fixed;
-            bottom: -40px;
-            left: 0;
-            right: 0;
-            height: 50px;
-            text-align: center;
-            font-size: 14px;
-            color: #888;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
         }
         .container {
             max-width: 800px;
@@ -110,7 +98,8 @@
             text-align: left;
         }
         th {
-            background-color: #f8f8f8;
+            background-color: #00337C;
+            color: white;
         }
         tr {
             page-break-inside: avoid;
@@ -139,6 +128,45 @@
         .schedule-title {
             margin-bottom: 15px;
         }
+        .footer {
+            position: fixed;
+            bottom: -40px;
+            text-align: center !important;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: auto;
+            background-color: #003366;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 10px 0;
+            border: none; /* Ensure no outer border */
+        }
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none; /* Remove table border */
+        }
+        .footer-table td {
+            padding: 5px 10px;
+            vertical-align: top;
+            border-right: 1px solid rgba(255,255,255,0.2);
+            border-top: none; /* Remove top border */
+            border-bottom: none; /* Remove bottom border */
+            border-left: none; /* Remove left border */
+        }
+        .footer-table td:last-child {
+            border-right: none; /* Remove right border for last cell */
+        }
+        .footer-table tr {
+            border: none; /* Remove row borders */
+        }
+        .handover-row {
+            background-color: #FFFF00 !important; /* Yellow */
+        }
+        .management-row {
+            background-color: #ADD8E6 !important; /* Light blue */
+        }
     </style>
 </head>
 <body>
@@ -157,7 +185,27 @@
 
 <!-- Fixed Footer - Will repeat on every page -->
 <div class="footer">
-    <p>www.bsbqa.com | +974 4001 1911 - +974 3066 6004</p>
+    <table class="footer-table">
+        <tr>
+            <!-- First Column -->
+            <td width="33%" style="text-align: center">
+                <div style="font-weight: bold; margin-bottom: 5px;">www.bsbqa.com</div>
+            </td>
+
+            <!-- Second Column -->
+            <td width="33%" style="text-align: center">
+                <div style="font-weight: bold;">License No: 182</div>
+                <div style="font-weight: bold;">CR: 155731</div>
+            </td>
+
+            <!-- Third Column -->
+            <td width="34%" style="text-align: center;">
+                <div style="font-weight: bold;">+974 4001 1911</div>
+                <div style="font-weight: bold;">+974 3066 6004</div>
+            </td>
+        </tr>
+    </table>
+{{--    <p>www.bsbqa.com | +974 4001 1911 - +974 3066 6004</p>--}}
 </div>
 
 <!-- Main Content -->
@@ -191,9 +239,9 @@
                 <tr>
                     <th>Gross Area</th>
                     <th>Size Net</th>
-                    <th>Balcony Siz</th>
+                    <th>Balcony Size</th>
                     <th>Handover</th>
-                    <th>Instalment</th>
+                    <th>Installment</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -217,9 +265,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{ $full_price }}</td>
-                    <td>{{ $ser_amt }}</td>
-                    <td>{{ $total }}</td>
+                    <td>{{ number_format((float)$full_price, 2, '.', ',')}}</td>
+                    <td>{{ number_format((float)$ser_amt, 2, '.', ',')}}</td>
+                    <td>{{ number_format((float)$total, 2, '.', ',')}}</td>
                     <td>{{ date('d-M-y') }}</td>
                 </tr>
                 </tbody>
@@ -259,19 +307,21 @@
 
 $allRows[] = [
     'month' => 'Handover Payment',
-    'payment' => $hand_over_amount,
-    'percentage' => number_format($hand_over_percentage, 2) . '%',
-    'total_payment' => $full_price,
+    'payment' => number_format((float)$hand_over_amount, 2, '.', ','),
+    'percentage' => number_format((float)$hand_over_percentage, 2) . '%',
+    'total_payment' => number_format((float)$full_price, 2, '.', ','),
     'total_percentage' => '100%',
-    'highlight' => true
+    'highlight' => true,
+    'row_class' => 'handover-row'  // Add this line
 ];
 $allRows[] = [
     'month' => 'Management Fees',
-    'payment' => $ser_amt,
+    'payment' => number_format((float)$ser_amt, 2, '.', ','),
     'percentage' => $downPaymentPercentage,
         'total_payment' => '',
     'total_percentage' => '',
-    'highlight' => true
+    'highlight' => true,
+     'row_class' => 'management-row'  // Add this line
 ];
 
             // Calculate rows per page (adjust based on your content height)
@@ -297,8 +347,8 @@ $allRows[] = [
                     <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                         <td>{{ $allRows[$i]['month'] }}</td>
                         <td>{{ $allRows[$i]['percentage'] }}</td>
-                        <td>{{ $allRows[$i]['payment'] }}</td>
-                        <td>{{ $allRows[$i]['total_payment'] }}</td>
+                        <td>{{ number_format((float)$allRows[$i]['payment'], 2, '.', ',') }}</td>
+                        <td>{{ number_format((float)$allRows[$i]['total_payment'], 2, '.', ',') }}</td>
                         <td>{{ $allRows[$i]['total_percentage'] }}</td>
                     </tr>
                 @endfor
@@ -323,10 +373,10 @@ $allRows[] = [
                     <tbody>
                     @for($i = $page * $rowsPerPage; $i < min(($page + 1) * $rowsPerPage, count($allRows)); $i++)
                         <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
-                            <td>{{ $allRows[$i]['month'] }}</td>
+                            <td @if($allRows[$i]['highlight']) class="{{ $allRows[$i]['row_class'] ?? '' }}" @endif>{{ $allRows[$i]['month'] }}</td>
                             <td>{{ $allRows[$i]['percentage'] }}</td>
-                            <td>{{ $allRows[$i]['payment'] }}</td>
-                            <td>{{ $allRows[$i]['total_payment'] }}</td>
+                            <td>{{ number_format((float)$allRows[$i]['payment'], 2, '.', ',') }}</td>
+                            <td>{{ number_format((float)$allRows[$i]['total_payment'], 2, '.', ',') }}</td>
                             <td>{{ $allRows[$i]['total_percentage'] }}</td>
                         </tr>
                     @endfor

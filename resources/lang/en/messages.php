@@ -133,7 +133,7 @@ return [
     'password' => 'Password',
     'enter_password' => 'Enter password',
     'faster_login' => 'For faster login or register use your social account.',
-    
+
     // Phone verification strings
     'verify' => 'Verify',
     'verified' => 'Verified',
@@ -150,10 +150,11 @@ return [
     'otp_sent_failed' => 'Failed to send verification code',
     'server_error' => 'Server error occurred',
     'invalid_otp' => 'Invalid verification code',
-    
+
     'search_results' => 'Search Results',
     'popularity' => 'Popularity',
     'select' => 'Sort By',
+    'feature' => 'Featured',
     'latest' => 'Latest',
     'price_low_to_high' => 'Price: low to high',
     'price_high_to_low' => 'Price: high to low',
@@ -279,6 +280,7 @@ return [
     'account_need_approve_from_admin' => 'Your account need approval from admin',
     'logged_in_successfully' => 'Logged in successfully',
     'already_added' => 'Already added',
+    'registration_completed_without_verification' => 'Registration Completed',
     'registration_completed' => 'Registration Completed, Need Approval From Admin, we will Send Email When Approve ',
     'invalid_attempt' => 'Invalid attempt',
     'successfully_updated' => 'Successfully updated',

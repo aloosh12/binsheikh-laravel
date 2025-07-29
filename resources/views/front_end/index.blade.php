@@ -51,8 +51,8 @@
     <!-- Popup Modal -->
     @if(isset($popup) && $popup)
         <div class="modal fade" id="popupModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 rounded-0" style="background-color: #f8f5f0; max-width: 600px;">
+            <div class="modal-dialog modal-dialog-centered" style="max-width: 800px;">
+                <div class="modal-content border-0 rounded-0" style="background-color: #f8f5f0; max-width: 800px;">
                     <!-- Close Button -->
                     <button type="button" class="btn-close position-absolute end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
 
@@ -64,27 +64,32 @@
                             </div>
 
                             <!-- Right Column - Content -->
-                            <div class="col-md-6 p-4 d-flex flex-column justify-content-center">
+                            <div class="col-md-6 p-5 d-flex flex-column justify-content-center">
                                 <div class="text-center">
                                     <!-- "enro" text (assuming this is a logo/brand) -->
-                                    <p class="mb-1" style="font-size: 14px; letter-spacing: 2px;">enro</p>
+                                    <p class="mb-2" style="font-size: 16px; letter-spacing: 2px;">enro</p>
 
                                     <!-- Main Offer Text -->
-                                    <h2 class="mb-3" style="font-size: 32px; font-weight: 300; letter-spacing: 1px;">
+                                    <h2 class="mb-4" style="font-size: 42px; font-weight: 300; letter-spacing: 1px;">
                                         Unlock<br>
-                                        <span style="font-weight: 700;">OVER 30% OFF</span><br>
-                                        your first mask
+                                        <span style="font-weight: 700;">{{ $popup->title }}</span><br>
+                                        {{ $popup->subtitle }}
                                     </h2>
 
                                     <!-- Disclaimer -->
-                                    <p class="mb-4" style="font-size: 10px; font-style: italic;">"Exclusions apply!</p>
-
-
+                                    <p class="mb-4" style="font-size: 12px; font-style: italic;">"Exclusions apply!</p>
 
                                     <!-- Sign Up Button -->
-                                    <button class="btn btn-dark rounded-0 w-100 py-2" style="letter-spacing: 1px;">
+                                    <a href="{{ $popup->link }}"
+                                       class="btn btn-dark rounded-0 w-100 py-2"
+                                       style="letter-spacing: 1px;"
+                                       target="_blank"
+                                       rel="noopener noreferrer">
                                         SIGN UP
-                                    </button>
+                                    </a>
+{{--                                    <button class="btn btn-dark rounded-0 w-100 py-3" style="letter-spacing: 1px; font-size: 16px;">--}}
+{{--                                        SIGN UP--}}
+{{--                                    </button>--}}
                                 </div>
                             </div>
                         </div>
@@ -721,8 +726,7 @@
 <script>
     // Show popup modal on page load
     $(document).ready(function() {
-        var popupModal = new bootstrap.Modal(document.getElementById('popupModal'));
-        popupModal.show();
+        $("#popupModal").modal("show");
     });
 
     $(".pr_range").change(function(){

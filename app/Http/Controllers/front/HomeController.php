@@ -873,16 +873,26 @@ class HomeController extends Controller
                 //         }
                 //     }
                 // }
+                if($request->user_type == 2)
+                {
+                    $ins['verified'] = 1;
+                }
                 if ($user_id = User::create($ins)->id) {
                     $status = "1";
-                    Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => $request->user_type]);
-                    $request->session()->put('user_id', Auth::user()->id);
-                    if ($request->timezone) {
-                        $request->session()->put('user_timezone', $request->timezone);
+//                    Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => $request->user_type]);
+//                    $request->session()->put('user_id', Auth::user()->id);
+//                    if ($request->timezone) {
+//                        $request->session()->put('user_timezone', $request->timezone);
+//                    }
+                    if($request->user_type == 2)
+                    {
+                        $message = __('messages.registration_completed_without_verification');
+                        $errors = '';
                     }
-
-                    $message = __('messages.registration_completed');
-                    $errors = '';
+                    else {
+                        $message = __('messages.registration_completed');
+                        $errors = '';
+                    }
                 } else {
                     $status = "0";
                     $message = __('messages.something_went_wrong');
