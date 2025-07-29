@@ -349,5 +349,29 @@ class PropertyController extends Controller
         return redirect()->back()->with('error', 'No Property selected.');
 
     }
+    
+    public function delete_multiple_images(Request $request)
+    {
+        $status = "0";
+        $message = "";
+        $o_data = [];
+
+        if ($request->has('image_ids') && !empty($request->image_ids)) {
+            $ids = $request->image_ids;
+            
+            $deletedCount = PropertyImages::whereIn('id', $ids)->delete();
+            
+            if ($deletedCount > 0) {
+                $status = "1";
+                $message = "Images removed successfully";
+            } else {
+                $message = "No images were deleted";
+            }
+        } else {
+            $message = "No images selected for deletion";
+        }
+        
+        return response()->json(['status' => $status, 'message' => $message, 'o_data' => $o_data]);
+    }
 
 }

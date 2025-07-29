@@ -130,6 +130,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::post("save_property", "PropertyController@store");
 
     Route::delete("property/delete_image/{id}", "PropertyController@delete_image");
+    Route::post("property/delete_multiple_images", "PropertyController@delete_multiple_images");
     Route::delete('properties/deleteAll', "PropertyController@deleteAll")->name('properties.deleteAll');
 
     Route::get("blog", "BlogController@index");

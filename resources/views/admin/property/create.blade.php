@@ -377,25 +377,28 @@
                                             <label>
                                                 <h5>Uploaded Property Images:</h5>
                                             </label>
+                                            <button type="button" id="delete-selected-images" class="btn btn-danger btn-sm float-right mb-2" style="display:none;">Delete Selected Images</button>
+                                            <button type="button" id="select-all-images" class="btn btn-secondary btn-sm float-right mb-2 mr-2">Select All</button>
                                         </div>
 
                                         <div class="row col-md-12">
-
                                             @foreach ($images as $img)
                                                 <div class="col-md-2">
                                                     <div style="float: left;margin-top: 30px;">
-                                                        <img src="{{aws_asset_path($img->image) }}" style="max-width:75%;">
-                                                        <a class="remove deleteListItem" data-role="unlink"
-                                                            data-message="Do you want to remove this image?"
-                                                            title="Delete"
-                                                            href="{{ url('admin/property/delete_image/' . $img->id) }}">
-                                                            <i class="fa fa-trash removeThis" style="color: red;"></i>
-                                                        </a>
+                                                        <div class="image-container position-relative">
+                                                            <input type="checkbox" class="image-checkbox" data-id="{{ $img->id }}" style="position: absolute; top: 5px; left: 5px; z-index: 10;">
+                                                            <img src="{{aws_asset_path($img->image) }}" style="max-width:75%;">
+                                                            <a class="remove deleteListItem" data-role="unlink"
+                                                                data-message="Do you want to remove this image?"
+                                                                title="Delete"
+                                                                href="{{ url('admin/property/delete_image/' . $img->id) }}">
+                                                                <i class="fa fa-trash removeThis" style="color: red;"></i>
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @endforeach
                                         </div>
-
                                     @endif
 
                                     <div class="col-md-6 mt-2">
@@ -567,6 +570,62 @@
                 }
             });
             selectElement.select2();
+
+            // Handle image selection and deletion
+            $('.image-checkbox').on('change', function() {
+                updateDeleteButtonVisibility();
+            });
+
+            $('#select-all-images').on('click', function() {
+                alert()
+                var allChecked = $('.image-checkbox:checked').length === $('.image-checkbox').length;
+                $('.image-checkbox').prop('checked', !allChecked);
+                updateDeleteButtonVisibility();
+                $(this).text(allChecked ? 'Select All' : 'Deselect All');
+            });
+
+            $('#delete-selected-images').on('click', function() {
+                if (confirm('Are you sure you want to delete the selected images?')) {
+                    var selectedIds = [];
+                    $('.image-checkbox:checked').each(function() {
+                        selectedIds.push($(this).data('id'));
+                    });
+
+                    if (selectedIds.length > 0) {
+                        $.ajax({
+                            url: '{{ url("admin/property/delete_multiple_images") }}',
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                image_ids: selectedIds
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    show_msg(1, response.message || 'Images deleted successfully');
+                                    // Remove deleted images from the DOM
+                                    $('.image-checkbox:checked').each(function() {
+                                        $(this).closest('.col-md-2').remove();
+                                    });
+                                    updateDeleteButtonVisibility();
+                                } else {
+                                    show_msg(0, response.message || 'Failed to delete images');
+                                }
+                            },
+                            error: function() {
+                                show_msg(0, 'An error occurred while deleting images');
+                            }
+                        });
+                    }
+                }
+            });
+
+            function updateDeleteButtonVisibility() {
+                var selectedCount = $('.image-checkbox:checked').length;
+                $('#delete-selected-images').toggle(selectedCount > 0);
+                if (selectedCount > 0) {
+                    $('#delete-selected-images').text('Delete Selected Images (' + selectedCount + ')');
+                }
+            }
         });
 
         var editor_config = {
@@ -714,6 +773,74 @@
         });
         $(document).on('click', '.remove_itinerary', function(e) {
             $(this).parent().parent().parent().remove();
+        });
+
+        // Handle image selection and deletion
+        $('#select-all-images').on('click', function() {
+            var checkboxes = $('.image-checkbox');
+            var allChecked = checkboxes.length === checkboxes.filter(':checked').length;
+
+            checkboxes.prop('checked', !allChecked);
+            updateDeleteButton();
+        });
+
+        $('.image-checkbox').on('change', function() {
+            updateDeleteButton();
+        });
+
+        function updateDeleteButton() {
+            var selectedCount = $('.image-checkbox:checked').length;
+            if (selectedCount > 0) {
+                $('#delete-selected-images').show().text('Delete Selected Images (' + selectedCount + ')');
+            } else {
+                $('#delete-selected-images').hide();
+            }
+        }
+
+        $('#delete-selected-images').on('click', function() {
+            var selectedIds = [];
+            $('.image-checkbox:checked').each(function() {
+                selectedIds.push($(this).data('id'));
+            });
+
+            if (selectedIds.length === 0) {
+                return;
+            }
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You are about to delete " + selectedIds.length + " images. This cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete them!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "{{ url('admin/property/delete_multiple_images') }}",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "image_ids": selectedIds
+                        },
+                        success: function(res) {
+                            if (res.status == '1') {
+                                show_msg(1, res.message || 'Images deleted successfully');
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                show_msg(0, res.message || 'Unable to delete the images.');
+                            }
+                        },
+                        error: function(e) {
+                            show_msg(0, e.responseText || 'An error occurred while deleting images.');
+                        }
+                    });
+                }
+            });
         });
     </script>
 
