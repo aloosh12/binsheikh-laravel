@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
-                                return 'QR ' + tooltipItem.raw.toLocaleString();
+                                return 'QAR ' + tooltipItem.raw.toLocaleString();
                             }
                         }
                     },
@@ -220,9 +220,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         console.log(value);
 
                           if (value !== undefined && value !== null) {
-                              return 'QR ' + value.toLocaleString();
+                              return 'QAR ' + value.toLocaleString();
                           }
-                          return 'QR 0';
+                          return 'QAR 0';
                       },
                       color: 'black',
                       font: {

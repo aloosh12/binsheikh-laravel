@@ -148,7 +148,7 @@ function moneyFormat($amount){
     $currency = session()->get('currency');
     $currency_rate = session()->get('currency_rate');
     if($currency=="QAR" || !$currency){
-        $currency = "QR";
+        $currency = "QAR";
     }
     if(!$currency_rate){
         $currency_rate = 1;
