@@ -189,6 +189,25 @@ class HomeController extends Controller
         }
         $recommended_prj = Projects::where(['is_recommended' => 1, 'active' => '1', 'deleted' => 0])->orderBy('created_at', 'desc')->limit(6)->get();
 
+        // Add unit counts for each project
+        foreach ($recommended_prj as $key => $project) {
+            // Total units left
+            $total_units = Properties::where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id])
+                ->count();
+            $recommended_prj[$key]->total_units = $total_units;
+
+            // Units for rent
+            $rent_units = Properties::where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id])->whereIn('sale_type', [2, 3])
+                ->count();
+            $recommended_prj[$key]->rent_units = $rent_units;
+
+            // Units for sale
+            $buy_units = Properties::where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id])
+                ->whereIn('sale_type', [1, 3])
+                ->count();
+            $recommended_prj[$key]->buy_units = $buy_units;
+        }
+
         $recommended_ser = Service::where(['is_recommended' => 1, 'active' => '1', 'deleted' => 0])->orderBy('created_at', 'desc')->limit(6)->get();
 
         $prj = Projects::select('id', 'name','name_ar')->where(['active' => '1', 'deleted' => 0])->orderBy('created_at', 'desc')->get();

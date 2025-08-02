@@ -611,6 +611,19 @@
                                             <div class="city-carousel-content">
                                                 <h3><a href="{{url('project-details/'.$project->slug)}}">{{$project->name}}</a></h3>
                                                 <p>{{$project->location}}</p>
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <div class="units-left-box p-2 text-center" style="background-color: rgba(255, 255, 255, 0.1); border-radius: 5px;">
+                                                        <span style="font-size: 14px; font-weight: bold;">{{ __('messages.units_left') }}: {{$project->total_units}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between mb-3">
+                                                    <div class="buy-units p-1 text-center" style="background-color: rgba(0, 123, 255, 0.2); border-radius: 5px; width: 48%;">
+                                                        <span style="font-size: 12px;">{{ __('messages.buy') }}: {{$project->buy_units}}</span>
+                                                    </div>
+                                                    <div class="rent-units p-1 text-center" style="background-color: rgba(40, 167, 69, 0.2); border-radius: 5px; width: 48%;">
+                                                        <span style="font-size: 12px;">{{ __('messages.rent') }}: {{$project->rent_units}}</span>
+                                                    </div>
+                                                </div>
                                                 <a href="{{url('project-details/'.$project->slug)}}" class="hc-counter">{{ __("messages.view_project") }}</a>
                                             </div>
                                         </div>

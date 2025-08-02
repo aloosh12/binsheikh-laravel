@@ -378,5 +378,8 @@ return [
     'commission_number' => 'العمولة',
     'discount_number' => 'الخصم',
     'apartments_for_sale' => 'العقارات',
-    'photos_media' => 'الصور والميديا'
+    'photos_media' => 'الصور والميديا',
+    'units_left' => 'الشقق المتاحة',
+    'buy_units' => 'بيع',
+    'rent_units' => 'اجار'
 ];

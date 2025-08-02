@@ -367,5 +367,8 @@ return [
     'commission_number' => 'Commission',
     'discount_number' => 'Discount',
     'apartments_for_sale' => 'Apartments For Sale',
-    'photos_media' => 'Gallery & Media'
+    'photos_media' => 'Gallery & Media',
+    'units_left' => 'Units Left',
+    'buy_units' => 'Buy',
+    'rent_units' => 'Rent'
 ];
