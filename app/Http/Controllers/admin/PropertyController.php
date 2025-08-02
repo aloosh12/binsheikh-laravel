@@ -214,10 +214,21 @@ class PropertyController extends Controller
             //     $iti['description_ar'] = $iti_description_ar[$key];
             //     PropertyFaq::create($iti);
             // }
+            // Process image orders if provided
+            $imageOrders = $request->input('image_order', []);
+            
             foreach ($imgs as $img) {
                 $im['property_id'] = $prpty_id;
                 $im['image'] = $img;
+                $im['order'] = 0; // Default order
                 PropertyImages::create($im);
+            }
+            
+            // Update orders for existing images if provided
+            if (!empty($imageOrders)) {
+                foreach ($imageOrders as $imageId => $order) {
+                    PropertyImages::where('id', $imageId)->update(['order' => (int)$order]);
+                }
             }
 
         }

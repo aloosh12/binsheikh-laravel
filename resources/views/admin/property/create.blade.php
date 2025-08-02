@@ -388,6 +388,10 @@
                                                         <div class="image-container position-relative">
                                                             <input type="checkbox" class="image-checkbox" data-id="{{ $img->id }}" style="position: absolute; top: 5px; left: 5px; z-index: 10;">
                                                             <img src="{{aws_asset_path($img->image) }}" style="max-width:75%;">
+                                                            <div class="mt-2">
+                                                                <label for="image-order-{{ $img->id }}" class="small">Order:</label>
+                                                                <input type="number" id="image-order-{{ $img->id }}" name="image_order[{{ $img->id }}]" class="form-control form-control-sm image-order" value="{{ $img->order ?? 0 }}" min="0" style="width: 70px;">
+                                                            </div>
                                                             <a class="remove deleteListItem" data-role="unlink"
                                                                 data-message="Do you want to remove this image?"
                                                                 title="Delete"
@@ -575,6 +579,14 @@
             $('.image-checkbox').on('change', function() {
                 updateDeleteButtonVisibility();
             });
+            
+            // Handle image order inputs
+            $('.image-order').on('change', function() {
+                var value = parseInt($(this).val());
+                if (isNaN(value) || value < 0) {
+                    $(this).val(0);
+                }
+            });
 
             // $('#select-all-images').on('click', function() {
             //     var checkboxes = $('.image-checkbox');
@@ -659,6 +671,13 @@
             var $form = $(this);
             var formData = new FormData(this);
             $(".invalid-feedback").remove();
+            
+            // Add image order data
+            $('.image-order').each(function() {
+                var imageId = $(this).attr('id').replace('image-order-', '');
+                var orderValue = $(this).val();
+                formData.append('image_order[' + imageId + ']', orderValue);
+            });
 
             $form.find('button[type="submit"]')
                 .text('Saving')

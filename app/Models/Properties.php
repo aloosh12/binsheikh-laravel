@@ -81,7 +81,7 @@ class Properties extends Model
 
     public function images()
     {
-        return $this->hasMany(PropertyImages::class, 'property_id', 'id');
+        return $this->hasMany(PropertyImages::class, 'property_id', 'id')->orderBy('order', 'asc');
     }
     public function property_type()
     {
