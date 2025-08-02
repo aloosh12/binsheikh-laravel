@@ -92,8 +92,8 @@
              <div class="card text-white bg-primary border-0 border-0">
                  <div class="card-body card-body  d-flex justify-content-between align-items-center">
                      <div>
-                         <div class="text-value-lg">{{$available}}</div>
-                         <div>Available</div>
+                         <div class="text-value-lg">{{$available_rent}}</div>
+                         <div>Available For Rent</div>
                      </div>
                      <div>
                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-building-lock" viewBox="0 0 16 16">
@@ -109,13 +109,30 @@
              <div class="card text-white bg-gradient-primary border-0">
                  <div class="card-body card-body d-flex justify-content-between align-items-center">
                      <div>
+                         <div class="text-value-lg">{{$available_sale}}</div>
+                         <div>Available For Sale</div>
+                     </div>
+                     <div>
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-building-lock" viewBox="0 0 16 16">
+                             <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1z"/>
+                             <path d="M9.438 4.312a.5.5 0 0 0-.876 0L7.25 6.37 6.436 5.12a.5.5 0 1 0-.872.56L6.43 7.344l-1.866 2.332a.5.5 0 1 0 .78.624L7 8.58l1.656 1.72a.5.5 0 1 0 .72-.72L8.22 8.344l1.902-2.375a.5.5 0 0 0 0-.625z"/>
+                         </svg>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+         <div class="col-sm-6 col-lg-3">
+             <div class="card text-white bg-primary border-0 border-0">
+                 <div class="card-body card-body  d-flex justify-content-between align-items-center">
+                     <div>
                          <div class="text-value-lg">{{$sold}}</div>
                          <div>Sold Properties</div>
                      </div>
                      <div>
                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-building-lock" viewBox="0 0 16 16">
                              <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1z"/>
-                             <path d="M9.438 4.312a.5.5 0 0 0-.876 0L7.25 6.37 6.436 5.12a.5.5 0 1 0-.872.56L6.43 7.344l-1.866 2.332a.5.5 0 1 0 .78.624L7 8.58l1.656 1.72a.5.5 0 1 0 .72-.72L8.22 8.344l1.902-2.375a.5.5 0 0 0 0-.625z"/>
+                             <path d="M13.854 10.146a.5.5 0 0 0-.708 0L10.5 12.793l-1.146-1.147a.5.5 0 0 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0 0-.708z"/>
                          </svg>
                      </div>
                  </div>

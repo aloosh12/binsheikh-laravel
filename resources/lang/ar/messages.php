@@ -198,6 +198,7 @@ return [
     'amount' => 'المبلغ',
     'percentage' => 'النسبة المئوية',
     'down_payment' => 'الدفعة المقدمة',
+    'handover_amount' => 'دفعة التسليم',
     'installment' => 'القسط',
     'similar_properties' => 'عقارات مشابهة',
     'key_service_highlight' => 'أبرز خدمة مميزة',

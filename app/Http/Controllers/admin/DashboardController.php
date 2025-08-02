@@ -19,6 +19,8 @@ class DashboardController extends Controller
         $rent = Properties::where(['deleted' => 0])->whereIn('sale_type', [2, 3])->count();
         $sale = Properties::where(['deleted' => 0])->whereIn('sale_type', [1, 3])->count();
         $available = Properties::where(['active' => 1])->count() - $bookings;
+        $available_rent = Properties::where(['active' => 1])->whereIn('sale_type', [2, 3])->count() - $bookings;
+        $available_sale = Properties::where(['active' => 1])->whereIn('sale_type', [1, 3])->count() - $bookings;
         $sold = Properties::where(['deleted' => 0, 'is_sold' => 1])->count();
 
         $salesData = Booking::selectRaw('
@@ -48,7 +50,7 @@ class DashboardController extends Controller
         $months = $monthlyData['months'];
         $data = $monthlyData['buyData'];
 
-        return view('admin.dashboard', compact('page_heading', 'bookings', 'properties', 'rent', 'sale','available', 'sold', 'months', 'data'));
+        return view('admin.dashboard', compact('page_heading', 'bookings', 'properties', 'rent', 'sale','available','available_rent','available_sale', 'sold', 'months', 'data'));
     }
 
     public function getSalesData()

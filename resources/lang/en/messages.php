@@ -185,6 +185,7 @@ return [
     'amount' => 'Amount',
     'percentage' => 'Percentage',
     'down_payment' => 'Down Payment',
+    'handover_amount' => 'Handover Payment',
     'installment' => 'Installment',
     'similar_properties' => 'Similar Properties',
     'key_service_highlight' => 'Key Service Highlight',

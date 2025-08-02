@@ -336,19 +336,33 @@ class AuthController extends Controller
                 }
             }
         }
+        if($request->user_type == 2)
+        {
+            $ins['verified'] = 1;
+        }
         if ($user = User::create($ins)) {
-            $data = [
-                'email' => $user->email,
-                'name' => $user->name,
-                'phone' => $user->phone,
-                'id' => $user->id,
-                'image' => asset('').'front-assets/images/avatar/profile-icon.png',
-                'token' => $user->createToken('binalsheikh')->plainTextToken,
-            ];
-            return response()->json([
-                'message' => __('messages.registration_completed'),
-                'data' => convert_all_elements_to_string($data),
-            ], 200);
+            if($request->user_type == 2)
+            {
+                $data = [
+                    'email' => $user->email,
+                    'name' => $user->name,
+                    'phone' => $user->phone,
+                    'id' => $user->id,
+                    'image' => asset('').'front-assets/images/avatar/profile-icon.png',
+                    'token' => $user->createToken('binalsheikh')->plainTextToken,
+                ];
+                return response()->json([
+                    'message' => __('messages.registration_completed_without_verification'),
+                    'data' => convert_all_elements_to_string($data),
+                ], 200);
+            }
+            else
+            {
+                return response()->json([
+                    'message' => __('messages.registration_completed'),
+                ], 200);
+            }
+
         } else {
             return response()->json([
                 'message' => __('messages.something_went_wrong'),
