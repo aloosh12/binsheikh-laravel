@@ -539,6 +539,24 @@ class HomeController extends Controller
     public function project_listing()
     {
         $projects = Projects::where(['active' => '1', 'deleted' => 0])->get();
+ foreach ($projects as $key => $project) {
+            // Total units left
+            $total_units = Properties::where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id])
+                ->count();
+            $projects[$key]->total_units = $total_units;
+
+            // Units for rent
+            $rent_units = Properties::where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id])->whereIn('sale_type', [2, 3])
+                ->count();
+            $projects[$key]->rent_units = $rent_units;
+
+            // Units for sale
+            $buy_units = Properties::where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id])
+                ->whereIn('sale_type', [1, 3])
+                ->count();
+            $projects[$key]->buy_units = $buy_units;
+        }
+
         $page_heading = "Projects";
         return view('front_end.project_listing', compact('page_heading', 'projects'));
     }
