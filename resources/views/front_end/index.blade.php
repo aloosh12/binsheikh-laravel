@@ -614,15 +614,18 @@
 {{--                                                <div class="d-flex justify-content-between align-items-center mb-3">--}}
 {{--                                                    --}}
 {{--                                                </div>--}}
-                                                <div class="d-flex justify-content-between mb-3">
-                                                    <div class="units-left-box p-2 text-center" style="background-color: rgba(255, 255, 255, 0.1); border-radius: 5px; width: 40%;">
-                                                        <span style="font-size: 14px; font-weight: bold; color: white;">{{ __('messages.units_left') }}: {{$project->total_units}}</span>
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <div class="units-left-box p-1 text-center" style="background-color: rgba(255, 255, 255, 0.1); border-radius: 5px; width: 32%;">
+                                                        <span style="font-size: 12px; font-weight: bold; color: white;">{{ __('messages.units_left') }}</span>
+                                                        <div style="font-size: 16px; font-weight: bold; color: white;">{{$project->total_units}}</div>
                                                     </div>
-                                                    <div class="buy-units p-1 text-center" style="background-color: rgba(0, 123, 255, 0.2); border-radius: 5px; width: 30%;">
-                                                        <span style="font-size: 12px;color: white;">{{ __('messages.buy') }}: {{$project->buy_units}}</span>
+                                                    <div class="buy-units p-1 text-center" style="background-color: rgba(0, 123, 255, 0.2); border-radius: 5px; width: 32%;">
+                                                        <span style="font-size: 12px; color: white;">{{ __('messages.buy') }}</span>
+                                                        <div style="font-size: 16px; font-weight: bold; color: white;">{{$project->buy_units}}</div>
                                                     </div>
-                                                    <div class="rent-units p-1 text-center" style="background-color: rgba(40, 167, 69, 0.2); border-radius: 5px; width: 30%;">
-                                                        <span style="font-size: 12px;color: white;">{{ __('messages.rent') }}: {{$project->rent_units}}</span>
+                                                    <div class="rent-units p-1 text-center" style="background-color: rgba(40, 167, 69, 0.2); border-radius: 5px; width: 32%; margin-right: 5px;">
+                                                        <span style="font-size: 12px; color: white;">{{ __('messages.rent') }}</span>
+                                                        <div style="font-size: 16px; font-weight: bold; color: white;">{{$project->rent_units}}</div>
                                                     </div>
                                                 </div>
                                                 <a href="{{url('project-details/'.$project->slug)}}" class="hc-counter">{{ __("messages.view_project") }}</a>
