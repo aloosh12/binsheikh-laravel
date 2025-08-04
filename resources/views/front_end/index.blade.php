@@ -67,11 +67,11 @@
                             <div class="col-md-6 p-5 d-flex flex-column justify-content-center">
                                 <div class="text-center">
                                     <!-- "enro" text (assuming this is a logo/brand) -->
-                                    <p class="mb-2" style="font-size: 16px; letter-spacing: 2px;">enro</p>
+{{--                                    <p class="mb-2" style="font-size: 16px; letter-spacing: 2px;">enro</p>--}}
 
                                     <!-- Main Offer Text -->
                                     <h2 class="mb-4" style="font-size: 42px; font-weight: 300; letter-spacing: 1px;">
-                                        Unlock<br>
+{{--                                        Unlock<br>--}}
                                         <span style="font-weight: 700;">{{ $popup->title }}</span><br>
                                         {{ $popup->subtitle }}
                                     </h2>
