@@ -180,6 +180,8 @@ return [
     'management_fees' => 'Management Fees',
     'total' => 'Total',
     'payment' => 'Payment',
+    'total_payment' => 'Total Payment',
+    'total_percentage' => 'Total Percentage',
     'month' => 'Month',
     'months' => 'Months',
     'amount' => 'Amount',

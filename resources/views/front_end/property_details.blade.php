@@ -537,10 +537,11 @@
                                                                                     <table class="payment-table table">
                                                                                         <thead>
                                                                                             <tr>
-                                                                                                <th>{{ __('messages.payment') }}</th>
                                                                                                 <th>{{ __('messages.month') }}</th>
-                                                                                                <th>{{ __('messages.amount') }}</th>
                                                                                                 <th>{{ __('messages.percentage') }}</th>
+                                                                                                <th>{{ __('messages.payment') }}</th>
+                                                                                                <th>{{ __('messages.total_payment') }}</th>
+                                                                                                <th>{{ __('messages.total_percentage') }}</th>
                                                                                             </tr>
                                                                                         </thead>
                                                                                         <tbody class="calculate_em_tbody">

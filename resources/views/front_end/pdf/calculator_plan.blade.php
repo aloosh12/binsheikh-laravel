@@ -249,8 +249,8 @@
                     <td>{{ $property->gross_area }} m2</td>
                     <td>{{ $property->area }} m2</td>
                     <td>{{ $property->balcony_size }} m2</td>
-                    <td>{{ $full_price }}</td>
-                    <td>{{ $ser_amt }}</td>
+                    <td>{{ moneyFormat((float)$hand_over_amount, 2, '.', ',')  }}</td>
+                    <td>{{$duration }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -265,9 +265,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{ number_format((float)$full_price, 2, '.', ',')}}</td>
-                    <td>{{ number_format((float)$ser_amt, 2, '.', ',')}}</td>
-                    <td>{{ number_format((float)$total, 2, '.', ',')}}</td>
+                    <td>{{ moneyFormat((float)$full_price, 2, '.', ',')}}</td>
+                    <td>{{ moneyFormat((float)$ser_amt, 2, '.', ',')}}</td>
+                    <td>{{ moneyFormat((float)$total, 2, '.', ',')}}</td>
                     <td>{{ date('d-M-y') }}</td>
                 </tr>
                 </tbody>
@@ -286,8 +286,8 @@
 
  $allRows[] = [
     'month' => 'Down Payment',
-    'payment' => $down_payment,
-    'total_payment' => $down_payment,
+    'payment' => moneyFormat((float)$down_payment, 2, '.', ','),
+    'total_payment' => moneyFormat((float)$down_payment, 2, '.', ','),
     'percentage' => number_format($downPaymentPercentage, 2) . '%',
     'total_percentage' => number_format($downPaymentPercentage, 2) . '%',
     'highlight' => true
@@ -307,17 +307,17 @@
 
 $allRows[] = [
     'month' => 'Handover Payment',
-    'payment' => number_format((float)$hand_over_amount, 2, '.', ','),
+    'payment' => moneyFormat((float)$hand_over_amount, 2, '.', ','),
     'percentage' => number_format((float)$hand_over_percentage, 2) . '%',
-    'total_payment' => number_format((float)$full_price, 2, '.', ','),
+    'total_payment' => moneyFormat((float)$full_price, 2, '.', ','),
     'total_percentage' => '100%',
     'highlight' => true,
     'row_class' => 'handover-row'  // Add this line
 ];
 $allRows[] = [
     'month' => 'Management Fees',
-    'payment' => number_format((float)$ser_amt, 2, '.', ','),
-    'percentage' => $downPaymentPercentage,
+    'payment' => moneyFormat((float)$ser_amt, 2, '.', ','),
+    'percentage' => number_format((float)$managment_fees_percentage, 2) . '%' ,
         'total_payment' => '',
     'total_percentage' => '',
     'highlight' => true,
@@ -347,8 +347,8 @@ $allRows[] = [
                     <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                         <td>{{ $allRows[$i]['month'] }}</td>
                         <td>{{ $allRows[$i]['percentage'] }}</td>
-                        <td>{{ number_format((float)$allRows[$i]['payment'], 2, '.', ',') }}</td>
-                        <td>{{ number_format((float)$allRows[$i]['total_payment'], 2, '.', ',') }}</td>
+                        <td>{{ moneyFormat((float)$allRows[$i]['payment'], 2, '.', ',') }}</td>
+                        <td>{{ moneyFormat((float)$allRows[$i]['total_payment'], 2, '.', ',') }}</td>
                         <td>{{ $allRows[$i]['total_percentage'] }}</td>
                     </tr>
                 @endfor
@@ -375,8 +375,8 @@ $allRows[] = [
                         <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                             <td @if($allRows[$i]['highlight']) class="{{ $allRows[$i]['row_class'] ?? '' }}" @endif>{{ $allRows[$i]['month'] }}</td>
                             <td>{{ $allRows[$i]['percentage'] }}</td>
-                            <td>{{ number_format((float)$allRows[$i]['payment'], 2, '.', ',') }}</td>
-                            <td>{{ number_format((float)$allRows[$i]['total_payment'], 2, '.', ',') }}</td>
+                            <td>{{ moneyFormat((float)$allRows[$i]['payment'], 2, '.', ',') }}</td>
+                            <td>{{ moneyFormat((float)$allRows[$i]['total_payment'], 2, '.', ',') }}</td>
                             <td>{{ $allRows[$i]['total_percentage'] }}</td>
                         </tr>
                     @endfor

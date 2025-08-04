@@ -1783,6 +1783,7 @@ class HomeController extends Controller
         $property_id = $request->property_id;
         $property = Properties::find($property_id);
         $advance_amount = $request->advance_amount;
+        $handover_amount = $request->hand_over_amount;
         $rental_duration = $request->rental_duration; // This will act as the number of months for the EMI calculation
         $settings = Settings::find(1);
 
@@ -1790,7 +1791,7 @@ class HomeController extends Controller
         $cur_month->startOfMonth();
 
         $ser_amt = ($settings->service_charge_perc / 100) * $property->price;
-
+        $ser_percentage = $settings->service_charge_perc;
         // $total = $property->price + $ser_amt;
         $full_price_calc = $property->price;
 
@@ -1798,7 +1799,7 @@ class HomeController extends Controller
         $down_payment = $advance_amount;
 
         // Calculate the pending amount to be paid via EMI
-        $pending_amt = $full_price_calc - $down_payment;
+        $pending_amt = $full_price_calc - $down_payment - $handover_amount;
 
         // The payable EMI amount is the pending amount
         $payableEmiAmount = $pending_amt;
@@ -1809,21 +1810,27 @@ class HomeController extends Controller
         // Calculate the monthly payment based on the pending amount and rental duration
         $monthlyPayment = $payableEmiAmount / $monthCount;
         $downPaymentPercentage = ($down_payment / $full_price_calc) * 100;
+        $handOverPaymentPercentage = ($handover_amount / $full_price_calc) * 100;
         // Calculate the percentage rate for each month's EMI
-        $percentageRate = (100 - $downPaymentPercentage) / $monthCount;
+        $percentageRate = (100 - $downPaymentPercentage - $handOverPaymentPercentage) / $monthCount;
         $months = [];
         $totalPercentage = $downPaymentPercentage;
         $remainingAmount = $payableEmiAmount;
+        $total_payment = $down_payment;
         for ($i = 0; $i < $monthCount; $i++) {
             $remainingAmount -= $monthlyPayment;
             $totalPercentage += $percentageRate;
+            $total_payment += $monthlyPayment;
             $months[$i]['month'] = $cur_month->addMonth()->format('M-y');
             $months[$i]['ordinal'] = $this->getOrdinalSuffix($i + 1);
             $months[$i]['payment'] = round($monthlyPayment, 2);
             $months[$i]['remaining_amount'] = round($remainingAmount, 2);
+            $months[$i]['total_payment'] = round($total_payment, 2);
+            $months[$i]['percentage'] = round($percentageRate, 2);
             $months[$i]['total_percentage'] = round($totalPercentage, 2);
         }
-        $html = view('front_end.calculate_emi', compact('down_payment', 'ser_amt', 'months','downPaymentPercentage'))->render();
+        $downPaymentPercentage = round($downPaymentPercentage, 2);
+        $html = view('front_end.calculate_emi', compact('down_payment', 'ser_amt','ser_percentage', 'months','downPaymentPercentage', 'handover_amount', 'handOverPaymentPercentage' ))->render();
         return response()->json(['html' => $html]);
     }
     public function get_payment_dates(Request $request)
@@ -2193,8 +2200,8 @@ class HomeController extends Controller
             $gross_area =  $property->gross_area;
             $floor_no =  $property->floor_no;
             $project_name = $property->project ? $property->project->name : '';
-
-            $pdf = $this->getPdfCalulator($payment_plan, $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, $months, $settings, $rental_duration, $logoBase64, $waterMarkBase64, $project_name, $hand_over_amount, $handOverPaymentPercentage);
+            $management_fees_percentage = $settings->service_charge_perc;
+            $pdf = $this->getPdfCalulator($payment_plan, $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, $months, $settings, $rental_duration, $logoBase64, $waterMarkBase64, $project_name, $hand_over_amount, $handOverPaymentPercentage,$management_fees_percentage );
 
             return $pdf->download('payment_calculator_' . $property->apartment_no . '.pdf');
 
@@ -2269,7 +2276,7 @@ class HomeController extends Controller
         return $pdf;
     }
 
-    public function getPdfCalulator(string $payment_plan, string $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, array $months, $settings, $rental_duration, string $logoBase64, string $waterMarkBase64, string $project_name, string $handOverPayment, string $handOverPaymentPercentage )
+    public function getPdfCalulator(string $payment_plan, string $payment_term, $property, $ser_amt, $total, $full_price_calc, $down_payment, $downPaymentPercentage, array $months, $settings, $rental_duration, string $logoBase64, string $waterMarkBase64, string $project_name, string $handOverPayment, string $handOverPaymentPercentage, string  $managment_fees_percentage)
     {
         $ppp = $project_name;
         $pdf = PDF::loadView('front_end.pdf.calculator_plan', [
@@ -2287,12 +2294,14 @@ class HomeController extends Controller
             'downPaymentPercentage' => $downPaymentPercentage,
             'hand_over_amount' => $handOverPayment,
             'hand_over_percentage' => $handOverPaymentPercentage,
+            'duration' => $rental_duration,
             'months' => $months,
             'settings' => $settings,
             'rental_duration' => $rental_duration,
             'logoBase64' => $logoBase64,
             'waterMarkBase64' => $waterMarkBase64,
             'project' => $project_name,
+            'managment_fees_percentage' => $managment_fees_percentage
 
         ]);
 

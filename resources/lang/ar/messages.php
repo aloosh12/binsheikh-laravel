@@ -193,6 +193,8 @@ return [
     'management_fees' => 'رسوم الإدارة',
     'total' => 'الإجمالي',
     'payment' => 'الدفع',
+    'total_payment' => 'الدفعات الاجمالية',
+    'total_percentage' => 'النسبة الاجمالية',
     'month' => 'الشهر',
     'months' => 'شهور',
     'amount' => 'المبلغ',
