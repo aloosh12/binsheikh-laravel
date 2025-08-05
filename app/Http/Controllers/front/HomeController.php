@@ -1830,7 +1830,8 @@ class HomeController extends Controller
             $months[$i]['total_percentage'] = round($totalPercentage, 2);
         }
         $downPaymentPercentage = round($downPaymentPercentage, 2);
-        $html = view('front_end.calculate_emi', compact('down_payment', 'ser_amt','ser_percentage', 'months','downPaymentPercentage', 'handover_amount', 'handOverPaymentPercentage' ))->render();
+        $total_payment_with_handover = round($total_payment + $handover_amount, 2);
+        $html = view('front_end.calculate_emi', compact('down_payment', 'ser_amt','ser_percentage', 'months','downPaymentPercentage', 'handover_amount', 'handOverPaymentPercentage', 'total_payment_with_handover' ))->render();
         return response()->json(['html' => $html]);
     }
     public function get_payment_dates(Request $request)

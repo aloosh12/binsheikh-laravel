@@ -417,7 +417,7 @@
                                                                                             <td>{{ __('messages.management_fees') }}</td>
                                                                                             <td>{{ date('M-y') }}</td>
                                                                                             <td>{{ moneyFormat($ser_amt) }}</td>
-                                                                                            <td></td>
+                                                                                            <td>{{$settings->service_charge_perc}}%</td>
                                                                                         </tr>
                                                                                         @foreach($months as $key => $mnth)
                                                                                             <tr>

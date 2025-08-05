@@ -22,7 +22,7 @@
     <td>{{ __('messages.handover_amount') }}</td>
     <td>{{number_format((float)$handOverPaymentPercentage, 2) . '%'}}</td>
     <td>{{ moneyFormat($handover_amount) }}</td>
-    <td></td>
+    <td>{{moneyFormat($total_payment_with_handover)}}</td>
     <td>100%</td>
 </tr>
 <tr class="payment-row-highlight">
