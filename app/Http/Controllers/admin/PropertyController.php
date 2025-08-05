@@ -216,14 +216,14 @@ class PropertyController extends Controller
             // }
             // Process image orders if provided
             $imageOrders = $request->input('image_order', []);
-            
+
             foreach ($imgs as $img) {
                 $im['property_id'] = $prpty_id;
                 $im['image'] = $img;
                 $im['order'] = 0; // Default order
                 PropertyImages::create($im);
             }
-            
+
             // Update orders for existing images if provided
             if (!empty($imageOrders)) {
                 foreach ($imageOrders as $imageId => $order) {
@@ -258,7 +258,7 @@ class PropertyController extends Controller
         if ($property) {
             $page_heading = "Properties";
             $mode = "edit";
-            $images = PropertyImages::where('property_id', $id)->get();
+            $images = PropertyImages::where('property_id', $id)->orderBy('order', 'asc')->get();
             $amenities = Amenities::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get();
             $categories = Categories::where(['deleted' => 0, 'active' => 1])->orderBy('name', 'asc')->get();
             $faq = PropertyFaq::where('property_id', $id)->orderBy('id', 'asc')->get();
@@ -360,7 +360,7 @@ class PropertyController extends Controller
         return redirect()->back()->with('error', 'No Property selected.');
 
     }
-    
+
     public function delete_multiple_images(Request $request)
     {
         $status = "0";
@@ -369,9 +369,9 @@ class PropertyController extends Controller
 
         if ($request->has('image_ids') && !empty($request->image_ids)) {
             $ids = $request->image_ids;
-            
+
             $deletedCount = PropertyImages::whereIn('id', $ids)->delete();
-            
+
             if ($deletedCount > 0) {
                 $status = "1";
                 $message = "Images removed successfully";
@@ -381,7 +381,7 @@ class PropertyController extends Controller
         } else {
             $message = "No images selected for deletion";
         }
-        
+
         return response()->json(['status' => $status, 'message' => $message, 'o_data' => $o_data]);
     }
 

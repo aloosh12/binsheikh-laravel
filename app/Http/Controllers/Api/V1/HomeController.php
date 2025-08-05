@@ -285,10 +285,10 @@ class HomeController extends Controller
 
             $data['location']  = $property->location;
             $data['location_link']  = $property->location_link;
-            $data['image'] = $property->images->first() ? aws_asset_path($property->images->first()->image) : '';
+            $data['image'] = $property->images->first() ? aws_asset_path($property->images->orderBy('order', 'asc')->first()->image) : '';
             $data['area']  = $property->area.'m2';
             $data['property_type']  = $property->property_type->name;
-            $data['images'] = $property->images->pluck('image')->map(fn($image) => aws_asset_path($image))->toArray();
+            $data['images'] = $property->images->orderBy('order', 'asc')->pluck('image')->map(fn($image) => aws_asset_path($image))->toArray();
 
             if($property->sale_type == 1 || $property->sale_type == 3){
                 $data['sale_type']  = __('messages.buy');
