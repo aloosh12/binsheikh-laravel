@@ -44,6 +44,7 @@ class PopupController extends Controller
             'subtitle' => 'nullable|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'link' => 'nullable|string|max:255',
+            'button_text' => 'nullable|string|max:255',
             'is_active' => 'nullable|boolean',
         ]);
 
@@ -64,6 +65,7 @@ class PopupController extends Controller
             'subtitle' => $request->subtitle,
             'image' => $imagePath,
             'link' => $request->link,
+            'button_text' => $request->button_text,
             'is_active' => $request->has('is_active') ? 1 : 0,
         ]);
 
@@ -108,6 +110,7 @@ class PopupController extends Controller
             'subtitle' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'link' => 'nullable|string|max:255',
+            'button_text' => 'nullable|string|max:255',
             'is_active' => 'nullable|boolean',
         ]);
 
@@ -134,6 +137,7 @@ class PopupController extends Controller
         $popup->title = $request->title;
         $popup->subtitle = $request->subtitle;
         $popup->link = $request->link;
+        $popup->button_text = $request->button_text;
         $popup->is_active = $request->has('is_active') ? 1 : 0;
         $popup->save();
 

@@ -38,6 +38,13 @@
                                     </div>
                                 </div>
 
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Button Text</label>
+                                        <input type="text" name="button_text" class="form-control" placeholder="e.g. SIGN UP" value="{{ $popup->button_text }}">
+                                    </div>
+                                </div>
+
                                 <div class="col-md-6 form-group">
                                     <label>Status</label>
                                     <select name="is_active" class="form-control">

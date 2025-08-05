@@ -16,10 +16,11 @@ class Popup extends Model
         'subtitle',
         'image',
         'link',
+        'button_text',
         'is_active'
     ];
     
     protected $casts = [
         'is_active' => 'boolean',
     ];
-} 
+}

@@ -77,7 +77,7 @@
                                     </h2>
 
                                     <!-- Disclaimer -->
-                                    <p class="mb-4" style="font-size: 12px; font-style: italic;">"Exclusions apply!</p>
+                                    <!-- <p class="mb-4" style="font-size: 12px; font-style: italic;">"Exclusions apply!</p> -->
 
                                     <!-- Sign Up Button -->
                                     <a href="{{ $popup->link }}"
@@ -85,7 +85,7 @@
                                        style="letter-spacing: 1px;"
                                        target="_blank"
                                        rel="noopener noreferrer">
-                                        SIGN UP
+                                        {{ $popup->button_text ?? 'SIGN UP' }}
                                     </a>
 {{--                                    <button class="btn btn-dark rounded-0 w-100 py-3" style="letter-spacing: 1px; font-size: 16px;">--}}
 {{--                                        SIGN UP--}}

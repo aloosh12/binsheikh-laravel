@@ -23,6 +23,7 @@
                                         <th>Title</th>
                                         <th>Subtitle</th>
                                         <th>Link</th>
+                                        <th>Button Text</th>
                                         <th>Is Active</th>
                                         <th>Created Date</th>
                                         <th>Action</th>
@@ -46,6 +47,7 @@
                                             <td>{{ $popup->title }}</td>
                                             <td>{{ $popup->subtitle }}</td>
                                             <td>{{ $popup->link }}</td>
+                                            <td>{{ $popup->button_text }}</td>
                                             <td>
                                                 <input class="toggle_status"
                                                     data-url="{{ url('admin/popups/change_status') }}" type="checkbox"
