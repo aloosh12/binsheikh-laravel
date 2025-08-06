@@ -286,8 +286,8 @@
 
  $allRows[] = [
     'month' => 'Down Payment',
-    'payment' => moneyFormat((float)$down_payment, 2, '.', ','),
-    'total_payment' => moneyFormat((float)$down_payment, 2, '.', ','),
+    'payment' => $down_payment,
+    'total_payment' => $down_payment,
     'percentage' => number_format($downPaymentPercentage, 2) . '%',
     'total_percentage' => number_format($downPaymentPercentage, 2) . '%',
     'highlight' => true
@@ -307,18 +307,18 @@
 
 $allRows[] = [
     'month' => 'Handover Payment',
-    'payment' => moneyFormat((float)$hand_over_amount, 2, '.', ','),
+    'payment' => $hand_over_amount,
     'percentage' => number_format((float)$hand_over_percentage, 2) . '%',
-    'total_payment' => moneyFormat((float)$full_price, 2, '.', ','),
+    'total_payment' => $full_price,
     'total_percentage' => '100%',
     'highlight' => true,
     'row_class' => 'handover-row'  // Add this line
 ];
 $allRows[] = [
     'month' => 'Management Fees',
-    'payment' => moneyFormat((float)$ser_amt, 2, '.', ','),
+    'payment' => $ser_amt,
     'percentage' => number_format((float)$managment_fees_percentage, 2) . '%' ,
-        'total_payment' => '',
+     'total_payment' => 'empty_value',
     'total_percentage' => '',
     'highlight' => true,
      'row_class' => 'management-row'  // Add this line
@@ -347,8 +347,8 @@ $allRows[] = [
                     <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                         <td>{{ $allRows[$i]['month'] }}</td>
                         <td>{{ $allRows[$i]['percentage'] }}</td>
-                        <td>{{ moneyFormat((float)$allRows[$i]['payment'], 2, '.', ',') }}</td>
-                        <td>{{ moneyFormat((float)$allRows[$i]['total_payment'], 2, '.', ',') }}</td>
+                        <td>{{ moneyFormat($allRows[$i]['payment'], 2, '.', ',') }}</td>
+                        <td>{{ moneyFormat($allRows[$i]['total_payment'], 2, '.', ',') }}</td>
                         <td>{{ $allRows[$i]['total_percentage'] }}</td>
                     </tr>
                 @endfor
@@ -375,8 +375,8 @@ $allRows[] = [
                         <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                             <td @if($allRows[$i]['highlight']) class="{{ $allRows[$i]['row_class'] ?? '' }}" @endif>{{ $allRows[$i]['month'] }}</td>
                             <td>{{ $allRows[$i]['percentage'] }}</td>
-                            <td>{{ moneyFormat((float)$allRows[$i]['payment'], 2, '.', ',') }}</td>
-                            <td>{{ moneyFormat((float)$allRows[$i]['total_payment'], 2, '.', ',') }}</td>
+                            <td>{{ moneyFormat($allRows[$i]['payment'], 2, '.', ',') }}</td>
+                            <td>{{ moneyFormat($allRows[$i]['total_payment'], 2, '.', ',') }}</td>
                             <td>{{ $allRows[$i]['total_percentage'] }}</td>
                         </tr>
                     @endfor

@@ -145,6 +145,8 @@ function public_url()
     return config('app.asset_url');
 }
 function moneyFormat($amount){
+    if($amount == 'empty_value')
+        return '';
     $currency = session()->get('currency');
     $currency_rate = session()->get('currency_rate');
     if($currency=="QAR" || !$currency){

@@ -2291,6 +2291,7 @@ class HomeController extends Controller
             'ser_amt' => $ser_amt,
             'total' => $total,
             'full_price' => $full_price_calc,
+            'full_price_handover' => $full_price_calc,
             'down_payment' => $down_payment,
             'downPaymentPercentage' => $downPaymentPercentage,
             'hand_over_amount' => $handOverPayment,
