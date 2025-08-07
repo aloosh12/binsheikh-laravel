@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Payment ص عربي تج Template</title>
+    <title>Payment Template</title>
     <style>
         @page {
             margin: 120px 50px 80px 50px;
@@ -33,18 +33,6 @@
             border-top: 2px solid #c0a96e;
             margin: 0;
             width: 100%;
-        }
-        .footer {
-            position: fixed;
-            bottom: -40px;
-            left: 0;
-            right: 0;
-            height: 50px;
-            text-align: center;
-            font-size: 14px;
-            color: #888;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
         }
         .container {
             max-width: 800px;
@@ -110,7 +98,8 @@
             text-align: left;
         }
         th {
-            background-color: #f8f8f8;
+            background-color: #00337C;
+            color: white;
         }
         tr {
             page-break-inside: avoid;
@@ -139,6 +128,45 @@
         .schedule-title {
             margin-bottom: 15px;
         }
+        .footer {
+            position: fixed;
+            bottom: -40px;
+            text-align: center !important;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: auto;
+            background-color: #003366;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 10px 0;
+            border: none; /* Ensure no outer border */
+        }
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none; /* Remove table border */
+        }
+        .footer-table td {
+            padding: 5px 10px;
+            vertical-align: top;
+            border-right: 1px solid rgba(255,255,255,0.2);
+            border-top: none; /* Remove top border */
+            border-bottom: none; /* Remove bottom border */
+            border-left: none; /* Remove left border */
+        }
+        .footer-table td:last-child {
+            border-right: none; /* Remove right border for last cell */
+        }
+        .footer-table tr {
+            border: none; /* Remove row borders */
+        }
+        .handover-row {
+            background-color: #FFFF00 !important; /* Yellow */
+        }
+        .management-row {
+            background-color: #ADD8E6 !important; /* Light blue */
+        }
     </style>
 </head>
 <body>
@@ -157,7 +185,27 @@
 
 <!-- Fixed Footer - Will repeat on every page -->
 <div class="footer">
-    <p>www.bsbqa.com | +974 4001 1911 - +974 3066 6004</p>
+    <table class="footer-table">
+        <tr>
+            <!-- First Column -->
+            <td width="33%" style="text-align: center">
+                <div style="font-weight: bold; margin-bottom: 5px;">www.bsbqa.com</div>
+            </td>
+
+            <!-- Second Column -->
+            <td width="33%" style="text-align: center">
+                <div style="font-weight: bold;">License No: 182</div>
+                <div style="font-weight: bold;">CR: 155731</div>
+            </td>
+
+            <!-- Third Column -->
+            <td width="34%" style="text-align: center;">
+                <div style="font-weight: bold;">+974 4001 1911</div>
+                <div style="font-weight: bold;">+974 3066 6004</div>
+            </td>
+        </tr>
+    </table>
+    {{--    <p>www.bsbqa.com | +974 4001 1911 - +974 3066 6004</p>--}}
 </div>
 
 <!-- Main Content -->
@@ -166,7 +214,7 @@
         <div class="title">{{$payment_plan}}</div>
         <div class="property-name">{{ $payment_note_en_part1 }}</div>
         <div style="text-align: center;font-size: 12px;  color: #ff0000;font-weight: bold;">{{ $payment_note_en_part2 }}</div>
-        <div class="note-ar">{{ $payment_note_ar }}</div>
+        {{--        <div class="note-ar">{{ $payment_note_ar }}</div>--}}
 
         <div class="property-details">
             <h3>Property Details</h3>
@@ -191,9 +239,9 @@
                 <tr>
                     <th>Gross Area</th>
                     <th>Size Net</th>
-                    <th>Balcony Siz</th>
+                    <th>Balcony Size</th>
                     <th>Handover</th>
-                    <th>Instalment</th>
+                    <th>Installment</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -201,8 +249,8 @@
                     <td>{{ $property->gross_area }} m2</td>
                     <td>{{ $property->area }} m2</td>
                     <td>{{ $property->balcony_size }} m2</td>
-                    <td>{{ moneyFormat($full_price) }}</td>
-                    <td>{{ moneyFormat($ser_amt) }}</td>
+                    <td>{{ moneyFormat((float)$hand_over_amount, 2, '.', ',')  }}</td>
+                    <td>{{$duration }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -217,9 +265,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{ moneyFormat($full_price) }}</td>
-                    <td>{{ moneyFormat($ser_amt) }}</td>
-                    <td>{{ moneyFormat($total) }}</td>
+                    <td>{{ moneyFormat((float)$full_price, 2, '.', ',')}}</td>
+                    <td>{{ moneyFormat((float)$ser_amt, 2, '.', ',')}}</td>
+                    <td>{{ moneyFormat((float)$total, 2, '.', ',')}}</td>
                     <td>{{ date('d-M-y') }}</td>
                 </tr>
                 </tbody>
@@ -235,33 +283,46 @@
         <!-- Payment Schedule Sections -->
         @php
             // Combine all payment rows
-            $allRows = [
-                [
-                    'type' => 'Down Payment',
-                    'month' => date('M-y'),
-                    'amount' => $down_payment,
-                    'percentage' => number_format($downPaymentPercentage, 2) . '%',
-                    'highlight' => true
-                ],
-                [
-                    'type' => 'Management Fees',
-                    'month' => date('M-y'),
-                    'amount' => $ser_amt,
-                    'percentage' => '',
-                    'highlight' => true
-                ]
-            ];
+
+ $allRows[] = [
+    'month' => 'Down Payment',
+    'payment' => $down_payment,
+    'total_payment' => $down_payment,
+    'percentage' => number_format($downPaymentPercentage, 2) . '%',
+    'total_percentage' => number_format($downPaymentPercentage, 2) . '%',
+    'highlight' => true
+];
 
             // Add all installment rows
             foreach($months as $mnth) {
                 $allRows[] = [
-                    'type' => $mnth['ordinal'] . ' Installment',
                     'month' => $mnth['month'],
-                    'amount' => $mnth['payment'],
-                    'percentage' => $mnth['total_percentage'] . '%',
+                    'percentage' => $mnth['percentage']. '%',
+                    'payment' => $mnth['payment'],
+                    'total_payment' => $mnth['total_payment'],
+                    'total_percentage' => $mnth['total_percentage'] . '%',
                     'highlight' => false
                 ];
             }
+
+//$allRows[] = [
+//    'month' => 'Handover Payment',
+//    'payment' => $hand_over_amount,
+//    'percentage' => number_format((float)$hand_over_percentage, 2) . '%',
+//    'total_payment' => $full_price,
+//    'total_percentage' => '100%',
+//    'highlight' => true,
+//    'row_class' => 'handover-row'  // Add this line
+//];
+$allRows[] = [
+    'month' => 'Management Fees',
+    'payment' => $ser_amt,
+    'percentage' => number_format((float)$managment_fees_percentage, 2) . '%' ,
+     'total_payment' => 'empty_value',
+    'total_percentage' => '',
+    'highlight' => true,
+     'row_class' => 'management-row'  // Add this line
+];
 
             // Calculate rows per page (adjust based on your content height)
             $rowsPerPage = 17;
@@ -275,21 +336,20 @@
                 <thead>
                 <tr>
                     <th>Timeline</th>
-                    <th>Monthly %</th>
+                    <th>Monthly%</th>
                     <th>Payment</th>
                     <th>Total Accumulated</th>
-                    <th>Total</th>
+                    <th>Total%</th>
                 </tr>
                 </thead>
                 <tbody>
                 @for($i = 0; $i < min($rowsPerPage, count($allRows)); $i++)
                     <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
                         <td>{{ $allRows[$i]['month'] }}</td>
-
-                        <td>{{ $allRows[$i]['type'] }}</td>
-
-                        <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>
                         <td>{{ $allRows[$i]['percentage'] }}</td>
+                        <td>{{ moneyFormat($allRows[$i]['payment'], 2, '.', ',') }}</td>
+                        <td>{{ moneyFormat($allRows[$i]['total_payment'], 2, '.', ',') }}</td>
+                        <td>{{ $allRows[$i]['total_percentage'] }}</td>
                     </tr>
                 @endfor
                 </tbody>
@@ -304,21 +364,20 @@
                     <thead>
                     <tr>
                         <th>Timeline</th>
-                        <th>Monthly %</th>
+                        <th>Monthly%</th>
                         <th>Payment</th>
                         <th>Total Accumulated</th>
-                        <th>Total</th>
+                        <th>Total%</th>
                     </tr>
                     </thead>
                     <tbody>
                     @for($i = $page * $rowsPerPage; $i < min(($page + 1) * $rowsPerPage, count($allRows)); $i++)
                         <tr @if($allRows[$i]['highlight']) class="payment-highlight" @endif>
-                            <td>{{ $allRows[$i]['month'] }}</td>
-
-                            <td>{{ $allRows[$i]['type'] }}</td>
-
-                            <td>{{ moneyFormat($allRows[$i]['amount']) }}</td>
+                            <td @if($allRows[$i]['highlight']) class="{{ $allRows[$i]['row_class'] ?? '' }}" @endif>{{ $allRows[$i]['month'] }}</td>
                             <td>{{ $allRows[$i]['percentage'] }}</td>
+                            <td>{{ moneyFormat($allRows[$i]['payment'], 2, '.', ',') }}</td>
+                            <td>{{ moneyFormat($allRows[$i]['total_payment'], 2, '.', ',') }}</td>
+                            <td>{{ $allRows[$i]['total_percentage'] }}</td>
                         </tr>
                     @endfor
                     </tbody>
