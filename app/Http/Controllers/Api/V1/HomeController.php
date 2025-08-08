@@ -232,6 +232,7 @@ class HomeController extends Controller
             $data[$key]['location_link']  = $val->location_link;
             $data[$key]['unit_number']  = $val->apartment_no;
             $data[$key]['floor_number']  = $val->floor_no;
+            $data[$key]['is_featured']  = $val->is_featured;
             $data[$key]['image']  = $val->images->first() ? aws_asset_path($val->images->first()->image) : '';
             $data[$key]['area']  = $val->area.'m2';
             $data[$key]['property_type']  = $val->property_type->name;
@@ -271,6 +272,7 @@ class HomeController extends Controller
             $data['bedrooms']  = $property->bedrooms;
             $data['bathrooms']  = $property->bathrooms;
             $data['floor_number']  = $property->floor_no;
+            $data['is_featured']  = $property->is_featured;
 
             $data['gross_area']  = $property->gross_area ? $property->gross_area.'m2' : '';
             $data['net_area']  = $property->area.'m2';
@@ -586,6 +588,7 @@ class HomeController extends Controller
             $data[$key]['name']  = $val->name;
             $data[$key]['price']  = moneyFormat($val->price);
             $data[$key]['floor_number']  = $val->floor_no;
+            $data[$key]['is_featured']  = $val->is_featured;
 
             $data[$key]['gross_area']  = $val->gross_area ? $val->gross_area.'m2' : '';
             $data[$key]['net_area']  = $val->area.'m2';
