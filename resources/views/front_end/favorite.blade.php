@@ -77,6 +77,9 @@
                                                                         @endif
                                                                     </li>
                                                                     <li><a href="#" class="cat-opt">{{ $property->property_type->name }}</a></li>
+                                                                    @if($property->is_featured == 1)
+                                                                        <li><a href="#" class="cat-opt" style="margin-top: 60px; box-shadow: 0px 0px 0px 4px rgba(255, 74, 82, 0.2); background: rgba(255, 74, 82, 0.8);">{{ __('messages.hot_property') }}</a></li>
+                                                                    @endif
                                                                 </ul>
                                                                 <a href="javascript:;" class="geodir_save-btn tolt fav_prop" data-id="{{ $property->id }}" data-reload="1" data-microtip-position="left" data-tooltip="{{ __('messages.remove_from_favourite') }}"><span><i class="fal fa-heart heart_{{ $property->id }}"></i></span></a>
                                                                 <div class="geodir-category-listing_media-list">

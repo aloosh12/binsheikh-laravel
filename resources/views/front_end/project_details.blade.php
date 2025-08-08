@@ -254,7 +254,7 @@
                                                                     <span><i class="fas fa-camera"></i> {{count($sim_property->images)}}</span>
                                                                 </div>
                                                             </div>
-                                                                                                                            <div class="geodir-category-content">
+                                                            <div class="geodir-category-content">
                                                                 <h3><a href="#">{{$sim_property->name}}</a></h3>
                                                                 <p class="txt-three-linesss">{{$sim_property->short_description}}</p>
                                                                 <div class="geodir-category-content-details">

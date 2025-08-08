@@ -19,7 +19,8 @@ class Properties extends Model
 
     protected $casts = [
         'is_sold' => 'boolean',
-        'is_recommended' => 'boolean'
+        'is_recommended' => 'boolean',
+        'is_featured' => 'boolean'
     ];
 
     public function __get($key)

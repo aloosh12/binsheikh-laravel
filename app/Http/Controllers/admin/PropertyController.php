@@ -111,6 +111,7 @@ class PropertyController extends Controller
                 'video_link' =>  $request->video_link,
                 'is_recommended' => isset($request->is_recommended) ? 1 : 0,
                 'is_sold' => isset($request->is_sold) ? 1 : 0,
+                'is_featured' => isset($request->is_featured) ? 1 : 0,
                 'order' => $request->order,
 
                 'balcony_size' =>  $request->balcony_size,

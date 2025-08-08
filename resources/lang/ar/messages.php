@@ -383,5 +383,6 @@ return [
     'photos_media' => 'الصور والميديا',
     'units_left' => 'الشقق المتاحة',
     'buy_units' => 'بيع',
-    'rent_units' => 'اجار'
+    'rent_units' => 'اجار',
+    'hot_property' => 'عقار مميز',
 ];

@@ -209,6 +209,13 @@
 
                                     <div class="col-md-6">
                                         <div class="form-group">
+                                            <label for="is_featured">Is Featured <small class="text-info">To Highlight in Listings</small></label> <br>
+                                            <input type="checkbox" id="is_featured" name="is_featured" @if($id && $property->is_featured) checked @endif>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
                                             <label>Similar Properties <small class="text-info">Select properties that are similar to this one</small></label>
                                             <select name="similar_properties[]" class="form-control select2" multiple>
                                                 @foreach($properties as $prop)

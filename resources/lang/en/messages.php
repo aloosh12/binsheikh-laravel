@@ -372,5 +372,6 @@ return [
     'photos_media' => 'Gallery & Media',
     'units_left' => 'Units Left',
     'buy_units' => 'Buy',
-    'rent_units' => 'Rent'
+    'rent_units' => 'Rent',
+    'hot_property' => 'Hot Property',
 ];
