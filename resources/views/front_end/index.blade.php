@@ -54,8 +54,8 @@
             <div class="modal-dialog modal-dialog-centered" style="max-width: 800px;">
                 <div class="modal-content border-0 rounded-0" style="background-color: #f8f5f0; max-width: 800px;">
                     <!-- Close Button -->
-                    <button type="button" class="btn-close position-absolute end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-
+{{--                    <button type="button" class="btn-close position-absolute end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>--}}
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3 bg-white p-2 rounded-circle shadow-sm" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1030; opacity: 0.9; transform: scale(1.2);"></button>
                     <div class="modal-body p-0">
                         <div class="row g-0">
                             <!-- Left Column - Image -->
