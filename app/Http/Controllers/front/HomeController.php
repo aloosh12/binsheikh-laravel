@@ -1001,49 +1001,39 @@ class HomeController extends Controller
                     'postal_code' => $request->postal_code,
                     'updated_at' => gmdate('Y-m-d H:i:s'),
                 ];
-                // if ($request->file("image")) {
-                //     $response = image_upload($request, 'profile', 'image');
-                //     if ($response['status']) {
-                //         $ins['image'] = $response['link'];
-                //     }
-                // }
-                // if ($user_type == 3 || $user_type == 4) {
-                //     if ($request->file("license")) {
-                //         $response = image_upload($request, 'profile', 'license');
-                //         if ($response['status']) {
-                //             $ins['license'] = $response['link'];
-                //         }
-                //     }
+//                if ($user_type == 3 || $user_type == 4) {
+//                    $ins['id_no'] = $request->id_no??'';
+//                    if ($request->file("professional_practice_certificate")) {
+//                        $response = image_upload($request, 'profile', 'professional_practice_certificate');
+//                        if ($response['status']) {
+//                            $ins['professional_practice_certificate'] = $response['link'];
+//                        }
+//                    }
+//                }
 
-                //     if ($request->file("id_card")) {
-                //         $response = image_upload($request, 'profile', 'id_card');
-                //         if ($response['status']) {
-                //             $ins['id_card'] = $response['link'];
-                //         }
-                //     }
-                // }
-
-                // if ($user_type == 4) {
-                //     if ($request->file("cr")) {
-                //         $response = image_upload($request, 'profile', 'cr');
-                //         if ($response['status']) {
-                //             $ins['cr'] = $response['link'];
-                //         }
-                //     }
-
-                //     if ($request->file("real_estate_license")) {
-                //         $response = image_upload($request, 'profile', 'real_estate_license');
-                //         if ($response['status']) {
-                //             $ins['real_estate_license'] = $response['link'];
-                //         }
-                //     }
-                // }
-                if ($user_type == 3 || $user_type == 4) {
+                if ($request->user_type == 3 || $request->user_type == 4) {
                     $ins['id_no'] = $request->id_no??'';
                     if ($request->file("professional_practice_certificate")) {
                         $response = image_upload($request, 'profile', 'professional_practice_certificate');
                         if ($response['status']) {
                             $ins['professional_practice_certificate'] = $response['link'];
+                        }
+                    }
+                }
+
+
+                if ($request->user_type == 3 || $request->user_type == 4) {
+                    if ($request->file("license")) {
+                        $response = image_upload($request, 'profile', 'license');
+                        if ($response['status']) {
+                            $ins['license'] = $response['link'];
+                        }
+                    }
+
+                    if ($request->file("id_card")) {
+                        $response = image_upload($request, 'profile', 'id_card');
+                        if ($response['status']) {
+                            $ins['id_card'] = $response['link'];
                         }
                     }
                 }

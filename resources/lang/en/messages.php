@@ -374,4 +374,5 @@ return [
     'buy_units' => 'Buy',
     'rent_units' => 'Rent',
     'hot_property' => 'Hot Property',
+    'not_set' => 'No Value'
 ];

@@ -68,21 +68,36 @@
                                                                 <i class="fa-light fa-envelope"></i>
                                                                 <input type="email" placeholder="{{ __('messages.email_address') }}" name="email" required data-parsley-required-message="{{ __('messages.enter_email') }}" value="{{ \Auth::user()->email }}">
                                                             </div>
-                                                            @if(\Auth::user()->role == 3 || \Auth::user()->role == 4)
+                                                            @if(\Auth::user()->role == 3)
 
                                                                 <div class="cs-intsputwrap agent_agency_div">
                                                                     <input type="text" placeholder="ID" class="form-control agent_agency_inp" name="id_no" required data-parsley-required-message="{{ __('messages.enter_id') }}" value="{{ \Auth::user()->id_no }}">
                                                                 </div>
-
-                                                                <div class="cs-intsputwrap agent_agency_div mt-4 mb-5">
-                                                                    <label for="d" style="float:left">{{ __('messages.professional_practice_certificate') }}</label> <!-- Translated License -->
-                                                                    <input type="file" class="form-control agent_agency_inp" name="professional_practice_certificate" data-parsley-required-message="{{ __('messages.select_professional_practice_certificate') }}"
-                                                                        data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
-                                                                        data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
-                                                                        data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
-                                                                        accept="image/*,application/pdf">
-                                                                        <a style="float: left;" href="{{ aws_asset_path(Auth::user()->professional_practice_certificate) }}" target="_blank" rel="noopener noreferrer">{{ __('messages.view_professional_practice_certificate') }}</a>
+                                                                <div class="cs-intsputwrap agent_div">
+                                                                    <label for="d" style="float:left" id="id_card_label">{{ __('messages.id_card') }}</label>
+                                                                    <input type="file" class="form-control agent_inp" name="id_card" data-parsley-required-message="{{ __('messages.select_id_card') }}"
+                                                                           data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
+                                                                           data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
+                                                                           data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
+                                                                           accept="image/*,application/pdf">
                                                                 </div>
+                                                                <div class="cs-intsputwrap agent_agency_div">
+                                                                    <label for="d" style="float:left" id="license_label">{{ __('messages.license') }}</label>
+                                                                    <input type="file" class="form-control agent_agency_inp" name="license" data-parsley-required-message="{{ __('messages.select_license') }}"
+                                                                           data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
+                                                                           data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
+                                                                           data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
+                                                                           accept="image/*,application/pdf">
+                                                                </div>
+{{--                                                                <div class="cs-intsputwrap agent_agency_div mt-4 mb-5">--}}
+{{--                                                                    <label for="d" style="float:left">{{ __('messages.professional_practice_certificate') }}</label> <!-- Translated License -->--}}
+{{--                                                                    <input type="file" class="form-control agent_agency_inp" name="professional_practice_certificate" data-parsley-required-message="{{ __('messages.select_professional_practice_certificate') }}"--}}
+{{--                                                                        data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"--}}
+{{--                                                                        data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"--}}
+{{--                                                                        data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"--}}
+{{--                                                                        accept="image/*,application/pdf">--}}
+{{--                                                                        <a style="float: left;" href="{{ aws_asset_path(Auth::user()->professional_practice_certificate) }}" target="_blank" rel="noopener noreferrer">{{ __('messages.view_professional_practice_certificate') }}</a>--}}
+{{--                                                                </div>--}}
 
                                                                 {{-- <div class="cs-intsputwrap agent_agency_div">
                                                                     <label for="d" style="float:left" id="license_label">{{ \Auth::user()->role == 4 ? __('messages.trade_license') : '' }}</label>
@@ -105,6 +120,14 @@
                                                                 </div> --}}
                                                             @endif
                                                             @if(Auth::user()->role == 4)
+                                                                <div class="cs-intsputwrap agent_agency_div">
+                                                                    <label for="d" style="float:left" id="license_label">{{ __('messages.trade_license') }}</label>
+                                                                    <input type="file" class="form-control agent_agency_inp" name="license" data-parsley-required-message="{{ __('messages.select_license') }}"
+                                                                           data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
+                                                                           data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
+                                                                           data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
+                                                                           accept="image/*,application/pdf">
+                                                                </div>
                                                                 {{-- <div class="cs-intsputwrap agency_div">
                                                                     <label for="d" style="float:left">{{ __('messages.cr') }}</label>
                                                                     <input type="file" class="form-control agency_inp" name="cr" data-parsley-required-message="{{ __('messages.select_cr') }}" data-parsley-trigger="change"
@@ -187,23 +210,23 @@
                                                             <button class="commentssubmit">{{ __('messages.update') }}</button>
                                                         </form>
 
-                                                        @if(\Auth::user()->role == 3 || \Auth::user()->role == 4)
+                                                        @if(Auth::user()->role == 4)
 
                                                                 <form  style="margin-top: 20px"  data-parsley-validate="true">
 
                                                                     <div class="dashboard-widget-title-single">{{ __('messages.additional_information') }}</div>
                                                                     <div class="cs-intputwrap pass-input-wrap">
-                                                                        <label class="font-weight-bold">{{ __('messages.commission_number') }}</label>
+                                                                        <label class="font-weight-bold" style="font-size: large;font-weight: bold">{{ __('messages.commission_number') }}</label>
                                                                         <p class="mt-2" style="text-align: center">{{ \Auth::user()->commission_number ?? __('messages.not_set') }}</p>
                                                                     </div>
 
                                                                     <div class="cs-intputwrap pass-input-wrap">
-                                                                        <label class="font-weight-bold">{{ __('messages.discount_number') }}</label>
+                                                                        <label class="font-weight-bold" style="font-size: large;font-weight: bold">{{ __('messages.discount_number') }}</label>
                                                                         <p class="mt-2" style="text-align: center">{{ \Auth::user()->discount_number ?? __('messages.not_set') }}</p>
                                                                     </div>
 
                                                                     <div class="cs-intputwrap pass-input-wrap">
-                                                                        <label class="font-weight-bold">{{ __('messages.apartments_for_sale') }}</label>
+                                                                        <label class="font-weight-bold" style="font-size: large;font-weight: bold">{{ __('messages.apartments_for_sale') }}</label>
                                                                         <div class="mt-2">
                                                                             @php
                                                                                 $apartment_ids = explode(',', \Auth::user()->apartment_sell);

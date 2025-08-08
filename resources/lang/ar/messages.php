@@ -385,4 +385,5 @@ return [
     'buy_units' => 'بيع',
     'rent_units' => 'اجار',
     'hot_property' => 'عقار مميز',
+    'not_set' => 'لايوجد قيمة'
 ];
