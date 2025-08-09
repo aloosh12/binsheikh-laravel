@@ -17,7 +17,9 @@
     /* Center and contain image */
     .floor-plan-img {
         max-width: 100%;
-        max-height: 85%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
         object-fit: contain;
         display: block;
     }
@@ -216,9 +218,9 @@
                                                             <h5 class="modal-title fs-5 fw-bold" id="exampleModalLabel">{{ __('messages.floor_plan') }}</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <div class="modal-body cus p-0">
-                                                            <div class="d-flex justify-content-center align-items-center w-100 h-100">
-                                                                <iframe src="{{$property->unit_layout}}" style="width:70%; height:100%; border:0;" title="Floor Plan"></iframe>
+                                                        <div class="modal-body p-0 overflow-auto" style="height: calc(100vh - 60px);">
+                                                            <div class="d-flex justify-content-center align-items-center w-100">
+                                                                <iframe src="{{$property->unit_layout}}" style="width:100%; height:100vh; border:0; max-width:100%;" title="Floor Plan"></iframe>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -246,8 +248,8 @@
                                                             <h5 class="modal-title">{{ __('messages.unit_layout') }}</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <div class="modal-body cus p-0">
-                                                            <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                                                        <div class="modal-body p-0 overflow-auto" style="height: calc(100vh - 60px);">
+                                                            <div class="d-flex justify-content-center align-items-center w-100">
                                                                 <img src="{{ aws_asset_path($property->floor_plan) }}" class="floor-plan-img" alt="Unit Layout">
                                                             </div>
                                                         </div>
