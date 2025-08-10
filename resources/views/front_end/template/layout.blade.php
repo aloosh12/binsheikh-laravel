@@ -38,6 +38,7 @@
         <!--=============== css  ===============-->
         <link type="text/css" rel="stylesheet" href="{{ asset('') }}front-assets/css/bootstrap.min.css">
         <link type="text/css" rel="stylesheet" href="{{ asset('') }}front-assets/css/plugins.css">
+        <link type="text/css" rel="stylesheet" href="{{ asset('') }}front-assets/css/gallery-responsive.css">
         @if($currentRouteUri!="privacy-policy")
             @if($locale=="ar")
                 <link type="text/css" rel="stylesheet" href="{{ asset('') }}front-assets/css/ar-style.css">
