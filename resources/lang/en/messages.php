@@ -374,5 +374,6 @@ return [
     'buy_units' => 'Buy',
     'rent_units' => 'Rent',
     'hot_property' => 'Hot Property',
-    'not_set' => 'No Value'
+    'not_set' => 'No Value',
+    'you_should_verify_the_otp' => 'You should verify the OTP',
 ];

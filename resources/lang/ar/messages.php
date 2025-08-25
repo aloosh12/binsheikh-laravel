@@ -385,5 +385,6 @@ return [
     'buy_units' => 'بيع',
     'rent_units' => 'اجار',
     'hot_property' => 'عقار مميز',
-    'not_set' => 'لايوجد قيمة'
+    'not_set' => 'لايوجد قيمة',
+    'you_should_verify_the_otp' => 'يجب عليك تأكيد رقم الموبايل',
 ];

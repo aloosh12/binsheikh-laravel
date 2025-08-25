@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use GuzzleHttp\Client;
 use PDF;
+use Exception;
 
 class HomeController extends Controller
 {
@@ -539,7 +540,7 @@ class HomeController extends Controller
     public function project_listing()
     {
         $projects = Projects::where(['active' => '1', 'deleted' => 0])->get();
- foreach ($projects as $key => $project) {
+        foreach ($projects as $key => $project) {
             // Total units left
             $total_units = Properties::where(['active' => '1', 'deleted' => 0, 'project_id' => $project->id])
                 ->count();
@@ -827,7 +828,7 @@ class HomeController extends Controller
                     'phone' => 'required',
                 ],
                 [
-                    'name.required' => 'Name required',
+                    'name.required' => 'Name required 4444',
                     'email.required' => 'Email required',
                     'password.required' => 'Password required',
                     'phone.required' => 'Phone required',
@@ -842,14 +843,30 @@ class HomeController extends Controller
             if (1 != 1) {
                 $status = "0";
                 $message = "Password Not Matching";
+                return response()->json(['success' => $status,'status' => $status, 'message' => $message, 'errors' => $errors]);
             } else {
 
+                if($request->user_type == 2)
+                {
+                    if(Session::get('phone_verified') != $request->phone)
+                    {
+                        $status = "0";
+                        $message = __('messages.you_should_verify_the_otp');
+                        $errors['phone'] = $request->phone . " ".__('messages.you_should_verify_the_otp');
+                        return response()->json(['success' => 0,'status' => $status, 'message' => $message,'errors' => $errors  ]);
+//
+//                        $message = __('messages.you_should_verify_the_otp');
+//                        $errors['phone'] = $request->phone . " ".__('messages.you_should_verify_the_otp');
+                    }
+
+                }
                 $check_exist = User::where('email', $request->email)->get()->toArray();
                 if ($check_exist) {
                     $status = "0";
                     $message = "Email should be unique";
                     $errors['email'] = $request->email . " ".__('messages.already_added');
-                    echo json_encode(['status' => $status, 'message' => $message, 'errors' => $errors]);die();
+                    return response()->json(['success' => $status,'status' => $status, 'message' => $message, 'errors' => $errors]);
+                    //  echo json_encode(['status' => $status, 'errors' => $errors]);die();
                 }
 
                 $ins = [
@@ -910,19 +927,20 @@ class HomeController extends Controller
                 //         }
                 //     }
                 // }
+
                 if($request->user_type == 2)
                 {
                     $ins['verified'] = 1;
                 }
                 if ($user_id = User::create($ins)->id) {
                     $status = "1";
-//                    Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => $request->user_type]);
-//                    $request->session()->put('user_id', Auth::user()->id);
-//                    if ($request->timezone) {
-//                        $request->session()->put('user_timezone', $request->timezone);
-//                    }
                     if($request->user_type == 2)
                     {
+                        Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => $request->user_type]);
+                        $request->session()->put('user_id', Auth::user()->id);
+                        if ($request->timezone) {
+                            $request->session()->put('user_timezone', $request->timezone);
+                        }
                         $message = __('messages.registration_completed_without_verification');
                         $errors = '';
                     }
@@ -984,7 +1002,7 @@ class HomeController extends Controller
                 $check_exist = User::where('email', $request->email)->where('id', '!=', $user_id)->get()->toArray();
                 if ($check_exist) {
                     $status = "0";
-                    $message = "Email should be unique";
+                    $message = "Email should be unique 1111";
                     $errors['email'] = $request->email . " ".__('messages.already_added');
                     echo json_encode(['status' => $status, 'message' => $message, 'errors' => $errors]);die();
                 }
@@ -1473,7 +1491,7 @@ class HomeController extends Controller
             "Blink" => $blink,
             "Private" => $private
         ];
-
+        Log::info('This is an info message');
         $ch = curl_init($apiUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -1484,7 +1502,9 @@ class HomeController extends Controller
         ]);
 
         $response = curl_exec($ch);
+        Log::info($response);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        Log::info($httpCode);
         curl_close($ch);
 
         if ($httpCode !== 201) {
@@ -1530,7 +1550,7 @@ class HomeController extends Controller
     }
     public function sendOtp(Request $request)
     {
-     //   return response()->json(['success' => true, 'message' => 'sdada'], 200);
+        //   return response()->json(['success' => true, 'message' => 'sdada'], 200);
         try {
             // Validate request
             $validator = Validator::make($request->all(), [
@@ -1552,9 +1572,9 @@ class HomeController extends Controller
             $url = 'https://messaging.ooredoo.qa/bms/soap/Messenger.asmx';
             try {
                 $result =$this->sendSmsWithAuth(
-                    username: "BinAlSheikh",
-                    password: "Qatar@123#",
-                    from: "MyApp",
+                    username: "6480~BinAlSheikh",
+                    password: "QQatar@777",
+                    from: "BinAlsheikh",
                     to: $phone,
                     text: $otp,
                     type: 0
@@ -1564,8 +1584,8 @@ class HomeController extends Controller
 
                 try {
                     $status = $this->checkSmsStatusWithAuth(
-                        username: "BinAlSheikh",
-                        password: "Qatar@123#",
+                        username: "6480~BinAlSheikh",
+                        password: "QQatar@777",
                         messageId: $message_id
                     );
                     if (isset($status['data']['status']['SMSC_DELIVERED'])) {
@@ -1637,7 +1657,7 @@ class HomeController extends Controller
             }
 
             // Verify OTP
-            if ($storedData['otp'] !== $otp) {
+            if ($storedData['otp'] != $otp) {
                 return response()->json(['success' => false, 'message' => 'Invalid OTP'], 400);
             }
 
