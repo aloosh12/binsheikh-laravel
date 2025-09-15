@@ -279,7 +279,7 @@ class HomeController extends Controller
             $properties = $properties->orderByRaw('CAST(properties.floor_no AS DECIMAL) DESC, properties.order ASC');
         }
         if ($sort =="order") {
-            $properties = $properties->orderBy('properties.order', 'asc');
+            $properties = $properties->orderBy('properties.is_featured', 'desc')->orderBy('properties.order', 'asc');
         }
         // Apply default ordering by order field
 
@@ -313,7 +313,7 @@ class HomeController extends Controller
 //                $properties = $properties->where('bedrooms', $bedrooms);
 //            }
 //        }
-        if (isset($bedrooms)) {
+        if (isset($bedrooms) && $bedrooms != '') {
             if ($bedrooms == "6+") {
                 $properties = $properties->where('bedrooms', '>=', 6);
             } else {
