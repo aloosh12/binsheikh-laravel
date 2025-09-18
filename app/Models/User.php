@@ -149,4 +149,20 @@ class User extends Authenticatable
         return $this->hasOne(Country::class, 'code_iso', 'country_id');
     }
 
+    /**
+     * Get the agency that this user belongs to.
+     */
+    public function agency()
+    {
+        return $this->belongsTo(User::class, 'agency_id');
+    }
+
+    /**
+     * Get all users that belong to this agency.
+     */
+    public function agencyUsers()
+    {
+        return $this->hasMany(User::class, 'agency_id');
+    }
+
 }

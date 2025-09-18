@@ -259,7 +259,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::post('job_application/downloadCSV', "CareerController@downloadCSV")->name('job_application.downloadCSV');
     Route::delete("career/delete_application/{id}", "CareerController@delete_application");
 
-
+    Route::get("agencies", "AgencyController@index");
 
     Route::get("customer/{role?}", "CustomerController@index");
 

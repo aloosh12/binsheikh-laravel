@@ -191,8 +191,8 @@ $CurrentUrl = url()->current();
             </li>
 
             <li class="c-sidebar-nav-item"><a
-                    class="c-sidebar-nav-link {{ request()->get('role') == 3 ? 'c-active' : null }}"
-                    href="{{ url('admin/customer?role=3') }}">
+                    class="c-sidebar-nav-link {{ preg_match('/admin\/agents/', $CurrentUrl)  ? 'c-active' : null }}"
+                    href="{{ url('admin/agents') }}">
                     <div class="c-sidebar-nav-icon">
                         <i class="fas fa-user-tie"></i>
                     </div> Agents
@@ -200,8 +200,8 @@ $CurrentUrl = url()->current();
             </li>
 
             <li class="c-sidebar-nav-item"><a
-                    class="c-sidebar-nav-link {{ request()->get('role') == 4 ? 'c-active' : null }}"
-                    href="{{ url('admin/customer?role=4') }}">
+                    class="c-sidebar-nav-link {{ preg_match('/admin\/agencies/', $CurrentUrl)  ? 'c-active' : null }}"
+                    href="{{ url('admin/agencies') }}">
                     <div class="c-sidebar-nav-icon">
                         <i class="fas fa-building"></i>
                     </div> Agencies

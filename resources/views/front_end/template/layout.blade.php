@@ -601,15 +601,30 @@
                                                                    data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
                                                                    accept="image/*,application/pdf">
                                                         </div>
-{{--                                                        <div class="cs-intsputwrap agent_agency_div d-none">--}}
-{{--                                                            <label for="d" style="float:left">{{ __('messages.professional_practice_certificate') }}</label> <!-- Translated License -->--}}
-{{--                                                            <input type="file" class="form-control agent_agency_inp" name="professional_practice_certificate" data-parsley-required-message="{{ __('messages.select_professional_practice_certificate') }}"--}}
-{{--                                                                data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"--}}
-{{--                                                                data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"--}}
-{{--                                                                data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"--}}
-{{--                                                                accept="image/*,application/pdf">--}}
-{{--                                                        </div>--}}
-
+                                                        <div class="cs-intsputwrap agency_div d-none">
+                                                            <label for="d" style="float:left">{{ __('messages.professional_practice_certificate') }}</label> <!-- Translated License -->
+                                                            <input type="file" class="form-control agent_agency_inp" name="professional_practice_certificate" data-parsley-required-message="{{ __('messages.select_professional_practice_certificate') }}"
+                                                                data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
+                                                                data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
+                                                                data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
+                                                                accept="image/*,application/pdf">
+                                                        </div>
+                                                        <div class="cs-intsputwrap agency_div d-none">
+                                                            <label for="d" style="float:left">{{ __('messages.authorized_signatory') }}</label> <!-- Translated License -->
+                                                            <input type="file" class="form-control agency_inp" name="authorized_signatory" data-parsley-required-message="{{ __('messages.select_authorized_signatory') }}"
+                                                                   data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
+                                                                   data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
+                                                                   data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
+                                                                   accept="image/*,application/pdf">
+                                                        </div>
+                                                        <div class="cs-intsputwrap agency_div d-none">
+                                                            <label for="d" style="float:left">{{ __('messages.cr') }}</label> <!-- Translated License -->
+                                                            <input type="file" class="form-control agency_inp" name="cr" data-parsley-required-message="{{ __('messages.select_cr') }}"
+                                                                   data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
+                                                                   data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
+                                                                   data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
+                                                                   accept="image/*,application/pdf">
+                                                        </div>
                                                         <!-- License Upload for Agents/Agencies -->
                                                          <div class="cs-intsputwrap agent_agency_div d-none">
                                                             <label for="d" style="float:left" id="license_label">{{ __('messages.license') }}</label>
