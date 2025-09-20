@@ -261,11 +261,12 @@ class AgencyController extends Controller
     public function details($id)
     {
         $page_heading = "Customer Details";
-        $customer = User::find($id);
+        $customer = User::with(['agencyUsers'])->find($id);
 
         if (!$customer) {
             abort(404);
         }
+        
         $parts = explode('/', $customer->professional_practice_certificate);
         $last = end($parts);
         $parts = explode('/', $customer->license);
@@ -273,7 +274,22 @@ class AgencyController extends Controller
         $parts = explode('/', $customer->id_card);
         $last_id_card = end($parts);
 
-        return view('admin.customer.details', compact('page_heading', 'customer', 'last', 'last_license', 'last_id_card'));
+        // Get all agent IDs for this agency
+        $agentIds = $customer->agencyUsers->pluck('id')->toArray();
+        
+        // Load visit schedules for all agents in this agency
+        $visitSchedules = \App\Models\VisiteSchedule::with(['agent', 'property'])
+            ->whereIn('agent_id', $agentIds)
+            ->orderBy('visit_time', 'desc')
+            ->get();
+        
+        // Load reservations for all agents in this agency
+        $reservations = \App\Models\Reservation::with(['agent', 'property'])
+            ->whereIn('agent_id', $agentIds)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.agency.details', compact('page_heading', 'customer', 'last', 'last_license', 'last_id_card', 'visitSchedules', 'reservations'));
     }
 
     /**
@@ -389,6 +405,118 @@ class AgencyController extends Controller
         }
 
         return redirect()->back()->with('success', $message);
+    }
+
+    /**
+     * Update reservation commission
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateReservationCommission(Request $request)
+    {
+        $status = "0";
+        $message = "";
+        $errors = [];
+
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'reservation_id' => 'required|integer|exists:reservations,id',
+            'commission' => 'required|numeric|min:0|max:100'
+        ]);
+
+        if ($validator->fails()) {
+            $status = "0";
+            $message = "Validation error occurred";
+            $errors = $validator->errors();
+        } else {
+            try {
+                // Find the reservation
+                $reservation = \App\Models\Reservation::find($request->reservation_id);
+                
+                if ($reservation) {
+                    // Update the commission
+                    $reservation->commission = $request->commission;
+                    $reservation->updated_at = gmdate('Y-m-d H:i:s');
+                    $reservation->save();
+                    
+                    $status = "1";
+                    $message = "Commission updated successfully";
+                } else {
+                    $message = "Reservation not found";
+                }
+            } catch (\Exception $e) {
+                Log::error('Error updating reservation commission: ' . $e->getMessage());
+                $message = "Something went wrong while updating commission";
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'errors' => $errors
+        ]);
+    }
+
+    /**
+     * Update reservation status
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateReservationStatus(Request $request)
+    {
+        $status = "0";
+        $message = "";
+        $errors = [];
+
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'reservation_id' => 'required|integer|exists:reservations,id',
+            'status' => 'required|string|in:waitingApproval,Reserved,PreparingDocument,ClosedDeal'
+        ]);
+
+        if ($validator->fails()) {
+            $status = "0";
+            $message = "Validation error occurred";
+            $errors = $validator->errors();
+        } else {
+            try {
+                // Find the reservation
+                $reservation = \App\Models\Reservation::find($request->reservation_id);
+                
+                if ($reservation) {
+                    // Update the status
+                    $reservation->status = $request->status;
+                    $reservation->updated_at = gmdate('Y-m-d H:i:s');
+                    $reservation->save();
+                    
+                    // Get the status label for response
+                    $statusLabels = [
+                        'waitingApproval' => 'Waiting Approval',
+                        'Reserved' => 'Reserved',
+                        'PreparingDocument' => 'Preparing Document',
+                        'ClosedDeal' => 'Closed Deal'
+                    ];
+                    
+                    $status = "1";
+                    $message = "Status updated successfully";
+                    $status_label = $statusLabels[$request->status] ?? $request->status;
+                } else {
+                    $message = "Reservation not found";
+                }
+            } catch (\Exception $e) {
+                Log::error('Error updating reservation status: ' . $e->getMessage());
+                $message = "Something went wrong while updating status";
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'status_label' => $status_label ?? null,
+            'errors' => $errors
+        ]);
     }
 
 }

@@ -93,4 +93,12 @@ class Properties extends Model
         return $this->hasOne(Projects::class, 'id', 'project_id');
     }
 
+    /**
+     * Get all reservations for this property.
+     */
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'property_id');
+    }
+
 }

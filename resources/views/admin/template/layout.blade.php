@@ -19,6 +19,7 @@ $CurrentUrl = url()->current();
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('') }}admin-assets/assets/favicon/favicon.png" />
 
     <meta name="theme-color" content="#ffffff">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Main styles for this application-->
     <link href="{{ asset('') }}admin-assets/css/style.css?vers=<?= $version ?>" rel="stylesheet">
     <link href="{{ asset('') }}admin-assets/css/parsley.css" rel="stylesheet">

@@ -280,6 +280,10 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::post('customer/update-discount', 'CustomerController@updateDiscount')->name('admin.customer.update-discount');
     Route::post('customer/update-apartments', 'CustomerController@updateApartments')->name('admin.customer.update-apartments');
 
+    Route::get('agency/details/{id}', 'AgencyController@details')->name('admin.agency.details');
+    Route::post('agency/update-reservation-commission', 'AgencyController@updateReservationCommission')->name('admin.agency.update-reservation-commission');
+    Route::post('agency/update-reservation-status', 'AgencyController@updateReservationStatus')->name('admin.agency.update-reservation-status');
+
     // Popups routes
     Route::resource('popups', 'PopupController');
     Route::post('popups/change_status', 'PopupController@changeStatus');

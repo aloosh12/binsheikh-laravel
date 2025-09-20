@@ -165,4 +165,12 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'agency_id');
     }
 
+    /**
+     * Get all reservations for this agent.
+     */
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'agent_id');
+    }
+
 }
