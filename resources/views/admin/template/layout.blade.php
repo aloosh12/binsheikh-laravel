@@ -192,8 +192,8 @@ $CurrentUrl = url()->current();
             </li>
 
             <li class="c-sidebar-nav-item"><a
-                    class="c-sidebar-nav-link {{ preg_match('/admin\/agents/', $CurrentUrl)  ? 'c-active' : null }}"
-                    href="{{ url('admin/agents') }}">
+                    class="c-sidebar-nav-link {{ preg_match('/admin\/agent/', $CurrentUrl)  ? 'c-active' : null }}"
+                    href="{{ url('admin/agent') }}">
                     <div class="c-sidebar-nav-icon">
                         <i class="fas fa-user-tie"></i>
                     </div> Agents

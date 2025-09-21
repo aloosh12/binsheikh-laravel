@@ -22,8 +22,8 @@ class AgentController extends Controller
         $to = $request->get('to', \Carbon\Carbon::today()->format('Y-m-d'));
         $page_heading = "Customer";
         $query = User::where('deleted', 0);
-        $query->where('role', 4);
-        $page_heading = "Agencies";
+        $query->where('role', 3);
+        $page_heading = "Agents";
         $customer = $query->orderBy('created_at', 'desc');
 
         // Apply date range filter
@@ -39,7 +39,7 @@ class AgentController extends Controller
         }
 
         $customers = $customer->paginate(10);
-        return view('admin.agency.list', compact('page_heading', 'customers', 'search_text', 'role', 'from', 'to'));
+        return view('admin.agent.list', compact('page_heading', 'customers', 'search_text', 'role', 'from', 'to'));
     }
 
     /**
@@ -260,36 +260,33 @@ class AgentController extends Controller
 
     public function details($id)
     {
-        $page_heading = "Customer Details";
-        $customer = User::with(['agencyUsers'])->find($id);
+        $page_heading = "Agent Details";
+        $agent = User::find($id);
 
-        if (!$customer) {
+        if (!$agent) {
             abort(404);
         }
         
-        $parts = explode('/', $customer->professional_practice_certificate);
+        $parts = explode('/', $agent->professional_practice_certificate);
         $last = end($parts);
-        $parts = explode('/', $customer->license);
+        $parts = explode('/', $agent->license);
         $last_license = end($parts);
-        $parts = explode('/', $customer->id_card);
+        $parts = explode('/', $agent->id_card);
         $last_id_card = end($parts);
 
-        // Get all agent IDs for this agency
-        $agentIds = $customer->agencyUsers->pluck('id')->toArray();
-        
-        // Load visit schedules for all agents in this agency
+        // Load visit schedules for this specific agent
         $visitSchedules = \App\Models\VisiteSchedule::with(['agent', 'property'])
-            ->whereIn('agent_id', $agentIds)
+            ->where('agent_id', $id)
             ->orderBy('visit_time', 'desc')
             ->get();
         
-        // Load reservations for all agents in this agency
+        // Load reservations for this specific agent
         $reservations = \App\Models\Reservation::with(['agent', 'property'])
-            ->whereIn('agent_id', $agentIds)
+            ->where('agent_id', $id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('admin.agency.details', compact('page_heading', 'customer', 'last', 'last_license', 'last_id_card', 'visitSchedules', 'reservations'));
+        return view('admin.agent.details', compact('page_heading', 'agent', 'last', 'last_license', 'last_id_card', 'visitSchedules', 'reservations'));
     }
 
     /**
@@ -520,7 +517,7 @@ class AgentController extends Controller
     }
 
     /**
-     * Export employees to CSV
+     * Export agents to CSV
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
@@ -528,24 +525,24 @@ class AgentController extends Controller
     public function exportEmployees(Request $request)
     {
         $ids = $request->get('ids');
-        $employeeIds = $ids ? explode(',', $ids) : [];
+        $agentIds = $ids ? explode(',', $ids) : [];
         
-        $query = \App\Models\User::where('deleted', 0)->where('role', 3); // Assuming role 3 is for employees
+        $query = \App\Models\User::where('deleted', 0)->where('role', 3); // Assuming role 3 is for agents
         
-        if (!empty($employeeIds)) {
-            $query->whereIn('id', $employeeIds);
+        if (!empty($agentIds)) {
+            $query->whereIn('id', $agentIds);
         }
         
-        $employees = $query->get();
+        $agents = $query->get();
         
-        $filename = 'employees_export_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'agents_export_' . date('Y-m-d_H-i-s') . '.csv';
         
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
         
-        return response()->stream(function() use ($employees) {
+        return response()->stream(function() use ($agents) {
             $file = fopen('php://output', 'w');
             
             // CSV Headers
@@ -554,21 +551,21 @@ class AgentController extends Controller
                 'Name',
                 'Email',
                 'Phone',
-                'Agent Name',
+                'Agency Name',
                 'Created At',
                 'Status'
             ]);
             
             // CSV Data
-            foreach ($employees as $employee) {
+            foreach ($agents as $agent) {
                 fputcsv($file, [
-                    $employee->id,
-                    $employee->name,
-                    $employee->email,
-                    $employee->phone,
-                    $employee->agency->name ?? 'N/A',
-                    $employee->created_at->format('Y-m-d H:i:s'),
-                    $employee->active ? 'Active' : 'Inactive'
+                    $agent->id,
+                    $agent->name,
+                    $agent->email,
+                    $agent->phone,
+                    $agent->agency->name ?? 'N/A',
+                    $agent->created_at->format('Y-m-d H:i:s'),
+                    $agent->active ? 'Active' : 'Inactive'
                 ]);
             }
             
@@ -585,9 +582,15 @@ class AgentController extends Controller
     public function exportReservations(Request $request)
     {
         $ids = $request->get('ids');
+        $agentId = $request->get('agent_id'); // Get the specific agent ID
         $reservationIds = $ids ? explode(',', $ids) : [];
         
         $query = \App\Models\Reservation::with(['agent', 'property']);
+        
+        // Filter by specific agent if agent_id is provided
+        if ($agentId) {
+            $query->where('agent_id', $agentId);
+        }
         
         if (!empty($reservationIds)) {
             $query->whereIn('id', $reservationIds);
@@ -595,7 +598,7 @@ class AgentController extends Controller
         
         $reservations = $query->get();
         
-        $filename = 'reservations_export_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'agent_reservations_export_' . date('Y-m-d_H-i-s') . '.csv';
         
         $headers = [
             'Content-Type' => 'text/csv',
@@ -642,9 +645,15 @@ class AgentController extends Controller
     public function exportVisitSchedules(Request $request)
     {
         $ids = $request->get('ids');
+        $agentId = $request->get('agent_id'); // Get the specific agent ID
         $scheduleIds = $ids ? explode(',', $ids) : [];
         
         $query = \App\Models\VisiteSchedule::with(['agent', 'property']);
+        
+        // Filter by specific agent if agent_id is provided
+        if ($agentId) {
+            $query->where('agent_id', $agentId);
+        }
         
         if (!empty($scheduleIds)) {
             $query->whereIn('id', $scheduleIds);
@@ -652,7 +661,7 @@ class AgentController extends Controller
         
         $schedules = $query->get();
         
-        $filename = 'visit_schedules_export_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'agent_visit_schedules_export_' . date('Y-m-d_H-i-s') . '.csv';
         
         $headers = [
             'Content-Type' => 'text/csv',
@@ -697,7 +706,7 @@ class AgentController extends Controller
     }
 
     /**
-     * Delete selected employees
+     * Delete selected agents
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -721,7 +730,7 @@ class AgentController extends Controller
         } else {
             try {
                 $deletedCount = \App\Models\User::whereIn('id', $request->employee_ids)
-                    ->where('role', 3) // Assuming role 3 is for employees
+                    ->where('role', 3) // Assuming role 3 is for agents
                     ->update([
                         'deleted' => 1,
                         'active' => 0,
@@ -730,13 +739,13 @@ class AgentController extends Controller
                 
                 if ($deletedCount > 0) {
                     $status = "1";
-                    $message = "Successfully deleted {$deletedCount} employee(s)";
+                    $message = "Successfully deleted {$deletedCount} agent(s)";
                 } else {
-                    $message = "No employees were deleted";
+                    $message = "No agents were deleted";
                 }
             } catch (\Exception $e) {
-                Log::error('Error deleting employees: ' . $e->getMessage());
-                $message = "Something went wrong while deleting employees";
+                Log::error('Error deleting agents: ' . $e->getMessage());
+                $message = "Something went wrong while deleting agents";
             }
         }
 
@@ -762,7 +771,8 @@ class AgentController extends Controller
         // Validate the request
         $validator = Validator::make($request->all(), [
             'reservation_ids' => 'required|array',
-            'reservation_ids.*' => 'integer|exists:reservations,id'
+            'reservation_ids.*' => 'integer|exists:reservations,id',
+            'agent_id' => 'nullable|integer|exists:users,id'
         ]);
 
         if ($validator->fails()) {
@@ -771,7 +781,14 @@ class AgentController extends Controller
             $errors = $validator->errors();
         } else {
             try {
-                $deletedCount = \App\Models\Reservation::whereIn('id', $request->reservation_ids)->delete();
+                $query = \App\Models\Reservation::whereIn('id', $request->reservation_ids);
+                
+                // Filter by specific agent if agent_id is provided
+                if ($request->has('agent_id') && $request->agent_id) {
+                    $query->where('agent_id', $request->agent_id);
+                }
+                
+                $deletedCount = $query->delete();
                 
                 if ($deletedCount > 0) {
                     $status = "1";
@@ -807,7 +824,8 @@ class AgentController extends Controller
         // Validate the request
         $validator = Validator::make($request->all(), [
             'schedule_ids' => 'required|array',
-            'schedule_ids.*' => 'integer|exists:visit_schedules,id'
+            'schedule_ids.*' => 'integer|exists:visit_schedules,id',
+            'agent_id' => 'nullable|integer|exists:users,id'
         ]);
 
         if ($validator->fails()) {
@@ -816,7 +834,14 @@ class AgentController extends Controller
             $errors = $validator->errors();
         } else {
             try {
-                $deletedCount = \App\Models\VisiteSchedule::whereIn('id', $request->schedule_ids)->delete();
+                $query = \App\Models\VisiteSchedule::whereIn('id', $request->schedule_ids);
+                
+                // Filter by specific agent if agent_id is provided
+                if ($request->has('agent_id') && $request->agent_id) {
+                    $query->where('agent_id', $request->agent_id);
+                }
+                
+                $deletedCount = $query->delete();
                 
                 if ($deletedCount > 0) {
                     $status = "1";

@@ -260,6 +260,7 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::delete("career/delete_application/{id}", "CareerController@delete_application");
 
     Route::get("agencies", "AgencyController@index");
+    Route::get("agent", "AgentController@index");
 
     Route::get("customer/{role?}", "CustomerController@index");
 
@@ -297,6 +298,13 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::get('agent/details/{id}', 'AgentController@details')->name('admin.agent.details');
     Route::post('agent/update-reservation-commission', 'AgentController@updateReservationCommission')->name('admin.agent.update-reservation-commission');
     Route::post('agent/update-reservation-status', 'AgentController@updateReservationStatus')->name('admin.agent.update-reservation-status');
+    
+    // Agent management routes
+    Route::post('agent/change_status', 'AgentController@change_status')->name('admin.agent.change_status');
+    Route::delete('agent/delete/{id}', 'AgentController@destroy')->name('admin.agent.delete');
+    Route::get('agent/approve/{id}', 'AgentController@approve')->name('admin.agent.approve');
+    Route::delete('agent/deleteAll', 'AgentController@deleteAll')->name('admin.agent.deleteAll');
+    Route::get('agent/download-document/{filename}', 'AgentController@downloadDocument')->name('admin.agent.download-document');
     
     // Export routes
     Route::get('agent/export-employees', 'AgentController@exportEmployees')->name('admin.agent.export-employees');

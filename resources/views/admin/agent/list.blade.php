@@ -2,12 +2,12 @@
 
 @section('header')
 <style>
-    .agency-name {
+    .agent-name {
         cursor: pointer;
         color: #007bff;
     }
     
-    .agency-name:hover {
+    .agent-name:hover {
         text-decoration: underline;
     }
     
@@ -175,7 +175,7 @@
                         <div class="card-header"><i class="fa fa-align-justify"></i> {{$page_heading}}</div>
                         <div class="card-body">
                             <div class="col-md-8 mb-0" style="top:51px">
-                                <form action="{{ url('admin/customer') }}" method="get" >
+                                <form action="{{ url('admin/agent') }}" method="get" >
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="mb-3">
@@ -199,7 +199,7 @@
 
                                         <div class="col-md-3" style="margin-top: 1.8rem !important;">
                                             <button class="btn btn-primary" type="submit">Filter</button>
-                                            <a href="{{ url('admin/customer') }}" class="btn btn-success dt_tables_filter_button" data-tid="dt-tbl"
+                                            <a href="{{ url('admin/agent') }}" class="btn btn-success dt_tables_filter_button" data-tid="dt-tbl"
                                                type="button">Reset</a>
                                         </div>
                                     </div>
@@ -210,14 +210,14 @@
                                 <button id="deleteSelected" class="btn btn-danger">Delete Selected</button>
                             </div>
 
-                            <table class="table table-responsive-sm table-bordered" id="agencyTable">
+                            <table class="table table-responsive-sm table-bordered" id="agentTable">
                                 <thead>
                                     <tr>
                                         <th><input  type="checkbox" class="" id="selectAll"
                                                    onclick="toggleAll(this)">
                                         </th>
                                         <th>#</th>
-                                        <th>Agency Name</th>
+                                        <th>Agent Name</th>
                                         <th>Created At</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -235,29 +235,29 @@
                                             <td><input type="checkbox" class="box1" value="{{ $cust->id }}"></td>
                                             <td class="trVOE">{{ $i }}</td>
                                             <td class="trVOE">
-                                                <span class="agency-name">{{ $cust->name }}</span>
+                                                <span class="agent-name">{{ $cust->name }}</span>
                                                 <i class="fas fa-chevron-down expand-icon" style="margin-left: 10px; cursor: pointer;"></i>
                                             </td>
                                             <td class="trVOE">{{ web_date_in_timezone($cust->created_at, 'd-M-Y h:i A') }}</td>
                                             <td>
                                                 <input class="toggle_status"
-                                                    data-url="{{ url('admin/customer/change_status') }}" type="checkbox"
+                                                    data-url="{{ url('admin/agent/change_status') }}" type="checkbox"
                                                     {{ $checked }} data-id="{{ $cust->id }}" data-toggle="toggle"
                                                     data-on="Active" data-off="Inactive" data-onstyle="success"
                                                     data-offstyle="danger">
                                             </td>
                                             <td>
-                                                <a href="{{ url('admin/customer/delete/' . $cust->id) }}"
+                                                <a href="{{ url('admin/agent/delete/' . $cust->id) }}"
                                                     class="btn btn-outline-danger active deleteListItem" data-role="unlink"
-                                                    data-message="Do you want to remove this agency?" title="Delete"
+                                                    data-message="Do you want to remove this agent?" title="Delete"
                                                     aria-hidden="true"><i class="fas fa-trash-alt fa-1x"></i></a>
-                                                <a href="{{ url('admin/agency/details/' . $cust->id . '?role=' . $role) }}"
+                                                <a href="{{ url('admin/agent/details/' . $cust->id . '?role=' . $role) }}"
                                                     class="btn btn-outline-info active" title="View Details"
                                                     aria-hidden="true"><i class="fas fa-eye fa-1x"></i></a>
                                                 @if(!$cust->verified)
-                                                <a href="{{ url('admin/customer/approve/' . $cust->id) }}"
-                                                    class="btn btn-outline-success active approveCustomer" title="Approve Agency"
-                                                    data-message="Do you want to approve this agency?" aria-hidden="true"><i class="fas fa-check fa-1x"></i></a>
+                                                <a href="{{ url('admin/agent/approve/' . $cust->id) }}"
+                                                    class="btn btn-outline-success active approveCustomer" title="Approve Agent"
+                                                    data-message="Do you want to approve this agent?" aria-hidden="true"><i class="fas fa-check fa-1x"></i></a>
                                                 @endif
                                             </td>
                                         </tr>
@@ -267,7 +267,7 @@
                                             <td colspan="6">
                                                 <div class="detail-content">
                                                     <div class="agency-info-header">
-                                                        <h5>AGENCY INFO</h5>
+                                                        <h5>AGENT INFO</h5>
                                                         <div class="header-actions">
                                                             <button class="btn-action btn-success" title="Approve">
                                                                 <i class="fas fa-check"></i>
@@ -286,7 +286,7 @@
                                                                     <i class="fas fa-user"></i>
                                                                 </div>
                                                                 <div class="info-content">
-                                                                    <label>Agency Name</label>
+                                                                    <label>Agent Name</label>
                                                                     <span>{{ $cust->name ?? 'N/A' }}</span>
                                                                 </div>
                                                             </div>
@@ -296,8 +296,18 @@
                                                                     <i class="fas fa-envelope"></i>
                                                                 </div>
                                                                 <div class="info-content">
-                                                                    <label>Agency Email Address</label>
+                                                                    <label>Agent Email Address</label>
                                                                     <span>{{ $cust->email ?? 'N/A' }}</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="info-card">
+                                                                <div class="info-icon">
+                                                                    <i class="fas fa-building"></i>
+                                                                </div>
+                                                                <div class="info-content">
+                                                                    <label>Agency</label>
+                                                                    <span>{{ $cust->agency->name ?? 'N/A' }}</span>
                                                                 </div>
                                                             </div>
                                                             
@@ -306,21 +316,12 @@
                                                                     <i class="fas fa-file-alt"></i>
                                                                 </div>
                                                                 <div class="info-content">
-                                                                    <label>CR</label>
-                                                                    <span>{{ $cust->CR ?? 'N/A' }}</span>
+                                                                    <label>Professional Practice Certificate</label>
+                                                                    <span>{{ $cust->professional_practice_certificate ? 'Available' : 'N/A' }}</span>
                                                                 </div>
-                                                                <button class="view-btn">View</button>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-file-signature"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Authorized signatory</label>
-                                                                    <span>{{ $cust->authorized_signatory ?? 'N/A' }}</span>
-                                                                </div>
-                                                                <button class="view-btn">View</button>
+                                                                @if($cust->professional_practice_certificate)
+                                                                <button class="view-btn" onclick="downloadDocument('{{ basename($cust->professional_practice_certificate) }}')">View</button>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                         
@@ -331,7 +332,7 @@
                                                                     <i class="fas fa-phone"></i>
                                                                 </div>
                                                                 <div class="info-content">
-                                                                    <label>Agency Phone Number</label>
+                                                                    <label>Agent Phone Number</label>
                                                                     <span>{{ $cust->phone ?? 'N/A' }}</span>
                                                                 </div>
                                                             </div>
@@ -341,10 +342,12 @@
                                                                     <i class="fas fa-certificate"></i>
                                                                 </div>
                                                                 <div class="info-content">
-                                                                    <label>Trade License</label>
-                                                                    <span>{{ $cust->commission_number ?? 'N/A' }}</span>
+                                                                    <label>License</label>
+                                                                    <span>{{ $cust->license ? 'Available' : 'N/A' }}</span>
                                                                 </div>
-                                                                <button class="view-btn">View</button>
+                                                                @if($cust->license)
+                                                                <button class="view-btn" onclick="downloadDocument('{{ basename($cust->license) }}')">View</button>
+                                                                @endif
                                                             </div>
                                                             
                                                             <div class="info-card">
@@ -352,10 +355,22 @@
                                                                     <i class="fas fa-id-card"></i>
                                                                 </div>
                                                                 <div class="info-content">
-                                                                    <label>Professional License</label>
-                                                                    <span>{{ $cust->discount_number ?? 'N/A' }}</span>
+                                                                    <label>ID Card</label>
+                                                                    <span>{{ $cust->id_card ? 'Available' : 'N/A' }}</span>
                                                                 </div>
-                                                                <button class="view-btn">View</button>
+                                                                @if($cust->id_card)
+                                                                <button class="view-btn" onclick="downloadDocument('{{ basename($cust->id_card) }}')">View</button>
+                                                                @endif
+                                                            </div>
+                                                            
+                                                            <div class="info-card">
+                                                                <div class="info-icon">
+                                                                    <i class="fas fa-calendar"></i>
+                                                                </div>
+                                                                <div class="info-content">
+                                                                    <label>Created Date</label>
+                                                                    <span>{{ web_date_in_timezone($cust->created_at, 'd-M-Y h:i A') }}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -422,8 +437,8 @@
                 });
             });
 
-            // Add click event to agency name for expand/collapse
-            document.querySelectorAll('.agency-name').forEach(name => {
+            // Add click event to agent name for expand/collapse
+            document.querySelectorAll('.agent-name').forEach(name => {
                 name.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const icon = this.nextElementSibling;
@@ -464,8 +479,8 @@
                     const isApprove = this.classList.contains('btn-success');
                     const action = isApprove ? 'approve' : 'reject';
                     const icon = isApprove ? 'success' : 'error';
-                    const title = isApprove ? 'Approve Agency' : 'Reject Agency';
-                    const text = isApprove ? 'Are you sure you want to approve this agency?' : 'Are you sure you want to reject this agency?';
+                    const title = isApprove ? 'Approve Agent' : 'Reject Agent';
+                    const text = isApprove ? 'Are you sure you want to approve this agent?' : 'Are you sure you want to reject this agent?';
                     
                     Swal.fire({
                         title: title,
@@ -480,7 +495,7 @@
                             // Here you can add the actual approval/rejection logic
                             Swal.fire({
                                 title: 'Success!',
-                                text: `Agency has been ${action}d successfully.`,
+                                text: `Agent has been ${action}d successfully.`,
                                 icon: 'success',
                                 timer: 2000,
                                 showConfirmButton: false
@@ -505,7 +520,7 @@
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Selected agencies will be deleted!",
+                text: "Selected agents will be deleted!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -513,11 +528,10 @@
                 confirmButtonText: 'Yes, delete them!'
             }).then((result) => {
                 if (result.value) {
-                    console.log("dd");
                     // Send the request via AJAX or create a form
                     let form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '{{ route("admin.customer.deleteAll") }}';
+                    form.action = '{{ url("admin/agent/deleteAll") }}';
 
                     // Add CSRF token
                     let csrf = document.createElement('input');
@@ -568,5 +582,19 @@
                 });
             });
         });
+
+        // Download Document Function
+        function downloadDocument(filename) {
+            if (filename && filename !== 'N/A') {
+                window.open('{{ url("admin/agent/download-document") }}/' + filename, '_blank');
+            } else {
+                Swal.fire({
+                    title: 'No Document',
+                    text: 'No document available for download.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
     </script>
 @stop

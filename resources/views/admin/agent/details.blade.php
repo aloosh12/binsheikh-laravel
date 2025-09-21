@@ -1246,14 +1246,14 @@
         <div class="fade-in">
             <!-- Header -->
             <div class="agency-details-header">
-                <h1 class="breadcrumb-title">AGENCIES / {{ strtoupper($customer->name) }} / AGENCY INFO</h1>
+                <h1 class="breadcrumb-title">AGENTS / {{ strtoupper($agent->name) }} / AGENT INFO</h1>
                 <div class="header-actions">
                     <button class="btn-action btn-gray">Edit</button>
                     <button class="btn-action btn-gold">Approve</button>
                 </div>
             </div>
             
-            <!-- Agency Summary -->
+            <!-- Agent Summary -->
             <div class="agency-summary">
                 <div class="agency-info">
                     <div class="agency-avatar">
@@ -1261,25 +1261,24 @@
                         <div class="status-dot"></div>
                     </div>
                     <div>
-                        <h3 class="agency-name">{{ $customer->name }}</h3>
+                        <h3 class="agency-name">{{ $agent->name }}</h3>
                     </div>
                 </div>
-                <div class="agency-date">{{ web_date_in_timezone($customer->created_at, 'd-M-Y') }}</div>
-                <div class="agency-status">Status: <span class="status-active">{{ $customer->active ? 'Active' : 'Inactive' }}</span></div>
+                <div class="agency-date">{{ web_date_in_timezone($agent->created_at, 'd-M-Y') }}</div>
+                <div class="agency-status">Status: <span class="status-active">{{ $agent->active ? 'Active' : 'Inactive' }}</span></div>
             </div>
             
             <!-- Tab Navigation -->
             <div class="tab-navigation">
-                <button class="tab-btn active" data-tab="agency-info">AGENCY INFO</button>
-                <button class="tab-btn inactive" data-tab="employees">EMPLOYEES</button>
+                <button class="tab-btn active" data-tab="agent-info">AGENT INFO</button>
                 <button class="tab-btn inactive" data-tab="reservations">RESERVATIONS</button>
                 <button class="tab-btn inactive" data-tab="visit-schedule">VISIT SCHEDULE</button>
             </div>
             
             <!-- Tab Content -->
             <div class="tab-content">
-                <!-- Agency Info Tab -->
-                <div id="agency-info" class="tab-pane active">
+                <!-- Agent Info Tab -->
+                <div id="agent-info" class="tab-pane active">
                     <div class="agency-info-grid">
                         <!-- Left Column -->
                         <div class="info-column">
@@ -1288,8 +1287,8 @@
                                     <i class="fas fa-user"></i>
                                 </div>
                                 <div class="info-content">
-                                    <label>Agency Name</label>
-                                    <span>{{ $customer->name ?? 'N/A' }}</span>
+                                    <label>Agent Name</label>
+                                    <span>{{ $agent->name ?? 'N/A' }}</span>
                                 </div>
                             </div>
                             
@@ -1298,8 +1297,18 @@
                                     <i class="fas fa-envelope"></i>
                                 </div>
                                 <div class="info-content">
-                                    <label>Agency Email Address</label>
-                                    <span>{{ $customer->email ?? 'N/A' }}</span>
+                                    <label>Agent Email Address</label>
+                                    <span>{{ $agent->email ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="info-content">
+                                    <label>Agency</label>
+                                    <span>{{ $agent->agency->name ?? 'N/A' }}</span>
                                 </div>
                             </div>
                             
@@ -1308,21 +1317,12 @@
                                     <i class="fas fa-file-alt"></i>
                                 </div>
                                 <div class="info-content">
-                                    <label>CR</label>
-                                    <span>{{ $customer->CR ?? 'N/A' }}</span>
+                                    <label>Professional Practice Certificate</label>
+                                    <span>{{ $agent->professional_practice_certificate ? 'Available' : 'N/A' }}</span>
                                 </div>
-                                <button class="view-btn">View</button>
-                            </div>
-                            
-                            <div class="info-card">
-                                <div class="info-icon">
-                                    <i class="fas fa-file-signature"></i>
-                                </div>
-                                <div class="info-content">
-                                    <label>Authorized signatory</label>
-                                    <span>{{ $customer->authorized_signatory ?? 'N/A' }}</span>
-                                </div>
-                                <button class="view-btn">View</button>
+                                @if($agent->professional_practice_certificate)
+                                <button class="view-btn" onclick="downloadDocument('{{ basename($agent->professional_practice_certificate) }}')">View</button>
+                                @endif
                             </div>
                         </div>
                         
@@ -1333,8 +1333,8 @@
                                     <i class="fas fa-phone"></i>
                                 </div>
                                 <div class="info-content">
-                                    <label>Agency Phone Number</label>
-                                    <span>{{ $customer->phone ?? 'N/A' }}</span>
+                                    <label>Agent Phone Number</label>
+                                    <span>{{ $agent->phone ?? 'N/A' }}</span>
                                 </div>
                             </div>
                             
@@ -1343,10 +1343,12 @@
                                     <i class="fas fa-certificate"></i>
                                 </div>
                                 <div class="info-content">
-                                    <label>Trade License</label>
-                                    <span>{{ $customer->commission_number ?? 'N/A' }}</span>
+                                    <label>License</label>
+                                    <span>{{ $agent->license ? 'Available' : 'N/A' }}</span>
                                 </div>
-                                <button class="view-btn">View</button>
+                                @if($agent->license)
+                                <button class="view-btn" onclick="downloadDocument('{{ basename($agent->license) }}')">View</button>
+                                @endif
                             </div>
                             
                             <div class="info-card">
@@ -1354,175 +1356,27 @@
                                     <i class="fas fa-id-card"></i>
                                 </div>
                                 <div class="info-content">
-                                    <label>Professional License</label>
-                                    <span>{{ $customer->discount_number ?? 'N/A' }}</span>
+                                    <label>ID Card</label>
+                                    <span>{{ $agent->id_card ? 'Available' : 'N/A' }}</span>
                                 </div>
-                                <button class="view-btn">View</button>
+                                @if($agent->id_card)
+                                <button class="view-btn" onclick="downloadDocument('{{ basename($agent->id_card) }}')">View</button>
+                                @endif
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="info-content">
+                                    <label>Created Date</label>
+                                    <span>{{ web_date_in_timezone($agent->created_at, 'd-M-Y h:i A') }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Employees Tab -->
-                <div id="employees" class="tab-pane">
-                    <!-- Search and Filters -->
-                    <div class="employees-header">
-                        <div class="search-section">
-                            <div class="search-bar">
-                                <input type="text" class="form-control" placeholder="Search By Name | Email | Phone Number" id="employeeSearch">
-                            </div>
-                        </div>
-                        
-                        <div class="filters-section">
-                            <div class="date-filters">
-                                <div class="date-input">
-                                    <label>From</label>
-                                    <input type="date" class="form-control" id="fromDate">
-                                </div>
-                                <div class="date-input">
-                                    <label>To</label>
-                                    <input type="date" class="form-control" id="toDate">
-                                </div>
-                            </div>
-                            
-                            <div class="selection-info">
-                                <span id="selectedCount">0 items selected</span>
-                            </div>
-                            
-                            <div class="action-buttons">
-                                <button class="btn btn-primary btn-sm">Export</button>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Master-Details Table -->
-                    <div class="table-container">
-                        <table class="table table-hover" id="employeesTable">
-                            <thead>
-                                <tr>
-                                    <th width="50">
-                                        <input type="checkbox" id="selectAllEmployees" onclick="toggleAllEmployees(this)">
-                                    </th>
-                                    <th>Agent Name</th>
-                                    <th>Agency Name</th>
-                                    <th>Created On</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($customer->agencyUsers ?? [] as $index => $agent)
-                                <!-- Main Row -->
-                                <tr class="main-row" data-id="{{ $agent->id }}">
-                                    <td>
-                                        <input type="checkbox" class="employee-checkbox" value="{{ $agent->id }}">
-                                    </td>
-                                    <td>
-                                        <div class="agent-info">
-                                            <div class="agent-avatar">
-                                                <i class="fas fa-user"></i>
-                                                <div class="status-dot"></div>
-                                            </div>
-                                            <span class="agent-name">{{ $agent->name }}</span>
-                                        </div>
-                                    </td>
-                                    <td>{{ $customer->name }}</td>
-                                    <td><span data-date="{{ $agent->created_at }}">{{ web_date_in_timezone($agent->created_at, 'd-M-Y') }}</span></td>
-                                    <td>
-                                        <div class="status-section">
-                                            <span class="status-text {{ $agent->active ? 'text-success' : 'text-danger' }}">
-                                                {{ $agent->active ? 'Active' : 'Inactive' }}
-                                            </span>
-                                            <button class="btn btn-sm btn-info">View</button>
-                                            <i class="fas fa-chevron-down expand-icon" style="margin-left: 10px; cursor: pointer;"></i>
-                                        </div>
-                                    </td>
-                                </tr>
-                                
-                                <!-- Detail Row -->
-                                <tr class="detail-row" data-parent="{{ $agent->id }}" style="display: none;">
-                                    <td colspan="5">
-                                        <div class="detail-content">
-                                            <div class="agent-info-header">
-                                                <h6>AGENT INFO</h6>
-                                                <div class="header-actions">
-                                                    <div class="form-indicator">
-                                                        <span class="badge badge-info">1 Active Form Submitted</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="agent-info-grid">
-                                                <!-- Left Column -->
-                                                <div class="info-column">
-                                                    <div class="info-card">
-                                                        <div class="info-icon">
-                                                            <i class="fas fa-user"></i>
-                                                        </div>
-                                                        <div class="info-content">
-                                                            <label>Agency Name</label>
-                                                            <span>{{ $customer->name ?? 'N/A' }}</span>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="info-card">
-                                                        <div class="info-icon">
-                                                            <i class="fas fa-envelope"></i>
-                                                        </div>
-                                                        <div class="info-content">
-                                                            <label>Agent Email Address</label>
-                                                            <span>{{ $agent->email ?? 'N/A' }}</span>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="info-card">
-                                                        <div class="info-icon">
-                                                            <i class="fas fa-id-card"></i>
-                                                        </div>
-                                                        <div class="info-content">
-                                                            <label>ID Card</label>
-                                                            <span>{{ $agent->id_no ?? 'N/A' }}</span>
-                                                        </div>
-                                                        <button class="view-btn">View</button>
-                                                    </div>
-                                                </div>
-                                                
-                                                <!-- Right Column -->
-                                                <div class="info-column">
-                                                    <div class="info-card">
-                                                        <div class="info-icon">
-                                                            <i class="fas fa-phone"></i>
-                                                        </div>
-                                                        <div class="info-content">
-                                                            <label>Agent Phone Number</label>
-                                                            <span>{{ $agent->phone ?? 'N/A' }}</span>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="info-card">
-                                                        <div class="info-icon">
-                                                            <i class="fas fa-certificate"></i>
-                                                        </div>
-                                                        <div class="info-content">
-                                                            <label>Professional License</label>
-                                                            <span>{{ $agent->discount_number ?? 'N/A' }}</span>
-                                                        </div>
-                                                        <button class="view-btn">View</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5" class="text-center">No employees found for this agency.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
                 
                 <!-- Reservations Tab -->
                 <div id="reservations" class="tab-pane">
@@ -1973,272 +1827,18 @@
             });
         });
         
-        // Employees tab functionality
-        function toggleAllEmployees(source) {
-            document.querySelectorAll('.employee-checkbox').forEach(checkbox => {
-                checkbox.checked = source.checked;
-            });
-            updateSelectedCount();
-        }
-        
-        function updateSelectedCount() {
-            const selected = document.querySelectorAll('.employee-checkbox:checked').length;
-            document.getElementById('selectedCount').textContent = `${selected} items selected`;
-        }
-        
-        // Employee checkbox change
-        document.querySelectorAll('.employee-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', updateSelectedCount);
-        });
-        
-        // Employee export functionality
-        document.querySelectorAll('#employees .btn-primary').forEach(button => {
-            if (button.textContent.trim() === 'Export') {
-                button.addEventListener('click', function() {
-                    const selectedEmployees = document.querySelectorAll('.employee-checkbox:checked');
-                    if (selectedEmployees.length === 0) {
-                        Swal.fire({
-                            title: 'No Selection',
-                            text: 'Please select employees to export',
-                            icon: 'warning',
-                            confirmButtonText: 'OK'
-                        });
-                        return;
-                    }
-                    
-                    const employeeIds = Array.from(selectedEmployees).map(cb => cb.value);
-                    
-                    Swal.fire({
-                        title: 'Export Employees',
-                        text: `Export ${selectedEmployees.length} selected employee(s)?`,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#007bff',
-                        cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Yes, export!'
-                    }).then((result) => {
-                        if (result.value) {
-                            // Create export URL with selected IDs
-                            const exportUrl = `/admin/agency/export-employees?ids=${employeeIds.join(',')}`;
-                            window.open(exportUrl, '_blank');
-                            
-                            Swal.fire({
-                                title: 'Export Started',
-                                text: 'Employee data export has been initiated',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                        }
-                    });
+        // Download Document Function
+        function downloadDocument(filename) {
+            if (filename && filename !== 'N/A') {
+                window.open('{{ url("admin/customer/download-document") }}/' + filename, '_blank');
+            } else {
+                Swal.fire({
+                    title: 'No Document',
+                    text: 'No document available for download.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
                 });
             }
-        });
-        
-        // Employee delete functionality
-        document.querySelectorAll('#employees .btn-danger').forEach(button => {
-            if (button.textContent.trim() === 'Delete') {
-                button.addEventListener('click', function() {
-                    const selectedEmployees = document.querySelectorAll('.employee-checkbox:checked');
-                    if (selectedEmployees.length === 0) {
-                        Swal.fire({
-                            title: 'No Selection',
-                            text: 'Please select employees to delete',
-                            icon: 'warning',
-                            confirmButtonText: 'OK'
-                        });
-                        return;
-                    }
-                    
-                    Swal.fire({
-                        title: 'Delete Employees',
-                        text: `Are you sure you want to delete ${selectedEmployees.length} selected employee(s)? This action cannot be undone.`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#dc3545',
-                        cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Yes, delete!'
-                    }).then((result) => {
-                        if (result.value) {
-                            const employeeIds = Array.from(selectedEmployees).map(cb => cb.value);
-                            
-                            // Get CSRF token
-                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
-                            
-                            // Make AJAX call to delete employees
-                            fetch('/admin/agency/delete-employees', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': csrfToken
-                                },
-                                body: JSON.stringify({
-                                    employee_ids: employeeIds
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status === '1') {
-                                    // Remove deleted rows from the table
-                                    selectedEmployees.forEach(checkbox => {
-                                        const row = checkbox.closest('.main-row');
-                                        const rowId = row.getAttribute('data-id');
-                                        const detailRow = document.querySelector(`#employees .detail-row[data-parent="${rowId}"]`);
-                                        
-                                        row.remove();
-                                        if (detailRow) {
-                                            detailRow.remove();
-                                        }
-                                    });
-                                    
-                                    // Update selection count
-                                    updateSelectedCount();
-                                    
-                                    Swal.fire({
-                                        title: 'Success!',
-                                        text: data.message,
-                                        icon: 'success',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: data.message,
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Something went wrong while deleting employees',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            });
-                        }
-                    });
-                });
-            }
-        });
-        
-        // Employee expand/collapse functionality
-        document.querySelectorAll('#employees .expand-icon').forEach(icon => {
-            icon.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const row = this.closest('.main-row');
-                const rowId = row.getAttribute('data-id');
-                const detailRow = document.querySelector(`#employees .detail-row[data-parent="${rowId}"]`);
-                
-                if (detailRow.style.display === 'none' || detailRow.style.display === '') {
-                    // Close all other detail rows in employees tab
-                    document.querySelectorAll('#employees .detail-row').forEach(detail => {
-                        detail.style.display = 'none';
-                    });
-                    document.querySelectorAll('#employees .expand-icon').forEach(icon => {
-                        icon.classList.remove('fa-chevron-up');
-                        icon.classList.add('fa-chevron-down');
-                    });
-                    
-                    // Open this detail row
-                    detailRow.style.display = 'table-row';
-                    this.classList.remove('fa-chevron-down');
-                    this.classList.add('fa-chevron-up');
-                } else {
-                    // Close this detail row
-                    detailRow.style.display = 'none';
-                    this.classList.remove('fa-chevron-up');
-                    this.classList.add('fa-chevron-down');
-                }
-            });
-        });
-        
-        // Employee search functionality
-        document.getElementById('employeeSearch').addEventListener('input', function() {
-            filterEmployees();
-        });
-        
-        // Employee date filtering functionality
-        document.getElementById('fromDate').addEventListener('change', function() {
-            filterEmployees();
-        });
-        
-        document.getElementById('toDate').addEventListener('change', function() {
-            filterEmployees();
-        });
-        
-        function filterEmployees() {
-            const searchTerm = document.getElementById('employeeSearch').value.toLowerCase();
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
-            const rows = document.querySelectorAll('#employeesTable tbody tr.main-row');
-            
-            rows.forEach(row => {
-                const agentName = row.querySelector('.agent-name').textContent.toLowerCase();
-                const agencyName = row.cells[2].textContent.toLowerCase();
-                const createdDateText = row.cells[3].textContent.toLowerCase();
-                
-                // Extract created date from the created date cell
-                const createdDateSpan = row.cells[3].querySelector('span[data-date]');
-                const createdDateValue = createdDateSpan ? createdDateSpan.getAttribute('data-date') : null;
-                
-                let showRow = true;
-                
-                // Apply search filter
-                if (searchTerm && !agentName.includes(searchTerm) && !agencyName.includes(searchTerm) && !createdDateText.includes(searchTerm)) {
-                    showRow = false;
-                }
-                
-                // Apply date filter
-                if (showRow && (fromDate || toDate)) {
-                    if (createdDateValue) {
-                        const createdDate = new Date(createdDateValue);
-                        const fromDateObj = fromDate ? new Date(fromDate) : null;
-                        const toDateObj = toDate ? new Date(toDate) : null;
-                        
-                        // Set time to start of day for inclusive comparison
-                        if (fromDateObj) {
-                            fromDateObj.setHours(0, 0, 0, 0);
-                        }
-                        if (toDateObj) {
-                            toDateObj.setHours(23, 59, 59, 999);
-                        }
-                        createdDate.setHours(0, 0, 0, 0);
-                        
-                        if (fromDateObj && createdDate < fromDateObj) {
-                            showRow = false;
-                        }
-                        if (toDateObj && createdDate > toDateObj) {
-                            showRow = false;
-                        }
-                    } else {
-                        // If no data-date attribute, try to parse from the displayed text
-                        // This is a fallback for cases where the data-date attribute might not be set
-                        showRow = false;
-                    }
-                }
-                
-                if (showRow) {
-                    row.style.display = '';
-                    // Also show the corresponding detail row
-                    const rowId = row.getAttribute('data-id');
-                    const detailRow = document.querySelector(`#employees .detail-row[data-parent="${rowId}"]`);
-                    if (detailRow) {
-                        detailRow.style.display = '';
-                    }
-                } else {
-                    row.style.display = 'none';
-                    // Also hide the corresponding detail row
-                    const rowId = row.getAttribute('data-id');
-                    const detailRow = document.querySelector(`#employees .detail-row[data-parent="${rowId}"]`);
-                    if (detailRow) {
-                        detailRow.style.display = 'none';
-                    }
-                }
-            });
         }
         
         // Visit Schedule tab functionality
@@ -2287,7 +1887,7 @@
                     }).then((result) => {
                         if (result.value) {
                             // Create export URL with selected IDs
-                            const exportUrl = `/admin/agency/export-visit-schedules?ids=${scheduleIds.join(',')}`;
+                            const exportUrl = `/admin/agent/export-visit-schedules?ids=${scheduleIds.join(',')}`;
                             window.open(exportUrl, '_blank');
                             
                             Swal.fire({
@@ -2334,7 +1934,7 @@
                             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
                             
                             // Make AJAX call to delete visit schedules
-                            fetch('/admin/agency/delete-visit-schedules', {
+                            fetch('/admin/agent/delete-visit-schedules', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -2588,7 +2188,7 @@
                     }).then((result) => {
                         if (result.value) {
                             // Create export URL with selected IDs
-                            const exportUrl = `/admin/agency/export-reservations?ids=${reservationIds.join(',')}`;
+                            const exportUrl = `/admin/agent/export-reservations?ids=${reservationIds.join(',')}`;
                             window.open(exportUrl, '_blank');
                             
                             Swal.fire({
@@ -2635,7 +2235,7 @@
                             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
                             
                             // Make AJAX call to delete reservations
-                            fetch('/admin/agency/delete-reservations', {
+                            fetch('/admin/agent/delete-reservations', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -2768,7 +2368,7 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
         
         // Make AJAX call to update the database
-        fetch('/admin/agency/update-reservation-commission', {
+        fetch('/admin/agent/update-reservation-commission', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -2920,7 +2520,7 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
         
         // Make AJAX call to update the database
-        fetch('/admin/agency/update-reservation-status', {
+        fetch('/admin/agent/update-reservation-status', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
