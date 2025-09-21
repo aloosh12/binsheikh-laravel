@@ -519,4 +519,322 @@ class AgencyController extends Controller
         ]);
     }
 
+    /**
+     * Export employees to CSV
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function exportEmployees(Request $request)
+    {
+        $ids = $request->get('ids');
+        $employeeIds = $ids ? explode(',', $ids) : [];
+        
+        $query = \App\Models\User::where('deleted', 0)->where('role', 3); // Assuming role 3 is for employees
+        
+        if (!empty($employeeIds)) {
+            $query->whereIn('id', $employeeIds);
+        }
+        
+        $employees = $query->get();
+        
+        $filename = 'employees_export_' . date('Y-m-d_H-i-s') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+        
+        return response()->stream(function() use ($employees) {
+            $file = fopen('php://output', 'w');
+            
+            // CSV Headers
+            fputcsv($file, [
+                'ID',
+                'Name',
+                'Email',
+                'Phone',
+                'Agency Name',
+                'Created At',
+                'Status'
+            ]);
+            
+            // CSV Data
+            foreach ($employees as $employee) {
+                fputcsv($file, [
+                    $employee->id,
+                    $employee->name,
+                    $employee->email,
+                    $employee->phone,
+                    $employee->agency->name ?? 'N/A',
+                    $employee->created_at->format('Y-m-d H:i:s'),
+                    $employee->active ? 'Active' : 'Inactive'
+                ]);
+            }
+            
+            fclose($file);
+        }, 200, $headers);
+    }
+
+    /**
+     * Export reservations to CSV
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function exportReservations(Request $request)
+    {
+        $ids = $request->get('ids');
+        $reservationIds = $ids ? explode(',', $ids) : [];
+        
+        $query = \App\Models\Reservation::with(['agent', 'property']);
+        
+        if (!empty($reservationIds)) {
+            $query->whereIn('id', $reservationIds);
+        }
+        
+        $reservations = $query->get();
+        
+        $filename = 'reservations_export_' . date('Y-m-d_H-i-s') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+        
+        return response()->stream(function() use ($reservations) {
+            $file = fopen('php://output', 'w');
+            
+            // CSV Headers
+            fputcsv($file, [
+                'ID',
+                'Property Name',
+                'Agent Name',
+                'Status',
+                'Commission (%)',
+                'Price (QAR)',
+                'Created At'
+            ]);
+            
+            // CSV Data
+            foreach ($reservations as $reservation) {
+                fputcsv($file, [
+                    $reservation->id,
+                    $reservation->property->name ?? 'N/A',
+                    $reservation->agent->name ?? 'N/A',
+                    $reservation->status_label,
+                    $reservation->commission ?? 0,
+                    $reservation->property->price ?? 0,
+                    $reservation->created_at->format('Y-m-d H:i:s')
+                ]);
+            }
+            
+            fclose($file);
+        }, 200, $headers);
+    }
+
+    /**
+     * Export visit schedules to CSV
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function exportVisitSchedules(Request $request)
+    {
+        $ids = $request->get('ids');
+        $scheduleIds = $ids ? explode(',', $ids) : [];
+        
+        $query = \App\Models\VisiteSchedule::with(['agent', 'property']);
+        
+        if (!empty($scheduleIds)) {
+            $query->whereIn('id', $scheduleIds);
+        }
+        
+        $schedules = $query->get();
+        
+        $filename = 'visit_schedules_export_' . date('Y-m-d_H-i-s') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+        
+        return response()->stream(function() use ($schedules) {
+            $file = fopen('php://output', 'w');
+            
+            // CSV Headers
+            fputcsv($file, [
+                'ID',
+                'Client Name',
+                'Client Email',
+                'Client Phone',
+                'Client ID',
+                'Property Name',
+                'Unit Type',
+                'Visit Time',
+                'Agent Name',
+                'Created At'
+            ]);
+            
+            // CSV Data
+            foreach ($schedules as $schedule) {
+                fputcsv($file, [
+                    $schedule->id,
+                    $schedule->client_name,
+                    $schedule->client_email_address,
+                    $schedule->client_phone_number,
+                    $schedule->client_id,
+                    $schedule->property->name ?? 'N/A',
+                    $schedule->property->property_type->name ?? 'N/A',
+                    $schedule->visit_time->format('Y-m-d H:i:s'),
+                    $schedule->agent->name ?? 'N/A',
+                    $schedule->created_at->format('Y-m-d H:i:s')
+                ]);
+            }
+            
+            fclose($file);
+        }, 200, $headers);
+    }
+
+    /**
+     * Delete selected employees
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteEmployees(Request $request)
+    {
+        $status = "0";
+        $message = "";
+        $errors = [];
+
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'employee_ids' => 'required|array',
+            'employee_ids.*' => 'integer|exists:users,id'
+        ]);
+
+        if ($validator->fails()) {
+            $status = "0";
+            $message = "Validation error occurred";
+            $errors = $validator->errors();
+        } else {
+            try {
+                $deletedCount = \App\Models\User::whereIn('id', $request->employee_ids)
+                    ->where('role', 3) // Assuming role 3 is for employees
+                    ->update([
+                        'deleted' => 1,
+                        'active' => 0,
+                        'updated_at' => gmdate('Y-m-d H:i:s')
+                    ]);
+                
+                if ($deletedCount > 0) {
+                    $status = "1";
+                    $message = "Successfully deleted {$deletedCount} employee(s)";
+                } else {
+                    $message = "No employees were deleted";
+                }
+            } catch (\Exception $e) {
+                Log::error('Error deleting employees: ' . $e->getMessage());
+                $message = "Something went wrong while deleting employees";
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'errors' => $errors
+        ]);
+    }
+
+    /**
+     * Delete selected reservations
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteReservations(Request $request)
+    {
+        $status = "0";
+        $message = "";
+        $errors = [];
+
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'reservation_ids' => 'required|array',
+            'reservation_ids.*' => 'integer|exists:reservations,id'
+        ]);
+
+        if ($validator->fails()) {
+            $status = "0";
+            $message = "Validation error occurred";
+            $errors = $validator->errors();
+        } else {
+            try {
+                $deletedCount = \App\Models\Reservation::whereIn('id', $request->reservation_ids)->delete();
+                
+                if ($deletedCount > 0) {
+                    $status = "1";
+                    $message = "Successfully deleted {$deletedCount} reservation(s)";
+                } else {
+                    $message = "No reservations were deleted";
+                }
+            } catch (\Exception $e) {
+                Log::error('Error deleting reservations: ' . $e->getMessage());
+                $message = "Something went wrong while deleting reservations";
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'errors' => $errors
+        ]);
+    }
+
+    /**
+     * Delete selected visit schedules
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteVisitSchedules(Request $request)
+    {
+        $status = "0";
+        $message = "";
+        $errors = [];
+
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'schedule_ids' => 'required|array',
+            'schedule_ids.*' => 'integer|exists:visit_schedules,id'
+        ]);
+
+        if ($validator->fails()) {
+            $status = "0";
+            $message = "Validation error occurred";
+            $errors = $validator->errors();
+        } else {
+            try {
+                $deletedCount = \App\Models\VisiteSchedule::whereIn('id', $request->schedule_ids)->delete();
+                
+                if ($deletedCount > 0) {
+                    $status = "1";
+                    $message = "Successfully deleted {$deletedCount} visit schedule(s)";
+                } else {
+                    $message = "No visit schedules were deleted";
+                }
+            } catch (\Exception $e) {
+                Log::error('Error deleting visit schedules: ' . $e->getMessage());
+                $message = "Something went wrong while deleting visit schedules";
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'errors' => $errors
+        ]);
+    }
+
 }

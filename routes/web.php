@@ -283,6 +283,16 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::get('agency/details/{id}', 'AgencyController@details')->name('admin.agency.details');
     Route::post('agency/update-reservation-commission', 'AgencyController@updateReservationCommission')->name('admin.agency.update-reservation-commission');
     Route::post('agency/update-reservation-status', 'AgencyController@updateReservationStatus')->name('admin.agency.update-reservation-status');
+    
+    // Export routes
+    Route::get('agency/export-employees', 'AgencyController@exportEmployees')->name('admin.agency.export-employees');
+    Route::get('agency/export-reservations', 'AgencyController@exportReservations')->name('admin.agency.export-reservations');
+    Route::get('agency/export-visit-schedules', 'AgencyController@exportVisitSchedules')->name('admin.agency.export-visit-schedules');
+    
+    // Delete routes
+    Route::post('agency/delete-employees', 'AgencyController@deleteEmployees')->name('admin.agency.delete-employees');
+    Route::post('agency/delete-reservations', 'AgencyController@deleteReservations')->name('admin.agency.delete-reservations');
+    Route::post('agency/delete-visit-schedules', 'AgencyController@deleteVisitSchedules')->name('admin.agency.delete-visit-schedules');
 
     // Popups routes
     Route::resource('popups', 'PopupController');

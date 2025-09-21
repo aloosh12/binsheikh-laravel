@@ -1991,6 +1991,140 @@
             checkbox.addEventListener('change', updateSelectedCount);
         });
         
+        // Employee export functionality
+        document.querySelectorAll('#employees .btn-primary').forEach(button => {
+            if (button.textContent.trim() === 'Export') {
+                button.addEventListener('click', function() {
+                    const selectedEmployees = document.querySelectorAll('.employee-checkbox:checked');
+                    if (selectedEmployees.length === 0) {
+                        Swal.fire({
+                            title: 'No Selection',
+                            text: 'Please select employees to export',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+                    
+                    const employeeIds = Array.from(selectedEmployees).map(cb => cb.value);
+                    
+                    Swal.fire({
+                        title: 'Export Employees',
+                        text: `Export ${selectedEmployees.length} selected employee(s)?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#007bff',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Yes, export!'
+                    }).then((result) => {
+                        if (result.value) {
+                            // Create export URL with selected IDs
+                            const exportUrl = `/admin/agency/export-employees?ids=${employeeIds.join(',')}`;
+                            window.open(exportUrl, '_blank');
+                            
+                            Swal.fire({
+                                title: 'Export Started',
+                                text: 'Employee data export has been initiated',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+                });
+            }
+        });
+        
+        // Employee delete functionality
+        document.querySelectorAll('#employees .btn-danger').forEach(button => {
+            if (button.textContent.trim() === 'Delete') {
+                button.addEventListener('click', function() {
+                    const selectedEmployees = document.querySelectorAll('.employee-checkbox:checked');
+                    if (selectedEmployees.length === 0) {
+                        Swal.fire({
+                            title: 'No Selection',
+                            text: 'Please select employees to delete',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+                    
+                    Swal.fire({
+                        title: 'Delete Employees',
+                        text: `Are you sure you want to delete ${selectedEmployees.length} selected employee(s)? This action cannot be undone.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Yes, delete!'
+                    }).then((result) => {
+                        if (result.value) {
+                            const employeeIds = Array.from(selectedEmployees).map(cb => cb.value);
+                            
+                            // Get CSRF token
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                            
+                            // Make AJAX call to delete employees
+                            fetch('/admin/agency/delete-employees', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({
+                                    employee_ids: employeeIds
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === '1') {
+                                    // Remove deleted rows from the table
+                                    selectedEmployees.forEach(checkbox => {
+                                        const row = checkbox.closest('.main-row');
+                                        const rowId = row.getAttribute('data-id');
+                                        const detailRow = document.querySelector(`#employees .detail-row[data-parent="${rowId}"]`);
+                                        
+                                        row.remove();
+                                        if (detailRow) {
+                                            detailRow.remove();
+                                        }
+                                    });
+                                    
+                                    // Update selection count
+                                    updateSelectedCount();
+                                    
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Something went wrong while deleting employees',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            });
+                        }
+                    });
+                });
+            }
+        });
+        
         // Employee expand/collapse functionality
         document.querySelectorAll('#employees .expand-icon').forEach(icon => {
             icon.addEventListener('click', function(e) {
@@ -2123,6 +2257,140 @@
         // Visit schedule checkbox change
         document.querySelectorAll('.visit-schedule-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', updateSelectedCountVisit);
+        });
+        
+        // Visit schedule export functionality
+        document.querySelectorAll('#visit-schedule .btn-primary').forEach(button => {
+            if (button.textContent.trim() === 'Export') {
+                button.addEventListener('click', function() {
+                    const selectedSchedules = document.querySelectorAll('.visit-schedule-checkbox:checked');
+                    if (selectedSchedules.length === 0) {
+                        Swal.fire({
+                            title: 'No Selection',
+                            text: 'Please select visit schedules to export',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+                    
+                    const scheduleIds = Array.from(selectedSchedules).map(cb => cb.value);
+                    
+                    Swal.fire({
+                        title: 'Export Visit Schedules',
+                        text: `Export ${selectedSchedules.length} selected visit schedule(s)?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#007bff',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Yes, export!'
+                    }).then((result) => {
+                        if (result.value) {
+                            // Create export URL with selected IDs
+                            const exportUrl = `/admin/agency/export-visit-schedules?ids=${scheduleIds.join(',')}`;
+                            window.open(exportUrl, '_blank');
+                            
+                            Swal.fire({
+                                title: 'Export Started',
+                                text: 'Visit schedule data export has been initiated',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+                });
+            }
+        });
+        
+        // Visit schedule delete functionality
+        document.querySelectorAll('#visit-schedule .btn-danger').forEach(button => {
+            if (button.textContent.trim() === 'Delete') {
+                button.addEventListener('click', function() {
+                    const selectedSchedules = document.querySelectorAll('.visit-schedule-checkbox:checked');
+                    if (selectedSchedules.length === 0) {
+                        Swal.fire({
+                            title: 'No Selection',
+                            text: 'Please select visit schedules to delete',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+                    
+                    Swal.fire({
+                        title: 'Delete Visit Schedules',
+                        text: `Are you sure you want to delete ${selectedSchedules.length} selected visit schedule(s)? This action cannot be undone.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Yes, delete!'
+                    }).then((result) => {
+                        if (result.value) {
+                            const scheduleIds = Array.from(selectedSchedules).map(cb => cb.value);
+                            
+                            // Get CSRF token
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                            
+                            // Make AJAX call to delete visit schedules
+                            fetch('/admin/agency/delete-visit-schedules', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({
+                                    schedule_ids: scheduleIds
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === '1') {
+                                    // Remove deleted rows from the table
+                                    selectedSchedules.forEach(checkbox => {
+                                        const row = checkbox.closest('.main-row');
+                                        const rowId = row.getAttribute('data-id');
+                                        const detailRow = document.querySelector(`#visit-schedule .detail-row[data-parent="${rowId}"]`);
+                                        
+                                        row.remove();
+                                        if (detailRow) {
+                                            detailRow.remove();
+                                        }
+                                    });
+                                    
+                                    // Update selection count
+                                    updateSelectedCountVisit();
+                                    
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Something went wrong while deleting visit schedules',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            });
+                        }
+                    });
+                });
+            }
         });
         
         // Visit schedule expand/collapse functionality
@@ -2290,6 +2558,134 @@
         // Reservation checkbox change
         document.querySelectorAll('.reservation-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', updateSelectedCountReservation);
+        });
+        
+        // Reservation export functionality
+        document.querySelectorAll('#reservations .btn-primary').forEach(button => {
+            if (button.textContent.trim() === 'Export') {
+                button.addEventListener('click', function() {
+                    const selectedReservations = document.querySelectorAll('.reservation-checkbox:checked');
+                    if (selectedReservations.length === 0) {
+                        Swal.fire({
+                            title: 'No Selection',
+                            text: 'Please select reservations to export',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+                    
+                    const reservationIds = Array.from(selectedReservations).map(cb => cb.value);
+                    
+                    Swal.fire({
+                        title: 'Export Reservations',
+                        text: `Export ${selectedReservations.length} selected reservation(s)?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#007bff',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Yes, export!'
+                    }).then((result) => {
+                        if (result.value) {
+                            // Create export URL with selected IDs
+                            const exportUrl = `/admin/agency/export-reservations?ids=${reservationIds.join(',')}`;
+                            window.open(exportUrl, '_blank');
+                            
+                            Swal.fire({
+                                title: 'Export Started',
+                                text: 'Reservation data export has been initiated',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+                });
+            }
+        });
+        
+        // Reservation delete functionality
+        document.querySelectorAll('#reservations .btn-danger').forEach(button => {
+            if (button.textContent.trim() === 'Delete') {
+                button.addEventListener('click', function() {
+                    const selectedReservations = document.querySelectorAll('.reservation-checkbox:checked');
+                    if (selectedReservations.length === 0) {
+                        Swal.fire({
+                            title: 'No Selection',
+                            text: 'Please select reservations to delete',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+                    
+                    Swal.fire({
+                        title: 'Delete Reservations',
+                        text: `Are you sure you want to delete ${selectedReservations.length} selected reservation(s)? This action cannot be undone.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Yes, delete!'
+                    }).then((result) => {
+                        if (result.value) {
+                            const reservationIds = Array.from(selectedReservations).map(cb => cb.value);
+                            
+                            // Get CSRF token
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                            
+                            // Make AJAX call to delete reservations
+                            fetch('/admin/agency/delete-reservations', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({
+                                    reservation_ids: reservationIds
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === '1') {
+                                    // Remove deleted rows from the table
+                                    selectedReservations.forEach(checkbox => {
+                                        const card = checkbox.closest('.reservation-card');
+                                        card.remove();
+                                    });
+                                    
+                                    // Update selection count
+                                    updateSelectedCountReservation();
+                                    
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Something went wrong while deleting reservations',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            });
+                        }
+                    });
+                });
+            }
         });
         
         // Select all toggle
