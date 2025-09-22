@@ -826,12 +826,14 @@ class HomeController extends Controller
                     'email' => 'required',
                     'password' => 'required',
                     'phone' => 'required',
+                    'agency_id' => 'nullable|exists:users,id',
                 ],
                 [
                     'name.required' => 'Name required 4444',
                     'email.required' => 'Email required',
                     'password.required' => 'Password required',
                     'phone.required' => 'Phone required',
+                    'agency_id.exists' => 'Selected agency is invalid',
                 ]
             );
             if ($validator->fails()) {
@@ -879,6 +881,11 @@ class HomeController extends Controller
                     'verified' => 0,
                     'created_at' => gmdate('Y-m-d H:i:s'),
                 ];
+
+                // Add agency_id for agents
+                if ($request->user_type == 3 && $request->agency_id) {
+                    $ins['agency_id'] = $request->agency_id;
+                }
                 if ($request->file("image")) {
                     $response = image_upload($request, 'profile', 'image');
                     if ($response['status']) {

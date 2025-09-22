@@ -58,6 +58,8 @@ return [
     'user' => 'مستخدم',
     'agent' => 'وكيل',
     'agency' => 'وكالة',
+    'select_agency' => 'اختر الوكالة',
+    'no_agencies_available' => 'لا توجد وكالات متاحة',
     'full_name' => 'الاسم الكامل',
     'phone_number' => 'رقم الهاتف',
     'or' => 'أو',

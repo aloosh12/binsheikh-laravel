@@ -56,6 +56,8 @@ return [
     'user' => 'User',
     'agent' => 'Agent',
     'agency' => 'Agency',
+    'select_agency' => 'Select Agency',
+    'no_agencies_available' => 'No agencies available',
     'full_name' => 'Full Name',
     'phone_number' => 'Phone Number',
     'or' => 'or',
