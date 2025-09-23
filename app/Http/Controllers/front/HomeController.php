@@ -2426,4 +2426,173 @@ class HomeController extends Controller
         ]);
         return $pdf;
     }
+
+    public function forget_password(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|exists:users,email'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first()
+                ]);
+            }
+
+            $email = $request->email;
+            $user = \App\Models\User::where('email', $email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found with this email address.'
+                ]);
+            }
+
+            // Generate 6-digit OTP
+            $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+            // Store OTP in session with expiration (5 minutes)
+            session([
+                'forget_password_otp' => $otp,
+                'forget_password_email' => $email,
+                'otp_expires_at' => now()->addMinutes(5)
+            ]);
+
+            // Prepare email content
+            $subject = 'Password Reset OTP - Bin Al Sheikh';
+            $mailbody = '
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h2 style="color: #333; margin-bottom: 10px;">Password Reset Request</h2>
+                        <p style="color: #666; font-size: 16px;">Hello ' . $user->name . ',</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <p style="color: #333; font-size: 16px; margin-bottom: 15px;">
+                            You have requested to reset your password. Please use the following OTP to verify your identity:
+                        </p>
+                        
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div style="display: inline-block; background: #f4e4bc; padding: 15px 30px; border-radius: 8px; font-size: 24px; font-weight: bold; color: #333; letter-spacing: 5px;">
+                                ' . $otp . '
+                            </div>
+                        </div>
+                        
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+                            <strong>Important:</strong>
+                        </p>
+                        <ul style="color: #666; font-size: 14px; margin-left: 20px;">
+                            <li>This OTP is valid for 5 minutes only</li>
+                            <li>Do not share this OTP with anyone</li>
+                            <li>If you did not request this password reset, please ignore this email</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <p style="color: #999; font-size: 12px;">
+                            This is an automated message from Bin Al Sheikh. Please do not reply to this email.
+                        </p>
+                    </div>
+                </div>
+            ';
+
+            // Send email using custom helper
+            $emailSent = send_email($email, $subject, $mailbody);
+
+            if ($emailSent) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'OTP has been sent to your email address successfully.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to send OTP. Please try again later.'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again later.'
+            ]);
+        }
+    }
+
+    public function verify_forget_password_otp(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'otp' => 'required|string|size:6'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first()
+                ]);
+            }
+
+            $email = $request->email;
+            $otp = $request->otp;
+
+            // Check if OTP exists in session
+            if (!session()->has('forget_password_otp') || !session()->has('forget_password_email')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'OTP session expired. Please request a new OTP.'
+                ]);
+            }
+
+            // Check if email matches
+            if (session('forget_password_email') !== $email) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid email address.'
+                ]);
+            }
+
+            // Check if OTP is expired
+            if (session()->has('otp_expires_at') && now()->isAfter(session('otp_expires_at'))) {
+                session()->forget(['forget_password_otp', 'forget_password_email', 'otp_expires_at']);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'OTP has expired. Please request a new OTP.'
+                ]);
+            }
+
+            // Verify OTP
+            if (session('forget_password_otp') !== $otp) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid OTP. Please check and try again.'
+                ]);
+            }
+
+            // OTP is valid - clear session and allow password reset
+            session()->forget(['forget_password_otp', 'forget_password_email', 'otp_expires_at']);
+            
+            // Store verification in session for password reset
+            session([
+                'password_reset_verified' => true,
+                'password_reset_email' => $email,
+                'password_reset_expires_at' => now()->addMinutes(10)
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP verified successfully. You can now reset your password.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again later.'
+            ]);
+        }
+    }
 }

@@ -334,6 +334,8 @@ Route::middleware('user')->group(function () {
     Route::post('fav_property', 'App\Http\Controllers\front\HomeController@fav_property')->name('frontend.fav_property');
     Route::post('update_profile', 'App\Http\Controllers\front\HomeController@update_profile')->name('frontend.update_profile');
     Route::post('change_password', 'App\Http\Controllers\front\HomeController@change_password')->name('frontend.update_profile');
+    Route::post('forget_password', 'App\Http\Controllers\front\HomeController@forget_password')->name('frontend.forget_password');
+    Route::post('verify_forget_password_otp', 'App\Http\Controllers\front\HomeController@verify_forget_password_otp')->name('frontend.verify_forget_password_otp');
     Route::get('favorite', 'App\Http\Controllers\front\HomeController@favorite')->name('frontend.favorite');
     Route::get('my-bookings', 'App\Http\Controllers\front\HomeController@my_bookings')->name('frontend.my_bookings');
     Route::get('my-reservations', 'App\Http\Controllers\front\HomeController@my_reservations')->name('frontend.my_reservations');

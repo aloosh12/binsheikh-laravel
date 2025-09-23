@@ -387,6 +387,11 @@ return [
     'sending' => 'Sending',
     'otp_sent_successfully' => 'OTP sent successfully',
     'something_went_wrong' => 'Something went wrong',
-    'please_enter_your_email' => 'Please enter your email',
-    'send_otp' => 'Send OTP',
+    'please_enter_your_otp' => 'Please Enter Your OTP',
+    'otp_instruction' => 'We have send you a 6 digit unique code on your Gmail please enter that below to update password',
+    'verify' => 'Verify',
+    'verifying' => 'Verifying',
+    'please_enter_complete_otp' => 'Please enter complete OTP',
+    'otp_verified_successfully' => 'OTP verified successfully',
+    'invalid_otp' => 'Invalid OTP',
 ];

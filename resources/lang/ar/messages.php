@@ -395,6 +395,11 @@ return [
     'sending' => 'إرسال',
     'otp_sent_successfully' => 'تم إرسال OTP بنجاح',
     'something_went_wrong' => 'حدث خطأ ما',
-    'please_enter_your_email' => 'يرجى إدخال بريدك الإلكتروني',
-    'send_otp' => 'إرسال OTP',
+    'please_enter_your_otp' => 'يرجى إدخال رمز التحقق',
+    'otp_instruction' => 'لقد أرسلنا لك رمز فريد مكون من 6 أرقام على بريدك الإلكتروني، يرجى إدخاله أدناه لتحديث كلمة المرور',
+    'verify' => 'تحقق',
+    'verifying' => 'جاري التحقق',
+    'please_enter_complete_otp' => 'يرجى إدخال رمز التحقق كاملاً',
+    'otp_verified_successfully' => 'تم التحقق من رمز التحقق بنجاح',
+    'invalid_otp' => 'رمز التحقق غير صحيح',
 ];

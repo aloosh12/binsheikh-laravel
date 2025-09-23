@@ -296,6 +296,47 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- OTP Verification Modal -->
+                    <div class="modal fade" id="otpVerificationModal" tabindex="-1" role="dialog" aria-labelledby="otpVerificationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content custom-modal-content">
+                                <div class="modal-header custom-modal-header">
+                                    <button type="button" class="close custom-close-btn" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <div class="modal-icon-section">
+                                        <div class="lock-icon-container">
+                                            <i class="fa-light fa-lock lock-icon"></i>
+                                        </div>
+                                        <div class="sparkle-icons">
+                                            <i class="fa-solid fa-star sparkle-1"></i>
+                                            <i class="fa-solid fa-star sparkle-2"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="modal-title custom-modal-title">{{ __('messages.please_enter_your_otp') }}</h4>
+                                    <p class="otp-instruction">{{ __('messages.otp_instruction') }}</p>
+                                    
+                                    <form id="otpVerificationForm" action="{{ url('verify_forget_password_otp') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="email" id="otp_email">
+                                        <div class="otp-input-container">
+                                            <input type="text" class="otp-input" maxlength="1" data-index="0" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="1" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="2" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="3" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="4" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="5" required>
+                                        </div>
+                                        <button type="submit" class="custom-verify-btn">{{ __('messages.verify') }}</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 @stop
 
 @section('script')
@@ -332,6 +373,7 @@ $(document).ready(function() {
         var formData = $(this).serialize();
         var submitBtn = $(this).find('button[type="submit"]');
         var originalText = submitBtn.text();
+        var email = $(this).find('input[name="email"]').val();
         
         // Show loading state
         submitBtn.prop('disabled', true).text('{{ __("messages.sending") }}...');
@@ -345,10 +387,90 @@ $(document).ready(function() {
                     // Show success message
                     alert('{{ __("messages.otp_sent_successfully") }}');
                     $('#forgetPasswordModal').modal('hide');
+                    // Set email for OTP verification
+                    $('#otp_email').val(email);
+                    // Open OTP verification modal
+                    $('#otpVerificationModal').modal('show');
                     // Reset form
                     $('#forgetPasswordForm')[0].reset();
                 } else {
                     alert(response.message || '{{ __("messages.something_went_wrong") }}');
+                }
+            },
+            error: function(xhr) {
+                var errorMessage = '{{ __("messages.something_went_wrong") }}';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                alert(errorMessage);
+            },
+            complete: function() {
+                // Reset button state
+                submitBtn.prop('disabled', false).text(originalText);
+            }
+        });
+    });
+    
+    // OTP Input handling
+    $('.otp-input').on('input', function() {
+        var currentIndex = parseInt($(this).data('index'));
+        var value = $(this).val();
+        
+        // Move to next input if current input has value
+        if (value.length === 1 && currentIndex < 5) {
+            $('.otp-input[data-index="' + (currentIndex + 1) + '"]').focus();
+        }
+    });
+    
+    // Handle backspace in OTP inputs
+    $('.otp-input').on('keydown', function(e) {
+        var currentIndex = parseInt($(this).data('index'));
+        
+        if (e.keyCode === 8 && $(this).val() === '' && currentIndex > 0) {
+            $('.otp-input[data-index="' + (currentIndex - 1) + '"]').focus();
+        }
+    });
+    
+    // Handle OTP verification form submission
+    $('#otpVerificationForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var otp = '';
+        $('.otp-input').each(function() {
+            otp += $(this).val();
+        });
+        
+        if (otp.length !== 6) {
+            alert('{{ __("messages.please_enter_complete_otp") }}');
+            return;
+        }
+        
+        var formData = {
+            email: $('#otp_email').val(),
+            otp: otp,
+            _token: $('input[name="_token"]').val()
+        };
+        
+        var submitBtn = $(this).find('button[type="submit"]');
+        var originalText = submitBtn.text();
+        
+        // Show loading state
+        submitBtn.prop('disabled', true).text('{{ __("messages.verifying") }}...');
+        
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    alert('{{ __("messages.otp_verified_successfully") }}');
+                    $('#otpVerificationModal').modal('hide');
+                    // Reset OTP inputs
+                    $('.otp-input').val('');
+                    // You can redirect to password reset page or show new password form here
+                    window.location.reload();
+                } else {
+                    alert(response.message || '{{ __("messages.invalid_otp") }}');
                 }
             },
             error: function(xhr) {
@@ -548,6 +670,79 @@ $(document).ready(function() {
 }
 
 .custom-send-otp-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* OTP Instruction Text */
+.otp-instruction {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+/* OTP Input Container */
+.otp-input-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+/* Individual OTP Input */
+.otp-input {
+    width: 45px;
+    height: 45px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    background: white;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.otp-input:focus {
+    outline: none;
+    border-color: #f4e4bc;
+    box-shadow: 0 0 0 3px rgba(244, 228, 188, 0.2);
+}
+
+.otp-input:valid {
+    border-color: #28a745;
+}
+
+/* Verify Button */
+.custom-verify-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background: #f4e4bc;
+    border: none;
+    border-radius: 12px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: none;
+    letter-spacing: 0.5px;
+}
+
+.custom-verify-btn:hover {
+    background: #e6d4a8;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(244, 228, 188, 0.4);
+}
+
+.custom-verify-btn:active {
+    transform: translateY(0);
+}
+
+.custom-verify-btn:disabled {
     background: #ccc;
     cursor: not-allowed;
     transform: none;
