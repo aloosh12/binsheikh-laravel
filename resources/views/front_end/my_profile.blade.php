@@ -207,7 +207,10 @@
                                                                 <input type="password" class="pass-input" placeholder="{{ __('messages.confirm_new_password') }}" name="password_confirmation" required data-parsley-required-message="{{ __('messages.confirm_new_password') }}" data-parsley-equalto="#new_pswd" data-parsley-equalto-message="{{ __('messages.password_mismatch') }}">
                                                                 <div class="view-pass"></div>
                                                             </div>
-                                                            <button class="commentssubmit">{{ __('messages.update') }}</button>
+                                                            <div class="d-flex gap-2">
+                                                                <button class="commentssubmit flex-grow-1">{{ __('messages.update') }}</button>
+                                                                <button type="button" class="btn btn-outline-warning" id="forgetPasswordBtn">{{ __('messages.forget_password') }}</button>
+                                                            </div>
                                                         </form>
 
                                                         @if(Auth::user()->role == 4)
@@ -259,8 +262,341 @@
                             <div class="svg-corner svg-corner_white footer-corner-right" style="top:6px;right: -39px; transform: rotate(-180deg)"></div>
                         </div>
                     </div>
+
+                    <!-- Forget Password Modal -->
+                    <div class="modal fade" id="forgetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgetPasswordModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content custom-modal-content">
+                                <div class="modal-header custom-modal-header">
+                                    <button type="button" class="close custom-close-btn" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <div class="modal-icon-section">
+                                        <div class="lock-icon-container">
+                                            <i class="fa-light fa-lock lock-icon"></i>
+                                        </div>
+                                        <div class="sparkle-icons">
+                                            <i class="fa-solid fa-star sparkle-1"></i>
+                                            <i class="fa-solid fa-star sparkle-2"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="modal-title custom-modal-title">{{ __('messages.please_enter_your_email') }}</h4>
+                                    
+                                    <form id="forgetPasswordForm" action="{{ url('forget_password') }}" method="POST">
+                                        @csrf
+                                        <div class="email-input-container">
+                                            <input type="email" class="custom-email-input" name="email" placeholder="Email@gmail.com" required>
+                                        </div>
+                                        <button type="submit" class="custom-send-otp-btn">{{ __('messages.send_otp') }}</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 @stop
 
 @section('script')
+<script>
+$(document).ready(function() {
+    // Open forget password modal
+    $('#forgetPasswordBtn').click(function() {
+        $('#forgetPasswordModal').modal('show');
+    });
+    
+    // Close modal functionality
+    $('.custom-close-btn').click(function() {
+        $('#forgetPasswordModal').modal('hide');
+    });
+    
+    // Close modal when clicking outside
+    $('#forgetPasswordModal').on('click', function(e) {
+        if (e.target === this) {
+            $(this).modal('hide');
+        }
+    });
+    
+    // Close modal with escape key
+    $(document).keyup(function(e) {
+        if (e.keyCode === 27) { // Escape key
+            $('#forgetPasswordModal').modal('hide');
+        }
+    });
+    
+    // Handle forget password form submission
+    $('#forgetPasswordForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var formData = $(this).serialize();
+        var submitBtn = $(this).find('button[type="submit"]');
+        var originalText = submitBtn.text();
+        
+        // Show loading state
+        submitBtn.prop('disabled', true).text('{{ __("messages.sending") }}...');
+        
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    // Show success message
+                    alert('{{ __("messages.otp_sent_successfully") }}');
+                    $('#forgetPasswordModal').modal('hide');
+                    // Reset form
+                    $('#forgetPasswordForm')[0].reset();
+                } else {
+                    alert(response.message || '{{ __("messages.something_went_wrong") }}');
+                }
+            },
+            error: function(xhr) {
+                var errorMessage = '{{ __("messages.something_went_wrong") }}';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                alert(errorMessage);
+            },
+            complete: function() {
+                // Reset button state
+                submitBtn.prop('disabled', false).text(originalText);
+            }
+        });
+    });
+});
+</script>
 
+<style>
+/* Modal Container */
+.custom-modal-content {
+    background: white;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Modal Header */
+.custom-modal-header {
+    border: none;
+    padding: 0;
+    position: relative;
+    height: 50px;
+}
+
+.custom-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #666;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.custom-close-btn:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.custom-close-btn span {
+    font-size: 18px;
+    font-weight: 300;
+}
+
+/* Modal Body */
+.custom-modal-body {
+    padding: 40px 30px 30px;
+    text-align: center;
+}
+
+/* Icon Section */
+.modal-icon-section {
+    position: relative;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lock-icon-container {
+    width: 100px;
+    height: 100px;
+    background: #f4e4bc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 8px 25px rgba(244, 228, 188, 0.4);
+}
+
+.lock-icon {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 300;
+}
+
+.sparkle-icons {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.sparkle-1, .sparkle-2 {
+    position: absolute;
+    color: #f4e4bc;
+    font-size: 1.2rem;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+.sparkle-1 {
+    top: 15px;
+    right: 20px;
+    animation-delay: 0s;
+}
+
+.sparkle-2 {
+    top: 25px;
+    right: 35px;
+    animation-delay: 1s;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Modal Title */
+.custom-modal-title {
+    color: #333;
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 30px;
+    line-height: 1.3;
+}
+
+/* Email Input */
+.email-input-container {
+    margin-bottom: 25px;
+}
+
+.custom-email-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    background: white;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.custom-email-input:focus {
+    outline: none;
+    border-color: #f4e4bc;
+    box-shadow: 0 0 0 3px rgba(244, 228, 188, 0.2);
+}
+
+.custom-email-input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Send OTP Button */
+.custom-send-otp-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background: #f4e4bc;
+    border: none;
+    border-radius: 12px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: none;
+    letter-spacing: 0.5px;
+}
+
+.custom-send-otp-btn:hover {
+    background: #e6d4a8;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(244, 228, 188, 0.4);
+}
+
+.custom-send-otp-btn:active {
+    transform: translateY(0);
+}
+
+.custom-send-otp-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Button Layout */
+.d-flex.gap-2 {
+    gap: 10px;
+}
+
+.btn-outline-warning {
+    border-color: #f4e4bc;
+    color: #f4e4bc;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 600;
+    background: transparent;
+}
+
+.btn-outline-warning:hover {
+    background-color: #f4e4bc;
+    border-color: #f4e4bc;
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .custom-modal-content {
+        margin: 20px;
+        max-width: none;
+    }
+    
+    .custom-modal-body {
+        padding: 30px 20px 20px;
+    }
+    
+    .lock-icon-container {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .lock-icon {
+        font-size: 2rem;
+    }
+    
+    .custom-modal-title {
+        font-size: 1.2rem;
+    }
+}
+</style>
 @stop

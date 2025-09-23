@@ -389,4 +389,12 @@ return [
     'hot_property' => 'عقار مميز',
     'not_set' => 'لايوجد قيمة',
     'you_should_verify_the_otp' => 'يجب عليك تأكيد رقم الموبايل',
+    'forget_password' => 'نسيت كلمة المرور',
+    'please_enter_your_email' => 'يرجى إدخال بريدك الإلكتروني',
+    'send_otp' => 'إرسال OTP',
+    'sending' => 'إرسال',
+    'otp_sent_successfully' => 'تم إرسال OTP بنجاح',
+    'something_went_wrong' => 'حدث خطأ ما',
+    'please_enter_your_email' => 'يرجى إدخال بريدك الإلكتروني',
+    'send_otp' => 'إرسال OTP',
 ];

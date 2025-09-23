@@ -381,4 +381,12 @@ return [
     'hot_property' => 'Hot Property',
     'not_set' => 'No Value',
     'you_should_verify_the_otp' => 'You should verify the OTP',
+    'forget_password' => 'Forget Password',
+    'please_enter_your_email' => 'Please enter your email',
+    'send_otp' => 'Send OTP',
+    'sending' => 'Sending',
+    'otp_sent_successfully' => 'OTP sent successfully',
+    'something_went_wrong' => 'Something went wrong',
+    'please_enter_your_email' => 'Please enter your email',
+    'send_otp' => 'Send OTP',
 ];
