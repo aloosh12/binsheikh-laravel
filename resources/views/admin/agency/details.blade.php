@@ -1246,7 +1246,7 @@
         <div class="fade-in">
             <!-- Header -->
             <div class="agency-details-header">
-                <h1 class="breadcrumb-title">AGENCIES / {{ strtoupper($customer->name) }} / AGENCY INFO</h1>
+                <h1 class="breadcrumb-title">AGENCIES / {{ strtoupper($customer->name) }} / <span id="currentTabTitle">AGENCY INFO</span></h1>
                 <div class="header-actions">
                     <button class="btn-action btn-gray">Edit</button>
                     <button class="btn-action btn-gold">Approve</button>
@@ -1902,8 +1902,26 @@
                 if (targetPane) {
                     targetPane.classList.add('active');
                 }
+                
+                // Update breadcrumb title based on selected tab
+                updateBreadcrumbTitle(targetTab);
             });
         });
+        
+        // Function to update breadcrumb title based on selected tab
+        function updateBreadcrumbTitle(tabId) {
+            const tabTitles = {
+                'agency-info': 'AGENCY INFO',
+                'employees': 'EMPLOYEES',
+                'reservations': 'RESERVATIONS',
+                'visit-schedule': 'VISIT SCHEDULE'
+            };
+            
+            const currentTabTitle = document.getElementById('currentTabTitle');
+            if (currentTabTitle && tabTitles[tabId]) {
+                currentTabTitle.textContent = tabTitles[tabId];
+            }
+        }
         
         // View button functionality
         document.querySelectorAll('.view-btn').forEach(btn => {
