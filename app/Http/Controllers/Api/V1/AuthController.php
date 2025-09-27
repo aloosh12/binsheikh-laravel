@@ -463,4 +463,54 @@ class AuthController extends Controller
             ], 401);
         }
     }
+
+    public function change_password(Request $request)
+    {
+        $rules = [
+            'old_password' => 'required',
+            'new_password' => 'required|confirmed|min:6',
+            'new_password_confirmation' => 'required',
+        ];
+        $messages = [
+            'old_password.required' => __('messages.old_password_required'),
+            'new_password.required' => __('messages.new_password_required'),
+            'new_password.confirmed' => __('messages.password_confirmed'),
+            'new_password.min' => __('messages.password_min_length'),
+            'new_password_confirmation.required' => __('messages.password_confirmation_required'),
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            $errors = $validator->messages();
+            return response()->json([
+                'error' => $errors,
+            ], 403);
+        }
+
+        $user = Auth::user();
+        
+        // Verify old password
+        if (!password_verify($request->old_password, $user->password)) {
+            return response()->json([
+                'message' => __('messages.old_password_incorrect'),
+            ], 401);
+        }
+
+        // Check if new password is different from old password
+        if (password_verify($request->new_password, $user->password)) {
+            return response()->json([
+                'message' => __('messages.new_password_same_as_old'),
+            ], 400);
+        }
+
+        // Update password
+        $user->password = bcrypt($request->new_password);
+        $user->updated_at = gmdate('Y-m-d H:i:s');
+        $user->save();
+
+        return response()->json([
+            'message' => __('messages.password_changed_successfully'),
+            'data' => [],
+        ], 200);
+    }
 }

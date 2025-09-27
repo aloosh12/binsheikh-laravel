@@ -431,4 +431,11 @@ return [
     'apartment_info' => 'معلومات الشقة',
     'agent_name' => 'اسم الوكيل',
     'reservation_amount' => 'مبلغ الحجز',
+    'old_password_required' => 'كلمة المرور القديمة مطلوبة',
+    'new_password_required' => 'كلمة المرور الجديدة مطلوبة',
+    'password_min_length' => 'يجب أن تكون كلمة المرور 6 أحرف على الأقل',
+    'password_confirmation_required' => 'تأكيد كلمة المرور مطلوب',
+    'old_password_incorrect' => 'كلمة المرور القديمة غير صحيحة',
+    'new_password_same_as_old' => 'لا يمكن أن تكون كلمة المرور الجديدة نفس كلمة المرور القديمة',
+    'password_changed_successfully' => 'تم تغيير كلمة المرور بنجاح',
 ];

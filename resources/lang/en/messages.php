@@ -423,4 +423,11 @@ return [
     'apartment_info' => 'Apartment Info',
     'agent_name' => 'Agent Name',
     'reservation_amount' => 'Reservation Amount',
+    'old_password_required' => 'Old password is required',
+    'new_password_required' => 'New password is required',
+    'password_min_length' => 'Password must be at least 6 characters',
+    'password_confirmation_required' => 'Password confirmation is required',
+    'old_password_incorrect' => 'Old password is incorrect',
+    'new_password_same_as_old' => 'New password cannot be the same as old password',
+    'password_changed_successfully' => 'Password changed successfully',
 ];

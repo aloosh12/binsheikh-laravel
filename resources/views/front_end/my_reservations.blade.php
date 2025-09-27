@@ -189,7 +189,7 @@
                                                                             </div>
                                                                             <div class="info-content">
                                                                                 <label>{{ __('messages.paid_amount') }}</label>
-                                                                                <span>{{ moneyFormat($reservation->amount ?? 0) }}</span>
+                                                                                <span>{{ moneyFormat(0) }}</span>
                                                                             </div>
                                                                         </div>
                                                                         
@@ -268,7 +268,7 @@
                                                                                         <tr class="payment-row-highlight">
                                                                                             <td>{{ __('messages.reservation_amount') }}</td>
                                                                                             <td>{{ web_date_in_timezone($reservation->created_at, 'M-y') }}</td>
-                                                                                            <td>{{ moneyFormat($reservation->amount ?? 0) }}</td>
+                                                                                            <td>{{ moneyFormat(0) }}</td>
                                                                                             <td>100%</td>
                                                                                         </tr>
                                                                                     </tbody>

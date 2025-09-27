@@ -22,12 +22,19 @@ Route::namespace('App\Http\Controllers\Api\V1')->prefix("v1/auth")->name("api.v1
 });
 Route::namespace('App\Http\Controllers\Api\V1')->prefix("v1")->middleware('auth:sanctum')->name("api.v1")->group(function(){
    Route::post('logout', 'AuthController@logout')->name('logout');
+   Route::post('change_password', 'AuthController@change_password')->name('change_password');
    Route::get('my_profile', 'HomeController@my_profile');
    Route::post('update_profile', 'HomeController@update_profile');
    Route::post('fav_unfav_property', 'HomeController@fav_unfav_property');
    Route::get('favorite', 'HomeController@favorite');
    Route::get('my_bookings', 'HomeController@my_bookings');
    Route::post('book-now', 'HomeController@book_now');
+   Route::get('get_agency_details', 'HomeController@get_agency_details');
+   Route::post('get_reservation_by_id', 'HomeController@get_reservation_by_id');
+   Route::get('get_reservations_list', 'HomeController@get_reservations_list');
+   Route::get('get_visit_schedules_list', 'HomeController@get_visit_schedules_list');
+   Route::post('get_visit_schedule_by_id', 'HomeController@get_visit_schedule_by_id');
+   Route::get('get_agents_by_agency', 'HomeController@get_agents_by_agency');
 //    Route::post('reset_password', 'HomeController@reset_password');
   });
   Route::namespace('App\Http\Controllers\Api\V1')->prefix("v1")->name("api.v1")->group(function(){

@@ -887,5 +887,928 @@ class HomeController extends Controller
         return substr(bin2hex($bytes), 0, $lenght);
     }
 
+    public function get_agency_details(Request $request)
+    {
+        $user = Auth::user();
+
+        // Check if user is an agency (role 4)
+        if ($user->role != 4) {
+            return response()->json([
+                'message' => 'Access denied. Only agencies can access this endpoint.',
+            ], 403);
+        }
+
+        // Get agency profile details
+        $agency_profile = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'address' => $user->address,
+            'city' => $user->city,
+            'state' => $user->state,
+            'postal_code' => $user->postal_code,
+            'country_id' => $user->country_id,
+            'country_name' => $user->country->name ?? '',
+            'image' => $user->image ? aws_asset_path($user->image) : asset('').'front-assets/images/avatar/profile-icon.png',
+            'license' => $user->license ? aws_asset_path($user->license) : '',
+            'id_card' => $user->id_card ? aws_asset_path($user->id_card) : '',
+            'cr' => $user->cr ? aws_asset_path($user->cr) : '',
+            'real_estate_license' => $user->real_estate_license ? aws_asset_path($user->real_estate_license) : '',
+            'professional_practice_certificate' => $user->professional_practice_certificate ? aws_asset_path($user->professional_practice_certificate) : '',
+            'created_at' => $user->created_at ? $user->created_at->toISOString() : '',
+            'updated_at' => $user->updated_at ? $user->updated_at->toISOString() : '',
+        ];
+
+        // Get list of employees (agents) related to this agency
+        $employees = User::where('agency_id', $user->id)
+            ->where('role', 3) // Agent role
+            ->select('id', 'name', 'email', 'phone', 'image', 'license', 'id_card', 'created_at', 'active')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($agent) {
+                return [
+                    'id' => $agent->id,
+                    'name' => $agent->name,
+                    'email' => $agent->email,
+                    'phone' => $agent->phone,
+                    'image' => $agent->image ? aws_asset_path($agent->image) : asset('').'front-assets/images/avatar/profile-icon.png',
+                    'license' => $agent->license ? aws_asset_path($agent->license) : '',
+                    'id_card' => $agent->id_card ? aws_asset_path($agent->id_card) : '',
+                    'created_at' => $agent->created_at ? $agent->created_at->toISOString() : '',
+                    'active' => $agent->active,
+                ];
+            });
+
+        // Get agent IDs for this agency
+        $agentIds = $employees->pluck('id')->toArray();
+
+        // Get visit schedules for agents in this agency
+        $visit_schedules = \App\Models\VisiteSchedule::with(['agent', 'property.project', 'property.property_type'])
+            ->whereIn('agent_id', $agentIds)
+            ->orderBy('visit_time', 'desc')
+            ->get()
+            ->map(function($visit) {
+                return [
+                    'id' => $visit->id,
+                    'client_name' => $visit->client_name,
+                    'client_email_address' => $visit->client_email_address,
+                    'client_phone_number' => $visit->client_phone_number,
+                    'client_id' => $visit->client_id,
+                    'visit_time' => $visit->visit_time ? $visit->visit_time->toISOString() : '',
+                    'agent' => [
+                        'id' => $visit->agent->id,
+                        'name' => $visit->agent->name,
+                        'email' => $visit->agent->email,
+                    ],
+                    'property' => [
+                        'id' => $visit->property->id,
+                        'name' => $visit->property->name,
+                        'apartment_no' => $visit->property->apartment_no,
+                        'project' => [
+                            'id' => $visit->property->project->id,
+                            'name' => $visit->property->project->name,
+                        ],
+                        'property_type' => [
+                            'id' => $visit->property->property_type->id,
+                            'name' => $visit->property->property_type->name,
+                        ],
+                    ],
+                    'created_at' => $visit->created_at ? $visit->created_at->toISOString() : '',
+                ];
+            });
+
+        // Get reservations for agents in this agency
+        $reservations = \App\Models\Reservation::with(['agent', 'property.project', 'property.property_type'])
+            ->whereIn('agent_id', $agentIds)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($reservation) {
+                return [
+                    'id' => $reservation->id,
+                    'status' => $reservation->status,
+                    'commission' => $reservation->commission,
+                    'agent' => [
+                        'id' => $reservation->agent->id,
+                        'name' => $reservation->agent->name,
+                        'email' => $reservation->agent->email,
+                    ],
+                    'property' => [
+                        'id' => $reservation->property->id,
+                        'name' => $reservation->property->name,
+                        'price' => $reservation->property->price,
+                        'apartment_no' => $reservation->property->apartment_no,
+                        'area' => $reservation->property->area,
+                        'project' => [
+                            'id' => $reservation->property->project->id,
+                            'name' => $reservation->property->project->name,
+                        ],
+                        'property_type' => [
+                            'id' => $reservation->property->property_type->id,
+                            'name' => $reservation->property->property_type->name,
+                        ],
+                    ],
+                    'created_at' => $reservation->created_at ? $reservation->created_at->toISOString() : '',
+                ];
+            });
+
+        $data = [
+            'agency_profile' => convert_all_elements_to_string($agency_profile),
+            'employees' => convert_all_elements_to_string($employees),
+            'visit_schedules' => convert_all_elements_to_string($visit_schedules),
+            'reservations' => convert_all_elements_to_string($reservations),
+            'summary' => convert_all_elements_to_string([
+                'total_employees' => $employees->count(),
+                'total_visit_schedules' => $visit_schedules->count(),
+                'total_reservations' => $reservations->count(),
+                'total_reservations' => $reservations->count(),
+            ])
+        ];
+
+        return response()->json([
+            'message' => 'Agency Details Retrieved Successfully',
+            'data' => $data
+        ], 200);
+    }
+
+    public function get_reservation_by_id(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not authenticated.',
+                ], 401);
+            }
+
+            // Validate reservation ID
+            $rules = [
+                'reservation_id' => 'required|integer|exists:reservations,id',
+            ];
+            $messages = [
+                'reservation_id.required' => 'Reservation ID is required',
+                'reservation_id.integer' => 'Reservation ID must be a valid integer',
+                'reservation_id.exists' => 'Reservation not found',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                $errors = $validator->messages();
+                return response()->json([
+                    'error' => $errors,
+                ], 403);
+            }
+
+            $reservationId = $request->reservation_id;
+
+            // Get reservation with relationships
+            $reservation = \App\Models\Reservation::with([
+                'agent',
+                'property.project',
+                'property.property_type',
+                'property.images'
+            ])->find($reservationId);
+
+            if (!$reservation) {
+                return response()->json([
+                    'message' => 'Reservation not found',
+                ], 404);
+            }
+
+            // Check access permissions based on user role
+            if ($user->role == 4) {
+                // Agency: Check if the reservation belongs to any of their agents
+                $agentIds = User::where('agency_id', $user->id)
+                    ->where('role', 3)
+                    ->pluck('id')
+                    ->toArray();
+
+                if (!in_array($reservation->agent_id, $agentIds)) {
+                    return response()->json([
+                        'message' => 'Access denied. This reservation does not belong to your agency.',
+                    ], 403);
+                }
+            } elseif ($user->role == 3) {
+                // Agent: Check if the reservation belongs to them
+                if ($reservation->agent_id != $user->id) {
+                    return response()->json([
+                        'message' => 'Access denied. This reservation does not belong to you.',
+                    ], 403);
+                }
+            } else {
+                // Other roles (customers, etc.)
+                return response()->json([
+                    'message' => 'Access denied. Only agencies and agents can access this endpoint.',
+                ], 403);
+            }
+
+            // Format reservation data
+            $reservationData = [
+                'id' => $reservation->id,
+                'status' => $reservation->status,
+                'commission' => $reservation->commission,
+                'created_at' => $reservation->created_at ? $reservation->created_at->toISOString() : '',
+                'updated_at' => $reservation->updated_at ? $reservation->updated_at->toISOString() : '',
+                'agent' => [
+                    'id' => $reservation->agent->id,
+                    'name' => $reservation->agent->name,
+                    'email' => $reservation->agent->email,
+                    'phone' => $reservation->agent->phone,
+                    'image' => $reservation->agent->image ? aws_asset_path($reservation->agent->image) : asset('').'front-assets/images/avatar/profile-icon.png',
+                ],
+                'property' => [
+                    'id' => $reservation->property->id,
+                    'name' => $reservation->property->name,
+                    'price' => $reservation->property->price,
+                    'apartment_no' => $reservation->property->apartment_no,
+                    'area' => $reservation->property->area,
+                    'bedrooms' => $reservation->property->bedrooms,
+                    'bathrooms' => $reservation->property->bathrooms,
+                    'floor_no' => $reservation->property->floor_no,
+                    'description' => $reservation->property->description,
+                    'short_description' => $reservation->property->short_description,
+                    'location' => $reservation->property->location,
+                    'location_link' => $reservation->property->location_link,
+                    'video_link' => $reservation->property->video_link,
+                    'link_360' => $reservation->property->link_360,
+                    'unit_layout' => $reservation->property->unit_layout,
+                    'floor_plan' => $reservation->property->floor_plan ? aws_asset_path($reservation->property->floor_plan) : '',
+                    'gross_area' => $reservation->property->gross_area,
+                    'balcony_size' => $reservation->property->balcony_size,
+                    'sale_type' => $reservation->property->sale_type,
+                    'is_featured' => $reservation->property->is_featured,
+                    'images' => $reservation->property->images->map(function($image) {
+                        return [
+                            'id' => $image->id,
+                            'image' => aws_asset_path($image->image),
+                            'type' => $image->type,
+                            'order' => $image->order,
+                        ];
+                    }),
+                    'project' => [
+                        'id' => $reservation->property->project->id,
+                        'name' => $reservation->property->project->name,
+                        'location' => $reservation->property->project->location,
+                        'description' => $reservation->property->project->description,
+                        'image' => $reservation->property->project->app_image ? aws_asset_path($reservation->property->project->app_image) : ($reservation->property->project->image ? aws_asset_path($reservation->property->project->image) : ''),
+                    ],
+                    'property_type' => [
+                        'id' => $reservation->property->property_type->id,
+                        'name' => $reservation->property->property_type->name,
+                    ],
+                ],
+            ];
+
+            // Add sale type label
+            if($reservation->property->sale_type == 1 || $reservation->property->sale_type == 3){
+                $reservationData['property']['sale_type_label'] = __('messages.buy');
+            }
+            if($reservation->property->sale_type == 2 || $reservation->property->sale_type == 3){
+                $reservationData['property']['sale_type_label'] = __('messages.rent');
+            }
+
+            return response()->json([
+                'message' => 'Reservation Details Retrieved Successfully',
+                'data' => convert_all_elements_to_string($reservationData)
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred: ' . $e->getMessage(),
+                'error' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+    public function get_reservations_list(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not authenticated.',
+                ], 401);
+            }
+
+            // Check if user is agency or agent
+            if ($user->role != 4 && $user->role != 3) {
+                return response()->json([
+                    'message' => 'Access denied. Only agencies and agents can access this endpoint.',
+                ], 403);
+            }
+
+            // Pagination parameters
+            $limit = isset($request->limit) ? (int)$request->limit : 10;
+            $page = isset($request->page) ? (int)$request->page : 1;
+            $offset = ($page - 1) * $limit;
+
+            // Status filter
+            $status = $request->status ?? '';
+
+            // Build query based on user role
+            $query = \App\Models\Reservation::with([
+                'agent',
+                'property.project',
+                'property.property_type',
+                'property.images'
+            ]);
+
+            if ($user->role == 4) {
+                // Agency: Get reservations from all their agents
+                $agentIds = User::where('agency_id', $user->id)
+                    ->where('role', 3)
+                    ->pluck('id')
+                    ->toArray();
+
+                if (empty($agentIds)) {
+                    // No agents under this agency
+                    $reservations = collect();
+                    $totalReservations = 0;
+                } else {
+                    $query->whereIn('agent_id', $agentIds);
+                }
+            } else {
+                // Agent: Get only their own reservations
+                $query->where('agent_id', $user->id);
+            }
+
+            // Apply status filter if provided
+            if ($status) {
+                $query->where('status', $status);
+            }
+
+            // Get total count for pagination
+            $totalReservations = $query->count();
+            $totalPages = ceil($totalReservations / $limit);
+            $hasNextPage = $page < $totalPages;
+
+            // Get reservations with pagination
+            $reservations = $query->orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->skip($offset)
+                ->get()
+                ->filter(function($reservation) {
+                    // Only include reservations with valid relationships
+                    return $reservation->property && $reservation->agent;
+                })
+                ->map(function($reservation) {
+                    return [
+                        'id' => $reservation->id,
+                        'status' => $reservation->status,
+                        'commission' => $reservation->commission,
+                        'created_at' => $reservation->created_at ? $reservation->created_at->toISOString() : '',
+                        'updated_at' => $reservation->updated_at ? $reservation->updated_at->toISOString() : '',
+                        'agent' => [
+                            'id' => $reservation->agent->id ?? '',
+                            'name' => $reservation->agent->name ?? '',
+                            'email' => $reservation->agent->email ?? '',
+                            'phone' => $reservation->agent->phone ?? '',
+                            'image' => $reservation->agent->image ? aws_asset_path($reservation->agent->image) : asset('').'front-assets/images/avatar/profile-icon.png',
+                        ],
+                        'property' => [
+                            'id' => $reservation->property->id ?? '',
+                            'name' => $reservation->property->name ?? '',
+                            'price' => $reservation->property->price ?? 0,
+                            'apartment_no' => $reservation->property->apartment_no ?? '',
+                            'area' => $reservation->property->area ?? '',
+                            'bedrooms' => $reservation->property->bedrooms ?? '',
+                            'bathrooms' => $reservation->property->bathrooms ?? '',
+                            'floor_no' => $reservation->property->floor_no ?? '',
+                            'location' => $reservation->property->location ?? '',
+                            'sale_type' => $reservation->property->sale_type ?? '',
+                            'is_featured' => $reservation->property->is_featured ?? '',
+                            'image' => ($reservation->property->images && $reservation->property->images->first()) ? aws_asset_path($reservation->property->images->first()->image) : '',
+                            'project' => [
+                                'id' => $reservation->property->project->id ?? '',
+                                'name' => $reservation->property->project->name ?? '',
+                                'location' => $reservation->property->project->location ?? '',
+                            ],
+                            'property_type' => [
+                                'id' => $reservation->property->property_type->id ?? '',
+                                'name' => $reservation->property->property_type->name ?? '',
+                            ],
+                        ],
+                    ];
+                });
+
+            // Add sale type labels
+            $reservations = $reservations->map(function($reservation) {
+                if(isset($reservation['property']['sale_type'])) {
+                    if($reservation['property']['sale_type'] == 1 || $reservation['property']['sale_type'] == 3){
+                        $reservation['property']['sale_type_label'] = __('messages.buy');
+                    }
+                    if($reservation['property']['sale_type'] == 2 || $reservation['property']['sale_type'] == 3){
+                        $reservation['property']['sale_type_label'] = __('messages.rent');
+                    }
+                }
+                return $reservation;
+            });
+
+            // Calculate summary statistics
+            $summaryQuery = \App\Models\Reservation::query();
+            if ($user->role == 4) {
+                $agentIds = User::where('agency_id', $user->id)
+                    ->where('role', 3)
+                    ->pluck('id')
+                    ->toArray();
+                if (!empty($agentIds)) {
+                    $summaryQuery->whereIn('agent_id', $agentIds);
+                }
+            } else {
+                $summaryQuery->where('agent_id', $user->id);
+            }
+
+            $summary = [
+                'total_reservations' => $summaryQuery->count(),
+                'total_commission' => $summaryQuery->sum('commission'),
+                'status_breakdown' => [
+                    'waiting_approval' => $summaryQuery->clone()->where('status', 'waitingApproval')->count(),
+                    'reserved' => $summaryQuery->clone()->where('status', 'Reserved')->count(),
+                    'preparing_document' => $summaryQuery->clone()->where('status', 'PreparingDocument')->count(),
+                    'closed_deal' => $summaryQuery->clone()->where('status', 'ClosedDeal')->count(),
+                ]
+            ];
+
+            $pagination = [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_items' => $totalReservations,
+                'has_next_page' => $hasNextPage,
+                'limit' => $limit,
+            ];
+
+            return response()->json([
+                'message' => 'Reservations List Retrieved Successfully',
+                'data' => convert_all_elements_to_string($reservations),
+                'summary' => convert_all_elements_to_string($summary),
+                'pagination' => convert_all_elements_to_string($pagination)
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred: ' . $e->getMessage(),
+                'error' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+    public function get_visit_schedules_list(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not authenticated.',
+                ], 401);
+            }
+
+            // Check if user is agency or agent
+            if ($user->role != 4 && $user->role != 3) {
+                return response()->json([
+                    'message' => 'Access denied. Only agencies and agents can access this endpoint.',
+                ], 403);
+            }
+
+            // Pagination parameters
+            $limit = isset($request->limit) ? (int)$request->limit : 10;
+            $page = isset($request->page) ? (int)$request->page : 1;
+            $offset = ($page - 1) * $limit;
+
+            // Status filter
+            $status = $request->status ?? '';
+
+            // Build query based on user role
+            $query = \App\Models\VisiteSchedule::with([
+                'agent',
+                'property.project',
+                'property.property_type',
+                'property.images'
+            ]);
+
+            if ($user->role == 4) {
+                // Agency: Get visit schedules from all their agents
+                $agentIds = User::where('agency_id', $user->id)
+                    ->where('role', 3)
+                    ->pluck('id')
+                    ->toArray();
+
+                if (empty($agentIds)) {
+                    // No agents under this agency
+                    $visitSchedules = collect();
+                    $totalVisitSchedules = 0;
+                } else {
+                    $query->whereIn('agent_id', $agentIds);
+                }
+            } else {
+                // Agent: Get only their own visit schedules
+                $query->where('agent_id', $user->id);
+            }
+
+            // Apply status filter if provided
+            if ($status) {
+                $query->where('status', $status);
+            }
+
+            // Get total count for pagination
+            $totalVisitSchedules = $query->count();
+            $totalPages = ceil($totalVisitSchedules / $limit);
+            $hasNextPage = $page < $totalPages;
+
+            // Get visit schedules with pagination
+            $visitSchedules = $query->orderBy('visit_time', 'desc')
+                ->limit($limit)
+                ->skip($offset)
+                ->get()
+                ->filter(function($visitSchedule) {
+                    // Only include visit schedules with valid relationships
+                    return $visitSchedule->property && $visitSchedule->agent;
+                })
+                ->map(function($visitSchedule) {
+                    return [
+                        'id' => $visitSchedule->id,
+                        'client_name' => $visitSchedule->client_name ?? '',
+                        'client_email_address' => $visitSchedule->client_email_address ?? '',
+                        'client_phone_number' => $visitSchedule->client_phone_number ?? '',
+                        'client_id' => $visitSchedule->client_id ?? '',
+                        'visit_time' => $visitSchedule->visit_time ? $visitSchedule->visit_time->toISOString() : '',
+                        'created_at' => $visitSchedule->created_at ? $visitSchedule->created_at->toISOString() : '',
+                        'updated_at' => $visitSchedule->updated_at ? $visitSchedule->updated_at->toISOString() : '',
+                        'agent' => [
+                            'id' => $visitSchedule->agent->id ?? '',
+                            'name' => $visitSchedule->agent->name ?? '',
+                            'email' => $visitSchedule->agent->email ?? '',
+                            'phone' => $visitSchedule->agent->phone ?? '',
+                            'image' => $visitSchedule->agent->image ? aws_asset_path($visitSchedule->agent->image) : asset('').'front-assets/images/avatar/profile-icon.png',
+                        ],
+                        'property' => [
+                            'id' => $visitSchedule->property->id ?? '',
+                            'name' => $visitSchedule->property->name ?? '',
+                            'price' => $visitSchedule->property->price ?? 0,
+                            'apartment_no' => $visitSchedule->property->apartment_no ?? '',
+                            'area' => $visitSchedule->property->area ?? '',
+                            'bedrooms' => $visitSchedule->property->bedrooms ?? '',
+                            'bathrooms' => $visitSchedule->property->bathrooms ?? '',
+                            'floor_no' => $visitSchedule->property->floor_no ?? '',
+                            'location' => $visitSchedule->property->location ?? '',
+                            'sale_type' => $visitSchedule->property->sale_type ?? '',
+                            'is_featured' => $visitSchedule->property->is_featured ?? '',
+                            'image' => ($visitSchedule->property->images && $visitSchedule->property->images->first()) ? aws_asset_path($visitSchedule->property->images->first()->image) : '',
+                            'project' => [
+                                'id' => $visitSchedule->property->project->id ?? '',
+                                'name' => $visitSchedule->property->project->name ?? '',
+                                'location' => $visitSchedule->property->project->location ?? '',
+                            ],
+                            'property_type' => [
+                                'id' => $visitSchedule->property->property_type->id ?? '',
+                                'name' => $visitSchedule->property->property_type->name ?? '',
+                            ],
+                        ],
+                    ];
+                });
+
+            // Add sale type labels
+            $visitSchedules = $visitSchedules->map(function($visitSchedule) {
+                if(isset($visitSchedule['property']['sale_type'])) {
+                    if($visitSchedule['property']['sale_type'] == 1 || $visitSchedule['property']['sale_type'] == 3){
+                        $visitSchedule['property']['sale_type_label'] = __('messages.buy');
+                    }
+                    if($visitSchedule['property']['sale_type'] == 2 || $visitSchedule['property']['sale_type'] == 3){
+                        $visitSchedule['property']['sale_type_label'] = __('messages.rent');
+                    }
+                }
+                return $visitSchedule;
+            });
+
+            // Calculate summary statistics
+            $summaryQuery = \App\Models\VisiteSchedule::query();
+            if ($user->role == 4) {
+                $agentIds = User::where('agency_id', $user->id)
+                    ->where('role', 3)
+                    ->pluck('id')
+                    ->toArray();
+                if (!empty($agentIds)) {
+                    $summaryQuery->whereIn('agent_id', $agentIds);
+                }
+            } else {
+                $summaryQuery->where('agent_id', $user->id);
+            }
+
+            $summary = [
+                'total_visit_schedules' => $summaryQuery->count()
+            ];
+
+            $pagination = [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_items' => $totalVisitSchedules,
+                'has_next_page' => $hasNextPage,
+                'limit' => $limit,
+            ];
+
+            return response()->json([
+                'message' => 'Visit Schedules List Retrieved Successfully',
+                'data' => convert_all_elements_to_string($visitSchedules),
+                'summary' => convert_all_elements_to_string($summary),
+                'pagination' => convert_all_elements_to_string($pagination)
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred: ' . $e->getMessage(),
+                'error' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+    public function get_visit_schedule_by_id(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not authenticated.',
+                ], 401);
+            }
+
+            // Validate visit schedule ID
+            $rules = [
+                'visit_schedule_id' => 'required|integer|exists:visite_schedules,id',
+            ];
+            $messages = [
+                'visit_schedule_id.required' => 'Visit Schedule ID is required',
+                'visit_schedule_id.integer' => 'Visit Schedule ID must be a valid integer',
+                'visit_schedule_id.exists' => 'Visit Schedule not found',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                $errors = $validator->messages();
+                return response()->json([
+                    'error' => $errors,
+                ], 403);
+            }
+
+            $visitScheduleId = $request->visit_schedule_id;
+
+            // Get visit schedule with relationships
+            $visitSchedule = \App\Models\VisiteSchedule::with([
+                'agent',
+                'property.project',
+                'property.property_type',
+                'property.images'
+            ])->find($visitScheduleId);
+
+            if (!$visitSchedule) {
+                return response()->json([
+                    'message' => 'Visit Schedule not found',
+                ], 404);
+            }
+
+            // Check access permissions based on user role
+            if ($user->role == 4) {
+                // Agency: Check if the visit schedule belongs to any of their agents
+                $agentIds = User::where('agency_id', $user->id)
+                    ->where('role', 3)
+                    ->pluck('id')
+                    ->toArray();
+
+                if (!in_array($visitSchedule->agent_id, $agentIds)) {
+                    return response()->json([
+                        'message' => 'Access denied. This visit schedule does not belong to your agency.',
+                    ], 403);
+                }
+            } elseif ($user->role == 3) {
+                // Agent: Check if the visit schedule belongs to them
+                if ($visitSchedule->agent_id != $user->id) {
+                    return response()->json([
+                        'message' => 'Access denied. This visit schedule does not belong to you.',
+                    ], 403);
+                }
+            } else {
+                // Other roles (customers, etc.)
+                return response()->json([
+                    'message' => 'Access denied. Only agencies and agents can access this endpoint.',
+                ], 403);
+            }
+
+            // Format visit schedule data
+            $visitScheduleData = [
+                'id' => $visitSchedule->id,
+                'client_name' => $visitSchedule->client_name,
+                'client_email_address' => $visitSchedule->client_email_address,
+                'client_phone_number' => $visitSchedule->client_phone_number,
+                'client_id' => $visitSchedule->client_id,
+                'visit_time' => $visitSchedule->visit_time ? $visitSchedule->visit_time->toISOString() : '',
+                'status' => $visitSchedule->status,
+                'created_at' => $visitSchedule->created_at ? $visitSchedule->created_at->toISOString() : '',
+                'updated_at' => $visitSchedule->updated_at ? $visitSchedule->updated_at->toISOString() : '',
+                'agent' => [
+                    'id' => $visitSchedule->agent->id,
+                    'name' => $visitSchedule->agent->name,
+                    'email' => $visitSchedule->agent->email,
+                    'phone' => $visitSchedule->agent->phone,
+                    'image' => $visitSchedule->agent->image ? aws_asset_path($visitSchedule->agent->image) : asset('').'front-assets/images/avatar/profile-icon.png',
+                ],
+                'property' => [
+                    'id' => $visitSchedule->property->id,
+                    'name' => $visitSchedule->property->name,
+                    'price' => $visitSchedule->property->price,
+                    'apartment_no' => $visitSchedule->property->apartment_no,
+                    'area' => $visitSchedule->property->area,
+                    'bedrooms' => $visitSchedule->property->bedrooms,
+                    'bathrooms' => $visitSchedule->property->bathrooms,
+                    'floor_no' => $visitSchedule->property->floor_no,
+                    'description' => $visitSchedule->property->description,
+                    'short_description' => $visitSchedule->property->short_description,
+                    'location' => $visitSchedule->property->location,
+                    'location_link' => $visitSchedule->property->location_link,
+                    'video_link' => $visitSchedule->property->video_link,
+                    'link_360' => $visitSchedule->property->link_360,
+                    'unit_layout' => $visitSchedule->property->unit_layout,
+                    'floor_plan' => $visitSchedule->property->floor_plan ? aws_asset_path($visitSchedule->property->floor_plan) : '',
+                    'gross_area' => $visitSchedule->property->gross_area,
+                    'balcony_size' => $visitSchedule->property->balcony_size,
+                    'sale_type' => $visitSchedule->property->sale_type,
+                    'is_featured' => $visitSchedule->property->is_featured,
+                    'images' => $visitSchedule->property->images->map(function($image) {
+                        return [
+                            'id' => $image->id,
+                            'image' => aws_asset_path($image->image),
+                            'type' => $image->type,
+                            'order' => $image->order,
+                        ];
+                    }),
+                    'project' => [
+                        'id' => $visitSchedule->property->project->id,
+                        'name' => $visitSchedule->property->project->name,
+                        'location' => $visitSchedule->property->project->location,
+                        'description' => $visitSchedule->property->project->description,
+                        'image' => $visitSchedule->property->project->app_image ? aws_asset_path($visitSchedule->property->project->app_image) : ($visitSchedule->property->project->image ? aws_asset_path($visitSchedule->property->project->image) : ''),
+                    ],
+                    'property_type' => [
+                        'id' => $visitSchedule->property->property_type->id,
+                        'name' => $visitSchedule->property->property_type->name,
+                    ],
+                ],
+            ];
+
+            // Add sale type label
+            if($visitSchedule->property->sale_type == 1 || $visitSchedule->property->sale_type == 3){
+                $visitScheduleData['property']['sale_type_label'] = __('messages.buy');
+            }
+            if($visitSchedule->property->sale_type == 2 || $visitSchedule->property->sale_type == 3){
+                $visitScheduleData['property']['sale_type_label'] = __('messages.rent');
+            }
+
+            return response()->json([
+                'message' => 'Visit Schedule Details Retrieved Successfully',
+                'data' => convert_all_elements_to_string($visitScheduleData)
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred: ' . $e->getMessage(),
+                'error' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+    public function get_agents_by_agency(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not authenticated.',
+                ], 401);
+            }
+
+            // Check if user is agency or agent
+            if ($user->role != 4) {
+                return response()->json([
+                    'message' => 'Access denied. Only agencies and agents can access this endpoint.',
+                ], 403);
+            }
+
+            // Pagination parameters
+            $limit = isset($request->limit) ? (int)$request->limit : 10;
+            $page = isset($request->page) ? (int)$request->page : 1;
+            $offset = ($page - 1) * $limit;
+
+            // Status filter
+            $status = $request->status ?? '';
+
+            // Determine agency ID based on user role
+            $agencyId = null;
+            if ($user->role == 4) {
+                // Agency: Get agents from their own agency
+                $agencyId = $user->id;
+            } elseif ($user->role == 3) {
+                // Agent: Get agents from their agency
+                $agencyId = $user->agency_id;
+            }
+
+            if (!$agencyId) {
+                return response()->json([
+                    'message' => 'No agency found for this user.',
+                ], 404);
+            }
+
+            // Build query for agents in the same agency
+            $query = User::where('agency_id', $agencyId)
+                ->where('role', 3) // Only agents
+                ->select('id', 'name', 'email', 'phone', 'image', 'license', 'id_card', 'created_at', 'updated_at', 'active', 'agency_id');
+
+            // Apply status filter if provided
+            if ($status) {
+                $query->where('active', $status === 'active' ? 1 : 0);
+            }
+
+            // Get total count for pagination
+            $totalAgents = $query->count();
+            $totalPages = ceil($totalAgents / $limit);
+            $hasNextPage = $page < $totalPages;
+
+            // Get agents with pagination
+            $agents = $query->orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->skip($offset)
+                ->get()
+                ->map(function($agent) {
+                    return [
+                        'id' => $agent->id,
+                        'name' => $agent->name,
+                        'email' => $agent->email,
+                        'phone' => $agent->phone,
+                        'image' => $agent->image ? aws_asset_path($agent->image) : asset('').'front-assets/images/avatar/profile-icon.png',
+                        'license' => $agent->license ? aws_asset_path($agent->license) : '',
+                        'id_card' => $agent->id_card ? aws_asset_path($agent->id_card) : '',
+                        'active' => $agent->active,
+                        'agency_id' => $agent->agency_id,
+                        'created_at' => $agent->created_at ? $agent->created_at->toISOString() : '',
+                        'updated_at' => $agent->updated_at ? $agent->updated_at->toISOString() : '',
+                    ];
+                });
+
+            // Get agency information
+            $agency = User::where('id', $agencyId)
+                ->where('role', 4)
+                ->select('id', 'name', 'email', 'phone', 'image', 'address', 'city', 'state', 'postal_code', 'country_id')
+                ->first();
+
+            $agencyInfo = null;
+            if ($agency) {
+                $agencyInfo = [
+                    'id' => $agency->id,
+                    'name' => $agency->name,
+                    'email' => $agency->email,
+                    'phone' => $agency->phone,
+                    'image' => $agency->image ? aws_asset_path($agency->image) : asset('').'front-assets/images/avatar/profile-icon.png',
+                    'address' => $agency->address,
+                    'city' => $agency->city,
+                    'state' => $agency->state,
+                    'postal_code' => $agency->postal_code,
+                    'country_id' => $agency->country_id,
+                    'country_name' => $agency->country->name ?? '',
+                ];
+            }
+
+            // Calculate summary statistics
+            $summaryQuery = User::where('agency_id', $agencyId)->where('role', 3);
+            $summary = [
+                'total_agents' => $summaryQuery->count(),
+                'active_agents' => $summaryQuery->clone()->where('active', 1)->count(),
+                'inactive_agents' => $summaryQuery->clone()->where('active', 0)->count(),
+            ];
+
+            $pagination = [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_items' => $totalAgents,
+                'has_next_page' => $hasNextPage,
+                'limit' => $limit,
+            ];
+
+            return response()->json([
+                'message' => 'Agents Retrieved Successfully',
+                'data' => convert_all_elements_to_string($agents),
+                'agency_info' => convert_all_elements_to_string($agencyInfo),
+                'summary' => convert_all_elements_to_string($summary),
+                'pagination' => convert_all_elements_to_string($pagination)
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred: ' . $e->getMessage(),
+                'error' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
 
 }
