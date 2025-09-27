@@ -340,6 +340,8 @@ Route::middleware('user')->group(function () {
     Route::get('favorite', 'App\Http\Controllers\front\HomeController@favorite')->name('frontend.favorite');
     Route::get('my-bookings', 'App\Http\Controllers\front\HomeController@my_bookings')->name('frontend.my_bookings');
     Route::get('my-reservations', 'App\Http\Controllers\front\HomeController@my_reservations')->name('frontend.my_reservations');
+    Route::get('my-employees', 'App\Http\Controllers\front\HomeController@my_employees')->name('frontend.my_employees');
+    Route::get('visit-schedule', 'App\Http\Controllers\front\HomeController@visit_schedule')->name('frontend.visit_schedule');
     Route::get('book-now/{property}', 'App\Http\Controllers\front\HomeController@book_now')->name('frontend.book_now');
     Route::get('specific-book-now/{property}', 'App\Http\Controllers\front\HomeController@specific_book_now')->name('frontend.book_now');
     Route::get('book-rent-now/{property}', 'App\Http\Controllers\front\HomeController@book_rent_now')->name('frontend.book_rent_now');

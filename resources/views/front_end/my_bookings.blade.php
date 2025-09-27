@@ -35,13 +35,17 @@
                                                 <div class="user-dasboard-menu faq-nav">
                                                     <ul>
                                                         <li><a href="{{ url('my-profile') }}">{{ __('messages.profile') }}</a></li>
-                                                        <li><a href="{{ url('my-bookings') }}"  class="act-scrlink">{{ __('messages.my_bookings') }}</a></li>
-
+                                                        
+                                                        @if(\Auth::user()->role == 4)
+                                                            <!-- Agency Role (role 4) - Show Employees -->
+                                                            <li><a href="{{ url('my-employees') }}">{{ __('messages.employees') }}</a></li>
+                                                        @endif
+                                                        
                                                         <li><a href="{{ url('my-reservations') }}">{{ __('messages.my_reservations') }}</a></li>
-
                                                         <li><a href="{{ url('favorite') }}">{{ __('messages.favorite') }}
                                                             <!-- <span>6</span> -->
                                                         </a></li>
+                                                        <li><a href="{{ url('visit-schedule') }}">{{ __('messages.visit_schedule') }}</a></li>
                                                     </ul>
                                                     <a href="{{ url('user/logout') }}" class="hum_log-out_btn"><i class="fa-light fa-power-off"></i> {{ __('messages.log_out') }}</a>
                                                 </div>

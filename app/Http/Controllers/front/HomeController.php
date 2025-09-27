@@ -1141,50 +1141,118 @@ class HomeController extends Controller
     public function my_reservations()
     {
         $page_heading = "My Reservations";
-        $bookings = Properties::with('project')->select('properties.*','reservations.created_at as booking_date')->where(['reservations.user_id' => Auth::user()->id])->rightjoin('reservations', 'reservations.property_id', 'properties.id')->orderBy('reservations.created_at', 'desc')->get();
+        $id = Auth::user()->id;
+        $customer = User::with(['agencyUsers'])->find($id);
         $settings = Settings::find(1);
-        $cur_month = Carbon::now();
-        $cur_month->startOfMonth();
 
-        foreach($bookings as $key=>$val){
-            $paid_mount = $val->amount;
-            $ser_amt = ($settings->service_charge_perc / 100) * $val->price;
-            $total = $val->price + $ser_amt;
-            $down_payment = ($settings->advance_perc / 100) * $total;
-            $pending_amt = $total - $down_payment;
+        if (!$customer) {
+            abort(404);
+        }
+        if($customer ->role == 4)
+        {
+            $agentIds = $customer->agencyUsers->pluck('id')->toArray();
 
-            if(isset($val->project->end_date) && $val->project->end_date){
-                $targetDate = Carbon::createFromFormat('Y-m', $val->project->end_date)->endOfMonth();;
-                $monthsDifference = $cur_month->diffInMonths($targetDate);
-            }else{
-                $monthsDifference = $settings->month_count;
-            }
-
-
-            $payableEmiAmount = $pending_amt;
-            $monthCount = $monthsDifference;//$settings->month_count;
-            $monthlyPayment = $payableEmiAmount / $monthCount;
-            $percentageRate = (100 - $settings->advance_perc) / $monthCount;
-
-            $months = [];
-            $totalPercentage = $settings->advance_perc;
-            $remainingAmount = $payableEmiAmount;
-
-            for ($i = 0; $i < $monthCount; $i++) {
-                $remainingAmount -= $monthlyPayment;
-                $totalPercentage += $percentageRate;
-                $months[$i]['month'] = $cur_month->addMonth()->format('M-y');
-                $months[$i]['ordinal'] = $this->getOrdinalSuffix($i + 1);
-                $months[$i]['payment'] = round($monthlyPayment, 2);
-                $months[$i]['remaining_amount'] = round($remainingAmount, 2);
-                $months[$i]['total_percentage'] = round($totalPercentage, 2);
-            }
-            $bookings[$key]['months'] = $months;
-            $bookings[$key]['paid_mount'] = $paid_mount;
+            $reservations = \App\Models\Reservation::with(['agent', 'property'])
+            ->whereIn('agent_id', $agentIds)
+            ->orderBy('created_at', 'desc')
+            ->get();
+            return view('front_end.my_reservations', compact('page_heading','reservations','settings'));
+        }
+        else
+        {
+            $reservations = \App\Models\Reservation::with(['agent', 'property'])
+            ->where('agent_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+            return view('front_end.my_reservations', compact('page_heading','reservations','settings'));
 
         }
-        return view('front_end.my_reservations', compact('page_heading','bookings','settings'));
+        // $bookings = Properties::with(['project', 'images'])->select('properties.*','reservations.created_at as booking_date')->where(['reservations.user_id' => Auth::user()->id])->rightjoin('reservations', 'reservations.property_id', 'properties.id')->orderBy('reservations.created_at', 'desc')->get();
+        // $settings = Settings::find(1);
+        // $cur_month = Carbon::now();
+        // $cur_month->startOfMonth();
+
+        // foreach($bookings as $key=>$val){
+        //     // Get paid amount from reservations table
+        //     $paid_mount = \App\Models\Reservation::where(['user_id' => Auth::user()->id, 'property_id' => $val->id])->sum('amount');
+            
+        //     $ser_amt = ($settings->service_charge_perc / 100) * $val->price;
+        //     $total = $val->price + $ser_amt;
+        //     $down_payment = ($settings->advance_perc / 100) * $total;
+        //     $pending_amt = $total - $down_payment;
+
+        //     if(isset($val->project->end_date) && $val->project->end_date){
+        //         $targetDate = Carbon::createFromFormat('Y-m', $val->project->end_date)->endOfMonth();;
+        //         $monthsDifference = $cur_month->diffInMonths($targetDate);
+        //     }else{
+        //         $monthsDifference = $settings->month_count;
+        //     }
+
+        //     $payableEmiAmount = $pending_amt;
+        //     $monthCount = $monthsDifference;
+        //     $monthlyPayment = $payableEmiAmount / $monthCount;
+        //     $percentageRate = (100 - $settings->advance_perc) / $monthCount;
+
+        //     $months = [];
+        //     $totalPercentage = $settings->advance_perc;
+        //     $remainingAmount = $payableEmiAmount;
+
+        //     for ($i = 0; $i < $monthCount; $i++) {
+        //         $remainingAmount -= $monthlyPayment;
+        //         $totalPercentage += $percentageRate;
+        //         $months[$i]['month'] = $cur_month->addMonth()->format('M-y');
+        //         $months[$i]['ordinal'] = $this->getOrdinalSuffix($i + 1);
+        //         $months[$i]['payment'] = round($monthlyPayment, 2);
+        //         $months[$i]['remaining_amount'] = round($remainingAmount, 2);
+        //         $months[$i]['total_percentage'] = round($totalPercentage, 2);
+        //     }
+        //     $bookings[$key]['months'] = $months;
+        //     $bookings[$key]['paid_mount'] = $paid_mount;
+        // }
+        
     }
+
+    public function my_employees()
+    {
+        $page_heading = "My Employees";
+        // For now, return a simple view - you can implement the actual employee logic later
+        $employees = collect(); // Empty collection for now
+        return view('front_end.my_employees', compact('page_heading', 'employees'));
+    }
+
+    public function visit_schedule()
+    {
+
+        $page_heading = "Visit Schedule";
+        $id = Auth::user()->id;
+        $customer = User::with(['agencyUsers'])->find($id);
+
+        if (!$customer) {
+            abort(404);
+        }
+        if($customer ->role == 4)
+        {
+            $agentIds = $customer->agencyUsers->pluck('id')->toArray();
+
+            $visits = \App\Models\VisiteSchedule::with(['agent', 'property'])
+            ->whereIn('agent_id', $agentIds)
+            ->orderBy('visit_time', 'desc')
+            ->get();
+            return view('front_end.visit_schedule', compact('page_heading','visits'));
+        }
+        else
+        {
+            $visits = \App\Models\VisiteSchedule::with(['agent', 'property'])
+            ->where('agent_id', $id)
+            ->orderBy('visit_time', 'desc')
+            ->get();
+            return view('front_end.visit_schedule', compact('page_heading','visits'));
+
+        }
+
+        
+    }
+
     public function fav_property(Request $request)
     {
         if ($fav = FavouriteProperty::where(['user_id' => Auth::user()->id, 'property_id' => $request->prop_id])->first()) {
