@@ -18,7 +18,9 @@ class VisiteSchedule extends Model
         'client_email_address',
         'visit_time',
         'client_id',
-        'property_id'
+        'property_id',
+        'notes',
+        'visit_purpose',
     ];
 
     protected $casts = [

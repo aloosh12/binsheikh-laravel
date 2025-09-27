@@ -34,6 +34,7 @@ Route::namespace('App\Http\Controllers\Api\V1')->prefix("v1")->middleware('auth:
    Route::get('get_reservations_list', 'HomeController@get_reservations_list');
    Route::get('get_visit_schedules_list', 'HomeController@get_visit_schedules_list');
    Route::post('get_visit_schedule_by_id', 'HomeController@get_visit_schedule_by_id');
+   Route::post('add_visit_schedule', 'HomeController@add_visit_schedule');
    Route::get('get_agents_by_agency', 'HomeController@get_agents_by_agency');
 //    Route::post('reset_password', 'HomeController@reset_password');
   });

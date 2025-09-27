@@ -1230,6 +1230,14 @@ class HomeController extends Controller
         if (!$customer) {
             abort(404);
         }
+
+        // Get all active properties for the dropdown
+        $properties = \App\Models\Properties::with(['project', 'property_type'])
+            ->where('active', 1)
+            ->where('deleted', 0)
+            ->orderBy('name', 'asc')
+            ->get();
+
         if($customer ->role == 4)
         {
             $agentIds = $customer->agencyUsers->pluck('id')->toArray();
@@ -1238,7 +1246,7 @@ class HomeController extends Controller
             ->whereIn('agent_id', $agentIds)
             ->orderBy('visit_time', 'desc')
             ->get();
-            return view('front_end.visit_schedule', compact('page_heading','visits'));
+            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties'));
         }
         else
         {
@@ -1246,7 +1254,7 @@ class HomeController extends Controller
             ->where('agent_id', $id)
             ->orderBy('visit_time', 'desc')
             ->get();
-            return view('front_end.visit_schedule', compact('page_heading','visits'));
+            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties'));
 
         }
 
@@ -2738,6 +2746,136 @@ class HomeController extends Controller
                 'success' => false,
                 'message' => 'Something went wrong. Please try again later.'
             ]);
+        }
+    }
+
+    /**
+     * Store a new visit schedule
+     * Only agents (role 3) can create visit schedules
+     */
+    public function store_visit_schedule(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            
+            // Check if user is authenticated
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. Please login first.',
+                ], 401);
+            }
+
+            // Check if user is an agent (role 3)
+            if ($user->role != 3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Access denied. Only agents can create visit schedules.',
+                ], 403);
+            }
+
+            // Validate the request
+            $validator = Validator::make($request->all(), [
+                'client_name' => 'required|string|max:255',
+                'client_phone_number' => 'required|string|max:20',
+                'client_email_address' => 'nullable|email|max:255',
+                'client_id' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+                'property_id' => 'required|integer|exists:properties,id',
+                'visit_date' => 'required|date|after_or_equal:today',
+                'visit_time' => 'required|date_format:H:i',
+                'notes' => 'nullable|string|max:1000',
+                'visit_purpose' => 'required|in:buy,rent',
+            ], [
+                'client_name.required' => 'Client name is required',
+                'client_phone_number.required' => 'Client phone number is required',
+                'client_email_address.email' => 'Please provide a valid email address',
+                'client_id.file' => 'Client ID must be a file',
+                'client_id.mimes' => 'Client ID file must be jpg, jpeg, png, or pdf',
+                'client_id.max' => 'Client ID file size must not exceed 5MB',
+                'property_id.required' => 'Property selection is required',
+                'property_id.exists' => 'Selected property does not exist',
+                'visit_date.required' => 'Visit date is required',
+                'visit_date.after_or_equal' => 'Visit date cannot be in the past',
+                'visit_time.required' => 'Visit time is required',
+                'visit_time.date_format' => 'Please provide a valid time format (HH:MM)',
+                'visit_purpose.required' => 'Visit purpose is required',
+                'visit_purpose.in' => 'Visit purpose must be either buy or rent',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Check if property exists and is active
+            $property = \App\Models\Properties::where('id', $request->property_id)
+                ->where('active', 1)
+                ->where('deleted', 0)
+                ->first();
+
+            if (!$property) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Selected property is not available',
+                ], 404);
+            }
+
+            // Handle client ID file upload
+            $clientIdFileName = null;
+            if ($request->hasFile('client_id')) {
+                $response = image_upload($request, 'profile', 'client_id');
+                if ($response['status']) {
+                    $clientIdFileName = $response['link'];
+                }
+            }
+
+            // Combine date and time
+            $visitDateTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $request->visit_date . ' ' . $request->visit_time);
+
+            // Check for conflicting visit schedules for the same agent
+            $existingVisit = \App\Models\VisiteSchedule::where('agent_id', $user->id)
+                ->where('visit_time', $visitDateTime)
+                ->first();
+
+            if ($existingVisit) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You already have a visit scheduled at this time',
+                ], 409);
+            }
+
+            // Create the visit schedule
+            $visitSchedule = \App\Models\VisiteSchedule::create([
+                'agent_id' => $user->id,
+                'client_name' => $request->client_name,
+                'client_phone_number' => $request->client_phone_number,
+                'client_email_address' => $request->client_email_address,
+                'client_id' => $clientIdFileName,
+                'property_id' => $request->property_id,
+                'visit_time' => $visitDateTime,
+                'notes' => $request->notes,
+                'visit_purpose' => $request->visit_purpose,
+                'status' => 'scheduled', // Default status
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Visit schedule created successfully',
+                'data' => [
+                    'id' => $visitSchedule->id,
+                    'client_name' => $visitSchedule->client_name,
+                    'visit_time' => $visitSchedule->visit_time->format('d-M-Y h:i A'),
+                ]
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while creating visit schedule: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

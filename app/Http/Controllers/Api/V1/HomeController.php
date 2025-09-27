@@ -954,8 +954,10 @@ class HomeController extends Controller
                     'client_name' => $visit->client_name,
                     'client_email_address' => $visit->client_email_address,
                     'client_phone_number' => $visit->client_phone_number,
-                    'client_id' => $visit->client_id,
+                    'client_id' =>  $visit->client_id ? aws_asset_path($visit->client_id) : '',
                     'visit_time' => $visit->visit_time ? $visit->visit_time->toISOString() : '',
+                    'notes' => $visit->notes,
+                    'visit_purpose' => $visit->visit_purpose,
                     'agent' => [
                         'id' => $visit->agent->id,
                         'name' => $visit->agent->name,
@@ -1432,8 +1434,10 @@ class HomeController extends Controller
                         'client_name' => $visitSchedule->client_name ?? '',
                         'client_email_address' => $visitSchedule->client_email_address ?? '',
                         'client_phone_number' => $visitSchedule->client_phone_number ?? '',
-                        'client_id' => $visitSchedule->client_id ?? '',
+                        'client_id' => $visitSchedule->client_id ? aws_asset_path($visitSchedule->client_id) : '',
                         'visit_time' => $visitSchedule->visit_time ? $visitSchedule->visit_time->toISOString() : '',
+                        'notes' => $visitSchedule->notes ?? '',
+                        'visit_purpose' => $visitSchedule->visit_purpose ?? '',
                         'created_at' => $visitSchedule->created_at ? $visitSchedule->created_at->toISOString() : '',
                         'updated_at' => $visitSchedule->updated_at ? $visitSchedule->updated_at->toISOString() : '',
                         'agent' => [
@@ -1603,6 +1607,8 @@ class HomeController extends Controller
                 'client_phone_number' => $visitSchedule->client_phone_number,
                 'client_id' => $visitSchedule->client_id,
                 'visit_time' => $visitSchedule->visit_time ? $visitSchedule->visit_time->toISOString() : '',
+                'notes' => $visitSchedule->notes,
+                'visit_purpose' => $visitSchedule->visit_purpose,
                 'status' => $visitSchedule->status,
                 'created_at' => $visitSchedule->created_at ? $visitSchedule->created_at->toISOString() : '',
                 'updated_at' => $visitSchedule->updated_at ? $visitSchedule->updated_at->toISOString() : '',
@@ -1805,6 +1811,168 @@ class HomeController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred: ' . $e->getMessage(),
+                'error' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+    /**
+     * Add a new visit schedule
+     * Only agents (role 3) can create visit schedules
+     */
+    public function add_visit_schedule(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            // Check if user is authenticated
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Unauthorized. Please login first.',
+                ], 401);
+            }
+
+            // Check if user is an agent (role 3)
+            if ($user->role != 3 && $user->role != 4) {
+                return response()->json([
+                    'message' => 'Access denied. Only agencies and agents can create visit schedules.',
+                ], 403);
+            }
+
+            // Validate the request
+            $validator = Validator::make($request->all(), [
+                'client_name' => 'required|string|max:255',
+                'client_phone_number' => 'required|string|max:20',
+                'client_email_address' => 'nullable|email|max:255',
+                'client_id' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+                'property_id' => 'required|integer|exists:properties,id',
+                'visit_date' => 'required|date|after_or_equal:today',
+                'visit_time' => 'required|date_format:H:i',
+                'notes' => 'nullable|string|max:1000',
+                'visit_purpose' => 'required|in:buy,rent',
+            ], [
+                'client_name.required' => 'Client name is required',
+                'client_phone_number.required' => 'Client phone number is required',
+                'client_email_address.email' => 'Please provide a valid email address',
+                'client_id.file' => 'Client ID must be a file',
+                'client_id.mimes' => 'Client ID file must be jpg, jpeg, png, or pdf',
+                'client_id.max' => 'Client ID file size must not exceed 5MB',
+                'property_id.required' => 'Property selection is required',
+                'property_id.exists' => 'Selected property does not exist',
+                'visit_date.required' => 'Visit date is required',
+                'visit_date.after_or_equal' => 'Visit date cannot be in the past',
+                'visit_time.required' => 'Visit time is required',
+                'visit_time.date_format' => 'Please provide a valid time format (HH:MM)',
+                'visit_purpose.required' => 'Visit purpose is required',
+                'visit_purpose.in' => 'Visit purpose must be either buy or rent',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Check if property exists and is active
+            $property = Properties::with(['project', 'property_type'])->where('id', $request->property_id)
+                ->where('active', 1)
+                ->where('deleted', 0)
+                ->first();
+
+            if (!$property) {
+                return response()->json([
+                    'message' => 'Selected property is not available',
+                ], 404);
+            }
+
+            // // Check if property has a valid project
+            // if (!$property->project) {
+            //     return response()->json([
+            //         'message' => 'Selected property does not have an associated project',
+            //     ], 404);
+            // }
+
+            // Handle client ID file upload
+            $clientIdFileName = null;
+            if ($request->hasFile('client_id')) {
+                $response = image_upload($request, 'visit_schedule', 'client_id');
+                if ($response['status']) {
+                    $clientIdFileName = $response['link'];
+                }
+            }
+
+            // Combine date and time
+            $visitDateTime = Carbon::createFromFormat('Y-m-d H:i', $request->visit_date . ' ' . $request->visit_time);
+
+            // Check for conflicting visit schedules for the same agent
+            $existingVisit = \App\Models\VisiteSchedule::where('agent_id', $user->id)
+                ->where('visit_time', $visitDateTime)
+                ->first();
+
+            if ($existingVisit) {
+                return response()->json([
+                    'message' => 'You already have a visit scheduled at this time',
+                ], 409);
+            }
+
+            // Create the visit schedule
+            $visitSchedule = \App\Models\VisiteSchedule::create([
+                'agent_id' => $user->id,
+                'client_name' => $request->client_name,
+                'client_phone_number' => $request->client_phone_number,
+                'client_email_address' => $request->client_email_address,
+                'client_id' => $clientIdFileName,
+                'property_id' => $request->property_id,
+                'visit_time' => $visitDateTime,
+                'notes' => $request->notes,
+                'visit_purpose' => $request->visit_purpose
+            ]);
+
+            // Load relationships for response
+            $visitSchedule->load(['agent', 'property.project', 'property.property_type']);
+
+            // Format the response data
+            $responseData = [
+                'id' => $visitSchedule->id,
+                'client_name' => $visitSchedule->client_name,
+                'client_email_address' => $visitSchedule->client_email_address,
+                'client_phone_number' => $visitSchedule->client_phone_number,
+                'client_id' => $visitSchedule->client_id,
+                'client_id_url' => $visitSchedule->client_id ? aws_asset_path($visitSchedule->client_id) : null,
+                'visit_time' => $visitSchedule->visit_time ? $visitSchedule->visit_time->toISOString() : '',
+                'notes' => $visitSchedule->notes,
+                'visit_purpose' => $visitSchedule->visit_purpose,
+                'agent' => [
+                    'id' => $visitSchedule->agent->id,
+                    'name' => $visitSchedule->agent->name,
+                    'email' => $visitSchedule->agent->email,
+                ],
+                'property' => [
+                    'id' => $visitSchedule->property->id,
+                    'name' => $visitSchedule->property->name,
+                    'apartment_no' => $visitSchedule->property->apartment_no,
+                    'project' => [
+                        'id' => $visitSchedule->property->project ? $visitSchedule->property->project->id : null,
+                        'name' => $visitSchedule->property->project ? $visitSchedule->property->project->name : 'N/A',
+                    ],
+                    'property_type' => [
+                        'id' => $visitSchedule->property->property_type ? $visitSchedule->property->property_type->id : null,
+                        'name' => $visitSchedule->property->property_type ? $visitSchedule->property->property_type->name : 'N/A',
+                    ],
+                ],
+                'created_at' => $visitSchedule->created_at ? $visitSchedule->created_at->toISOString() : '',
+                'updated_at' => $visitSchedule->updated_at ? $visitSchedule->updated_at->toISOString() : '',
+            ];
+
+            return response()->json([
+                'message' => 'Visit schedule created successfully',
+                'data' => convert_all_elements_to_string($responseData)
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while creating visit schedule: ' . $e->getMessage(),
                 'error' => $e->getTraceAsString()
             ], 500);
         }

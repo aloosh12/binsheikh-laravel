@@ -53,12 +53,18 @@
                                     <!-- user-dasboard-menu_wrap end-->
                                     <!-- pricing-column -->
                                     <div class="col-lg-9">
-                                        <div class="dashboard-title">
-                                            <div class="dashboard-title-item"><span>{{ __('messages.visit_schedule') }}</span></div>
-                                        </div>
-                                        
-                                        <!-- Master-Details Table -->
-                                        <div class="table-container">
+                                        <div class="db-container">
+                                            <div class="dashboard-title">
+                                                <div class="dashboard-title-item"><span>{{ __('messages.visit_schedule') }}</span></div>
+                                                <div class="dashboard-title-actions">
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVisitScheduleModal">
+                                                        <i class="fas fa-plus"></i> {{ __('messages.add_new_visit_schedule') }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Master-Details Table -->
+                                            <div class="table-container">
                                             <table class="table table-hover" id="visitScheduleTable">
                                                 <thead>
                                                     <tr>
@@ -209,6 +215,109 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        
+                                        <!-- Add Visit Schedule Modal -->
+                                        <div class="modal fade" id="addVisitScheduleModal" tabindex="-1" aria-labelledby="addVisitScheduleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="addVisitScheduleModalLabel">
+                                                            <i class="fas fa-calendar-plus"></i> {{ __('messages.add_new_visit_schedule') }}
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form id="addVisitScheduleForm" action="{{ url('visit-schedule/store') }}" method="POST" enctype="multipart/form-data">
+                                                        @csrf
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <!-- Client Information -->
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="client_name" class="form-label">{{ __('messages.client_name') }} <span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control" id="client_name" name="client_name" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="client_email" class="form-label">{{ __('messages.client_email_address') }}</label>
+                                                                        <input type="email" class="form-control" id="client_email" name="client_email">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="client_phone" class="form-label">{{ __('messages.phone_number') }} <span class="text-danger">*</span></label>
+                                                                        <input type="tel" class="form-control" id="client_phone" name="client_phone" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="client_id" class="form-label">{{ __('messages.client_id') }}</label>
+                                                                        <input type="file" class="form-control" id="client_id" name="client_id" accept=".jpg,.jpeg,.png,.pdf">
+                                                                        <small class="form-text text-muted">{{ __('messages.client_id_file_help') }}</small>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <!-- Property Information -->
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="property_id" class="form-label">{{ __('messages.property') }} <span class="text-danger">*</span></label>
+                                                                        <select class="form-control" id="property_id" name="property_id" required>
+                                                                            <option value="">{{ __('messages.select_property') }}</option>
+                                                                            @if(isset($properties))
+                                                                                @foreach($properties as $property)
+                                                                                    <option value="{{ $property->id }}">{{ $property->name }} - {{ $property->project->name ?? 'N/A' }}</option>
+                                                                                @endforeach
+                                                                            @endif
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <!-- Visit Schedule -->
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="visit_date" class="form-label">{{ __('messages.visit_date') }} <span class="text-danger">*</span></label>
+                                                                        <input type="date" class="form-control" id="visit_date" name="visit_date" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="visit_time" class="form-label">{{ __('messages.visit_time') }} <span class="text-danger">*</span></label>
+                                                                        <input type="time" class="form-control" id="visit_time" name="visit_time" required>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <!-- Notes -->
+                                                                <div class="col-12">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="notes" class="form-label">{{ __('messages.notes') }}</label>
+                                                                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="{{ __('messages.additional_notes') }}"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <!-- Visit Purpose -->
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="visit_purpose" class="form-label">{{ __('messages.visit_purpose') }} <span class="text-danger">*</span></label>
+                                                                        <select class="form-control" id="visit_purpose" name="visit_purpose" required>
+                                                                            <option value="">{{ __('messages.select_visit_purpose') }}</option>
+                                                                            <option value="buy">{{ __('messages.buy') }}</option>
+                                                                            <option value="rent">{{ __('messages.rent') }}</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="fas fa-save"></i> {{ __('messages.save_visit_schedule') }}
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <!-- pricing-column end-->
@@ -230,6 +339,109 @@
 
 @section('script')
 <style>
+    /* Dashboard Title Styles */
+    .dashboard-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 15px 0;
+    }
+    
+    .dashboard-title-item {
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .dashboard-title-actions .btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: #007bff;
+        border: none;
+        color: white;
+    }
+    
+    .dashboard-title-actions .btn:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    /* Modal Styles */
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px 12px 0 0;
+        padding: 20px;
+        border-bottom: none;
+    }
+    
+    .modal-title {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .btn-close {
+        filter: invert(1);
+        opacity: 0.8;
+    }
+    
+    .btn-close:hover {
+        opacity: 1;
+    }
+    
+    .modal-body {
+        padding: 30px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .modal-footer {
+        padding: 20px 30px;
+        border-top: 1px solid #e9ecef;
+        background-color: #f8f9fa;
+        border-radius: 0 0 12px 12px;
+    }
+    
+    .modal-footer .btn {
+        padding: 10px 25px;
+        border-radius: 6px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
     /* Table Container Styles */
     .table-container {
         background: white;
@@ -481,6 +693,92 @@
                 }
             });
         });
+        
+        // Modal form handling
+        $('#addVisitScheduleForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            
+            // Show loading state
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalText = submitBtn.html();
+            submitBtn.html('<i class="fas fa-spinner fa-spin"></i> {{ __("messages.saving") }}...').prop('disabled', true);
+            
+            // Submit form via AJAX
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        showNotification(response.message || '{{ __("messages.visit_schedule_added_successfully") }}', 'success');
+                        
+                        // Close modal
+                        $('#addVisitScheduleModal').modal('hide');
+                        
+                        // Reset form
+                        $('#addVisitScheduleForm')[0].reset();
+                        
+                        // Reload page to show new visit schedule
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        // Show error message from response
+                        showNotification(response.message || '{{ __("messages.error_occurred") }}', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    // Show error message
+                    let errorMessage = '{{ __("messages.error_occurred") }}';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        // Handle validation errors
+                        let errors = xhr.responseJSON.errors;
+                        let errorMessages = [];
+                        for (let field in errors) {
+                            errorMessages.push(errors[field][0]);
+                        }
+                        errorMessage = errorMessages.join('<br>');
+                    }
+                    showNotification(errorMessage, 'error');
+                },
+                complete: function() {
+                    // Reset button state
+                    submitBtn.html(originalText).prop('disabled', false);
+                }
+            });
+        });
+        
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        $('#visit_date').attr('min', today);
+        
+        // Notification function
+        function showNotification(message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            const notification = $(`
+                <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+                     style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `);
+            
+            $('body').append(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(function() {
+                notification.alert('close');
+            }, 5000);
+        }
     });
 </script>
 @stop
