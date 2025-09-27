@@ -337,6 +337,41 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- New Password Modal -->
+                    <div class="modal fade" id="newPasswordModal" tabindex="-1" role="dialog" aria-labelledby="newPasswordModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content custom-modal-content">
+                                <div class="modal-header custom-modal-header">
+                                    <button type="button" class="close custom-close-btn" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <div class="modal-icon-section">
+                                        <div class="check-icon-container">
+                                            <i class="fa-light fa-check check-icon"></i>
+                                        </div>
+                                        <div class="sparkle-icons">
+                                            <i class="fa-solid fa-star sparkle-1"></i>
+                                            <i class="fa-solid fa-star sparkle-2"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="modal-title custom-modal-title">{{ __('messages.verified_please_enter_new_password') }}</h4>
+                                    
+                                    <form id="newPasswordForm" action="{{ url('update_forget_password') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="email" id="new_password_email">
+                                        <div class="new-password-input-container">
+                                            <input type="password" class="custom-new-password-input" name="new_password" placeholder="{{ __('messages.new_password') }}" required>
+                                        </div>
+                                        <button type="submit" class="custom-update-btn">{{ __('messages.update') }}</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 @stop
 
 @section('script')
@@ -465,12 +500,55 @@ $(document).ready(function() {
                 if (response.success) {
                     alert('{{ __("messages.otp_verified_successfully") }}');
                     $('#otpVerificationModal').modal('hide');
+                    // Set email for new password form
+                    $('#new_password_email').val($('#otp_email').val());
+                    // Open new password modal
+                    $('#newPasswordModal').modal('show');
                     // Reset OTP inputs
                     $('.otp-input').val('');
-                    // You can redirect to password reset page or show new password form here
-                    window.location.reload();
                 } else {
                     alert(response.message || '{{ __("messages.invalid_otp") }}');
+                }
+            },
+            error: function(xhr) {
+                var errorMessage = '{{ __("messages.something_went_wrong") }}';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                alert(errorMessage);
+            },
+            complete: function() {
+                // Reset button state
+                submitBtn.prop('disabled', false).text(originalText);
+            }
+        });
+    });
+    
+    // Handle new password form submission
+    $('#newPasswordForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var formData = $(this).serialize();
+        var submitBtn = $(this).find('button[type="submit"]');
+        var originalText = submitBtn.text();
+        
+        // Show loading state
+        submitBtn.prop('disabled', true).text('{{ __("messages.updating") }}...');
+        
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    alert('{{ __("messages.password_updated_successfully") }}');
+                    $('#newPasswordModal').modal('hide');
+                    // Reset form
+                    $('#newPasswordForm')[0].reset();
+                    // Redirect to login or reload page
+                    window.location.reload();
+                } else {
+                    alert(response.message || '{{ __("messages.something_went_wrong") }}');
                 }
             },
             error: function(xhr) {
@@ -743,6 +821,86 @@ $(document).ready(function() {
 }
 
 .custom-verify-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Check Icon Container */
+.check-icon-container {
+    width: 100px;
+    height: 100px;
+    background: #f4e4bc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 8px 25px rgba(244, 228, 188, 0.4);
+}
+
+.check-icon {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 300;
+}
+
+/* New Password Input */
+.new-password-input-container {
+    margin-bottom: 25px;
+}
+
+.custom-new-password-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    background: white;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.custom-new-password-input:focus {
+    outline: none;
+    border-color: #f4e4bc;
+    box-shadow: 0 0 0 3px rgba(244, 228, 188, 0.2);
+}
+
+.custom-new-password-input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Update Button */
+.custom-update-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background: #f4e4bc;
+    border: none;
+    border-radius: 12px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: none;
+    letter-spacing: 0.5px;
+}
+
+.custom-update-btn:hover {
+    background: #e6d4a8;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(244, 228, 188, 0.4);
+}
+
+.custom-update-btn:active {
+    transform: translateY(0);
+}
+
+.custom-update-btn:disabled {
     background: #ccc;
     cursor: not-allowed;
     transform: none;

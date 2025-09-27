@@ -32,6 +32,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use Validator;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 use GuzzleHttp\Client;
 use PDF;
@@ -1944,7 +1945,9 @@ class HomeController extends Controller
             ->leftjoin('projects', 'projects.id', 'properties.project_id');
 
         if ($sale_type) {
+            if($sale_type != 3){
             $properties = $properties->whereIn('sale_type', [$sale_type, 3]);
+            }
         }
         if ($property_type) {
             $properties = $properties->where('category', $property_type);
@@ -2469,18 +2472,18 @@ class HomeController extends Controller
                         <h2 style="color: #333; margin-bottom: 10px;">Password Reset Request</h2>
                         <p style="color: #666; font-size: 16px;">Hello ' . $user->name . ',</p>
                     </div>
-                    
+
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                         <p style="color: #333; font-size: 16px; margin-bottom: 15px;">
                             You have requested to reset your password. Please use the following OTP to verify your identity:
                         </p>
-                        
+
                         <div style="text-align: center; margin: 20px 0;">
                             <div style="display: inline-block; background: #f4e4bc; padding: 15px 30px; border-radius: 8px; font-size: 24px; font-weight: bold; color: #333; letter-spacing: 5px;">
                                 ' . $otp . '
                             </div>
                         </div>
-                        
+
                         <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
                             <strong>Important:</strong>
                         </p>
@@ -2490,7 +2493,7 @@ class HomeController extends Controller
                             <li>If you did not request this password reset, please ignore this email</li>
                         </ul>
                     </div>
-                    
+
                     <div style="text-align: center; margin-top: 30px;">
                         <p style="color: #999; font-size: 12px;">
                             This is an automated message from Bin Al Sheikh. Please do not reply to this email.
@@ -2575,7 +2578,7 @@ class HomeController extends Controller
 
             // OTP is valid - clear session and allow password reset
             session()->forget(['forget_password_otp', 'forget_password_email', 'otp_expires_at']);
-            
+
             // Store verification in session for password reset
             session([
                 'password_reset_verified' => true,
@@ -2586,6 +2589,80 @@ class HomeController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'OTP verified successfully. You can now reset your password.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again later.'
+            ]);
+        }
+    }
+
+    public function update_forget_password(Request $request)
+    {
+         //$user_id = Auth::user()->id;
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|exists:users,email',
+                'new_password' => 'required|min:6'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first()
+                ]);
+            }
+
+            $email = $request->email;
+            $newPassword = $request->new_password;
+
+            // Check if password reset is verified
+            if (!session()->has('password_reset_verified') || !session()->has('password_reset_email')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Password reset session expired. Please start the process again.'
+                ]);
+            }
+
+            // Check if email matches
+            if (session('password_reset_email') !== $email) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid email address.'
+                ]);
+            }
+
+            // Check if password reset is expired
+            if (session()->has('password_reset_expires_at') && now()->isAfter(session('password_reset_expires_at'))) {
+                session()->forget(['password_reset_verified', 'password_reset_email', 'password_reset_expires_at']);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Password reset session has expired. Please start the process again.'
+                ]);
+            }
+
+            // Find user and update password
+            $user = \App\Models\User::where('email', $email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found.'
+                ]);
+            }
+
+            // Update password
+            $user->password = Hash::make($newPassword);
+            $user->save();
+
+            // Clear password reset session
+            session()->forget(['password_reset_verified', 'password_reset_email', 'password_reset_expires_at']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated successfully. You can now login with your new password.'
             ]);
 
         } catch (\Exception $e) {

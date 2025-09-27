@@ -394,4 +394,8 @@ return [
     'please_enter_complete_otp' => 'Please enter complete OTP',
     'otp_verified_successfully' => 'OTP verified successfully',
     'invalid_otp' => 'Invalid OTP',
+    'verified_please_enter_new_password' => 'Verified Please Enter New Password',
+    'new_password' => 'New Password',
+    'updating' => 'Updating',
+    'password_updated_successfully' => 'Password updated successfully',
 ];

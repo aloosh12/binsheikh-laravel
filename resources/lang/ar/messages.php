@@ -402,4 +402,8 @@ return [
     'please_enter_complete_otp' => 'يرجى إدخال رمز التحقق كاملاً',
     'otp_verified_successfully' => 'تم التحقق من رمز التحقق بنجاح',
     'invalid_otp' => 'رمز التحقق غير صحيح',
+    'verified_please_enter_new_password' => 'تم التحقق، يرجى إدخال كلمة مرور جديدة',
+    'new_password' => 'كلمة المرور الجديدة',
+    'updating' => 'جاري التحديث',
+    'password_updated_successfully' => 'تم تحديث كلمة المرور بنجاح',
 ];
