@@ -167,7 +167,13 @@
                                                                             </div>
                                                                             <div class="info-content">
                                                                                 <label>{{ __('messages.client_id') }}</label>
-                                                                                <span>{{ $visit->client_id ?? 'N/A' }}</span>
+                                                                                @if($visit->client_id)
+                                                                                    <a href="{{ aws_asset_path($visit->client_id) }}" target="_blank" class="btn btn-sm btn-info">
+                                                                                        <i class="fas fa-eye"></i> {{ __('messages.view_client_id') }}
+                                                                                    </a>
+                                                                                @else
+                                                                                    <span>N/A</span>
+                                                                                @endif
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -400,13 +406,13 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group mb-3">
                                                                         <label for="client_email" class="form-label">{{ __('messages.client_email_address') }}</label>
-                                                                        <input type="email" class="form-control" id="client_email" name="client_email">
+                                                                        <input type="email" class="form-control" id="client_email_address" name="client_email_address">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group mb-3">
                                                                         <label for="client_phone" class="form-label">{{ __('messages.phone_number') }} <span class="text-danger">*</span></label>
-                                                                        <input type="tel" class="form-control" id="client_phone" name="client_phone" required>
+                                                                        <input type="tel" class="form-control" id="client_phone_number" name="client_phone_number" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
@@ -750,6 +756,7 @@
         font-weight: 600;
     }
     
+
     /* Responsive */
     @media (max-width: 768px) {
         .schedule-info-grid {
@@ -767,6 +774,7 @@
             align-items: flex-start;
             gap: 5px;
         }
+        
     }
 </style>
 

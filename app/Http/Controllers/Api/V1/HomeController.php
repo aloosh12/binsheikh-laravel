@@ -401,6 +401,10 @@ class HomeController extends Controller
         $data['phone'] = $user->phone;
         $data['email'] = $user->email;
         $data['license'] = $user->license ? aws_asset_path($user->license) : '';
+        $data['id_card'] = $user->id_card ? aws_asset_path($user->id_card) : '';
+        $data['cr'] = $user->cr ? aws_asset_path($user->cr) : '';
+        $data['authorized_signatory'] = $user->authorized_signatory ? aws_asset_path($user->authorized_signatory) : '';
+        $data['professional_practice_certificate'] = $user->professional_practice_certificate ? aws_asset_path($user->professional_practice_certificate) : '';
         $data['address'] = $user->address;
         $data['city'] = $user->city;
         $data['state'] = $user->state;

@@ -893,18 +893,10 @@ class HomeController extends Controller
                         $ins['image'] = $response['link'];
                     }
                 }
-                if ($request->user_type == 3 || $request->user_type == 4) {
+
+
+                if ($request->user_type == 3 ) {
                     $ins['id_no'] = $request->id_no??'';
-                    if ($request->file("professional_practice_certificate")) {
-                        $response = image_upload($request, 'profile', 'professional_practice_certificate');
-                        if ($response['status']) {
-                            $ins['professional_practice_certificate'] = $response['link'];
-                        }
-                    }
-                }
-
-
-                if ($request->user_type == 3 || $request->user_type == 4) {
                     if ($request->file("license")) {
                         $response = image_upload($request, 'profile', 'license');
                         if ($response['status']) {
@@ -916,6 +908,37 @@ class HomeController extends Controller
                         $response = image_upload($request, 'profile', 'id_card');
                         if ($response['status']) {
                             $ins['id_card'] = $response['link'];
+                        }
+                    }
+                }
+
+                if ($request->user_type == 4) {
+                    $ins['id_no'] = $request->id_no??'';
+                    if ($request->file("professional_practice_certificate")) {
+                        $response = image_upload($request, 'profile', 'professional_practice_certificate');
+                        if ($response['status']) {
+                            $ins['professional_practice_certificate'] = $response['link'];
+                        }
+                    }
+
+                    if ($request->file("authorized_signatory")) {
+                        $response = image_upload($request, 'profile', 'authorized_signatory');
+                        if ($response['status']) {
+                            $ins['authorized_signatory'] = $response['link'];
+                        }
+                    }
+
+                    if ($request->file("cr")) {
+                        $response = image_upload($request, 'profile', 'cr');
+                        if ($response['status']) {
+                            $ins['cr'] = $response['link'];
+                        }
+                    }
+
+                    if ($request->file("license")) {
+                        $response = image_upload($request, 'profile', 'license');
+                        if ($response['status']) {
+                            $ins['license'] = $response['link'];
                         }
                     }
                 }
@@ -2826,7 +2849,7 @@ class HomeController extends Controller
             // Handle client ID file upload
             $clientIdFileName = null;
             if ($request->hasFile('client_id')) {
-                $response = image_upload($request, 'profile', 'client_id');
+                $response = image_upload($request, 'visit_schedule', 'client_id');
                 if ($response['status']) {
                     $clientIdFileName = $response['link'];
                 }

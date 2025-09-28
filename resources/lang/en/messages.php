@@ -430,4 +430,21 @@ return [
     'old_password_incorrect' => 'Old password is incorrect',
     'new_password_same_as_old' => 'New password cannot be the same as old password',
     'password_changed_successfully' => 'Password changed successfully',
+    
+    // Visit Schedule Modal Translations
+    'add_new_visit_schedule' => 'Add New Visit Schedule',
+    'property' => 'Property',
+    'select_property' => 'Select Property',
+    'visit_date' => 'Visit Date',
+    'visit_purpose' => 'Visit Purpose',
+    'select_visit_purpose' => 'Select Visit Purpose',
+    'notes' => 'Notes',
+    'additional_notes' => 'Additional Notes',
+    'cancel' => 'Cancel',
+    'save_visit_schedule' => 'Save Visit Schedule',
+    'client_id_file_help' => 'Upload client ID document (JPG, PNG, PDF)',
+    'saving' => 'Saving',
+    'visit_schedule_added_successfully' => 'Visit schedule added successfully',
+    'error_occurred' => 'An error occurred',
+    'view_client_id' => 'View Client ID',
 ];

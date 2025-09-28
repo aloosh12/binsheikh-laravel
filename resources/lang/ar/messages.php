@@ -438,4 +438,21 @@ return [
     'old_password_incorrect' => 'كلمة المرور القديمة غير صحيحة',
     'new_password_same_as_old' => 'لا يمكن أن تكون كلمة المرور الجديدة نفس كلمة المرور القديمة',
     'password_changed_successfully' => 'تم تغيير كلمة المرور بنجاح',
+    
+    // Visit Schedule Modal Translations
+    'add_new_visit_schedule' => 'إضافة جدولة زيارة جديدة',
+    'property' => 'العقار',
+    'select_property' => 'اختر العقار',
+    'visit_date' => 'تاريخ الزيارة',
+    'visit_purpose' => 'غرض الزيارة',
+    'select_visit_purpose' => 'اختر غرض الزيارة',
+    'notes' => 'ملاحظات',
+    'additional_notes' => 'ملاحظات إضافية',
+    'cancel' => 'إلغاء',
+    'save_visit_schedule' => 'حفظ جدولة الزيارة',
+    'client_id_file_help' => 'رفع وثيقة هوية العميل (JPG, PNG, PDF)',
+    'saving' => 'جاري الحفظ',
+    'visit_schedule_added_successfully' => 'تم إضافة جدولة الزيارة بنجاح',
+    'error_occurred' => 'حدث خطأ',
+    'view_client_id' => 'عرض هوية العميل',
 ];
