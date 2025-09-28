@@ -33,7 +33,7 @@
                                                 </div>
                                                 <div class="user-dasboard-menu faq-nav">
                                                     <ul>
-                                                        <li><a href="{{ url('my-profile') }}">{{ __('messages.profile') }}</a></li>
+                                                        <li><a href="{{ url('my-profile') }}" class="act-scrlink">{{ __('messages.profile') }}</a></li>
                                                         
                                                         @if(\Auth::user()->role == 4)
                                                             <!-- Agency Role (role 4) - Show Employees -->
@@ -41,8 +41,10 @@
                                                         @endif
                                                         
                                                         <li><a href="{{ url('my-reservations') }}">{{ __('messages.my_reservations') }}</a></li>
-                                                        <li><a href="{{ url('favorite') }}">{{ __('messages.favorite') }}</a></li>
-                                                        <li><a href="{{ url('visit-schedule') }}" class="act-scrlink">{{ __('messages.visit_schedule') }}</a></li>
+                                                        <li><a href="{{ url('favorite') }}">{{ __('messages.favorite') }}
+                                                            <!-- <span>6</span> -->
+                                                        </a></li>
+                                                        <li><a href="{{ url('visit-schedule') }}">{{ __('messages.visit_schedule') }}</a></li>
                                                     </ul>
                                                     <a href="{{ url('user/logout') }}" class="hum_log-out_btn"><i class="fa-light fa-power-off"></i> {{ __('messages.log_out') }}</a>
                                                 </div>
@@ -54,6 +56,12 @@
                                     <!-- pricing-column -->
                                     <div class="col-lg-9">
                                         <div class="db-container">
+                                            <div class="row">
+
+
+                                            <div class="custom-form bg-white p-4 h-100">
+
+
                                             <div class="dashboard-title">
                                                 <div class="dashboard-title-item"><span>{{ __('messages.visit_schedule') }}</span></div>
                                                 <div class="dashboard-title-actions">
@@ -62,9 +70,12 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                            
-                                            <!-- Master-Details Table -->
-                                            <div class="table-container">
+
+
+                                            <!-- <div class="dashboard-widget-title-single">{{ __('messages.profile') }}</div> -->
+
+
+
                                             <table class="table table-hover" id="visitScheduleTable">
                                                 <thead>
                                                     <tr>
@@ -214,10 +225,159 @@
                                                     @endforelse
                                                 </tbody>
                                             </table>
+
+
+
+
+
+                                            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+                                            </div>
                                         </div>
-                                        
-                                        <!-- Add Visit Schedule Modal -->
-                                        <div class="modal fade" id="addVisitScheduleModal" tabindex="-1" aria-labelledby="addVisitScheduleModalLabel" aria-hidden="true">
+                                    </div>
+
+                                    <!-- pricing-column end-->
+                                </div>
+                                <div class="limit-box"></div>
+                            </div>
+                            <!--boxed-container end-->
+                            </div>
+                        <!--main-content end-->
+                        <div class="to_top-btn-wrap">
+                            <div class="to-top to-top_btn"><span>{{ __("messages.back_to_top") }}</span> <i class="fa-solid fa-arrow-up"></i></div>
+                            <div class="svg-corner svg-corner_white footer-corner-left" style="top:0;left: -45px; transform: rotate(-90deg)"></div>
+                            <div class="svg-corner svg-corner_white footer-corner-right" style="top:6px;right: -39px; transform: rotate(-180deg)"></div>
+                        </div>
+                    </div>
+
+                    <!-- Forget Password Modal -->
+                    <div class="modal fade" id="forgetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgetPasswordModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content custom-modal-content">
+                                <div class="modal-header custom-modal-header">
+                                    <button type="button" class="close custom-close-btn" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <div class="modal-icon-section">
+                                        <div class="lock-icon-container">
+                                            <i class="fa-light fa-lock lock-icon"></i>
+                                        </div>
+                                        <div class="sparkle-icons">
+                                            <i class="fa-solid fa-star sparkle-1"></i>
+                                            <i class="fa-solid fa-star sparkle-2"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="modal-title custom-modal-title">{{ __('messages.please_enter_your_email') }}</h4>
+                                    
+                                    <form id="forgetPasswordForm" action="{{ url('forget_password') }}" method="POST">
+                                        @csrf
+                                        <div class="email-input-container">
+                                            <input type="email" class="custom-email-input" name="email" placeholder="Email@gmail.com" required>
+                                        </div>
+                                        <button type="submit" class="custom-send-otp-btn">{{ __('messages.send_otp') }}</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OTP Verification Modal -->
+                    <div class="modal fade" id="otpVerificationModal" tabindex="-1" role="dialog" aria-labelledby="otpVerificationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content custom-modal-content">
+                                <div class="modal-header custom-modal-header">
+                                    <button type="button" class="close custom-close-btn" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <div class="modal-icon-section">
+                                        <div class="lock-icon-container">
+                                            <i class="fa-light fa-lock lock-icon"></i>
+                                        </div>
+                                        <div class="sparkle-icons">
+                                            <i class="fa-solid fa-star sparkle-1"></i>
+                                            <i class="fa-solid fa-star sparkle-2"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="modal-title custom-modal-title">{{ __('messages.please_enter_your_otp') }}</h4>
+                                    <p class="otp-instruction">{{ __('messages.otp_instruction') }}</p>
+                                    
+                                    <form id="otpVerificationForm" action="{{ url('verify_forget_password_otp') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="email" id="otp_email">
+                                        <div class="otp-input-container">
+                                            <input type="text" class="otp-input" maxlength="1" data-index="0" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="1" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="2" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="3" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="4" required>
+                                            <input type="text" class="otp-input" maxlength="1" data-index="5" required>
+                                        </div>
+                                        <button type="submit" class="custom-verify-btn">{{ __('messages.verify') }}</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Password Modal -->
+                    <div class="modal fade" id="newPasswordModal" tabindex="-1" role="dialog" aria-labelledby="newPasswordModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content custom-modal-content">
+                                <div class="modal-header custom-modal-header">
+                                    <button type="button" class="close custom-close-btn" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <div class="modal-icon-section">
+                                        <div class="check-icon-container">
+                                            <i class="fa-light fa-check check-icon"></i>
+                                        </div>
+                                        <div class="sparkle-icons">
+                                            <i class="fa-solid fa-star sparkle-1"></i>
+                                            <i class="fa-solid fa-star sparkle-2"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="modal-title custom-modal-title">{{ __('messages.verified_please_enter_new_password') }}</h4>
+                                    
+                                    <form id="newPasswordForm" action="{{ url('update_forget_password') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="email" id="new_password_email">
+                                        <div class="new-password-input-container">
+                                            <input type="password" class="custom-new-password-input" name="new_password" placeholder="{{ __('messages.new_password') }}" required>
+                                        </div>
+                                        <button type="submit" class="custom-update-btn">{{ __('messages.update') }}</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                                                            <!-- Add Visit Schedule Modal -->
+                                                            <div class="modal fade" id="addVisitScheduleModal" tabindex="-1" aria-labelledby="addVisitScheduleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -286,15 +446,7 @@
                                                                     </div>
                                                                 </div>
                                                                 
-                                                                <!-- Notes -->
-                                                                <div class="col-12">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="notes" class="form-label">{{ __('messages.notes') }}</label>
-                                                                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="{{ __('messages.additional_notes') }}"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                
-                                                                <!-- Visit Purpose -->
+                                                                                                                                <!-- Visit Purpose -->
                                                                 <div class="col-md-6">
                                                                     <div class="form-group mb-3">
                                                                         <label for="visit_purpose" class="form-label">{{ __('messages.visit_purpose') }} <span class="text-danger">*</span></label>
@@ -305,6 +457,15 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
+                                                                <!-- Notes -->
+                                                                <div class="col-12">
+                                                                    <div class="form-group mb-3">
+                                                                        <label for="notes" class="form-label">{{ __('messages.notes') }}</label>
+                                                                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="{{ __('messages.additional_notes') }}"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                
+
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -317,25 +478,12 @@
                                                 </div>
                                             </div>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- pricing-column end-->
-                                </div>
-                                <div class="limit-box"></div>
-                            </div>
-                            <!--boxed-container end-->
-                            </div>
-                        <!--main-content end-->
-                        <div class="to_top-btn-wrap">
-                            <div class="to-top to-top_btn"><span>{{ __("messages.back_to_top") }}</span> <i class="fa-solid fa-arrow-up"></i></div>
-                            <div class="svg-corner svg-corner_white footer-corner-left" style="top:0;left: -45px; transform: rotate(-90deg)"></div>
-                            <div class="svg-corner svg-corner_white footer-corner-right" style="top:6px;right: -39px; transform: rotate(-180deg)"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                
 @stop
+
+
+
+
 
 @section('script')
 <style>
