@@ -157,6 +157,36 @@
                                                                 <div class="file-view-container">
                                                                     <div class="file-view-item">
                                                                         <div class="file-view-label">
+                                                                            <i class="fa-light fa-certificate"></i>
+                                                                            <span>{{ __('messages.trade_license') }}</span>
+                                                                        </div>
+                                                                        @if(\Auth::user()->license)
+                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->license) }}', '_blank')">
+                                                                                <i class="fa-light fa-eye"></i>
+                                                                                {{ __('messages.view') }}
+                                                                            </button>
+                                                                        @else
+                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
+                                                                        @endif
+                                                                    </div>
+                                                                    
+                                                                    <div class="file-view-item">
+                                                                        <div class="file-view-label">
+                                                                            <i class="fa-light fa-building"></i>
+                                                                            <span>{{ __('messages.cr') }}</span>
+                                                                        </div>
+                                                                        @if(\Auth::user()->cr)
+                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->cr) }}', '_blank')">
+                                                                                <i class="fa-light fa-eye"></i>
+                                                                                {{ __('messages.view') }}
+                                                                            </button>
+                                                                        @else
+                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
+                                                                        @endif
+                                                                    </div>
+                                                                    
+                                                                    <div class="file-view-item">
+                                                                        <div class="file-view-label">
                                                                             <i class="fa-light fa-file-certificate"></i>
                                                                             <span>{{ __('messages.professional_license') }}</span>
                                                                         </div>
@@ -177,38 +207,6 @@
                                                                         </div>
                                                                         @if(\Auth::user()->authorized_signatory)
                                                                             <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->authorized_signatory) }}', '_blank')">
-                                                                                <i class="fa-light fa-eye"></i>
-                                                                                {{ __('messages.view') }}
-                                                                            </button>
-                                                                        @else
-                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
-                                                                
-                                                                <div class="file-view-container">
-                                                                    <div class="file-view-item">
-                                                                        <div class="file-view-label">
-                                                                            <i class="fa-light fa-building"></i>
-                                                                            <span>{{ __('messages.cr') }}</span>
-                                                                        </div>
-                                                                        @if(\Auth::user()->cr)
-                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->cr) }}', '_blank')">
-                                                                                <i class="fa-light fa-eye"></i>
-                                                                                {{ __('messages.view') }}
-                                                                            </button>
-                                                                        @else
-                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
-                                                                        @endif
-                                                                    </div>
-                                                                    
-                                                                    <div class="file-view-item">
-                                                                        <div class="file-view-label">
-                                                                            <i class="fa-light fa-certificate"></i>
-                                                                            <span>{{ __('messages.trade_license') }}</span>
-                                                                        </div>
-                                                                        @if(\Auth::user()->license)
-                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->license) }}', '_blank')">
                                                                                 <i class="fa-light fa-eye"></i>
                                                                                 {{ __('messages.view') }}
                                                                             </button>
