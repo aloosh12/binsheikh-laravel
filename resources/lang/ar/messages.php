@@ -455,4 +455,13 @@ return [
     'visit_schedule_added_successfully' => 'تم إضافة جدولة الزيارة بنجاح',
     'error_occurred' => 'حدث خطأ',
     'view_client_id' => 'عرض هوية العميل',
+    'no_file_uploaded' => 'لم يتم رفع ملف',
+    'professional_license' => 'الرخصة المهنية',
+    'company_number' => 'رقم الشركة',
+    'agency_name' => 'اسم الوكالة',
+    'id_number' => 'رقم الهوية',
+    'view_id_card' => 'عرض بطاقة الهوية',
+    'view_professional_license' => 'عرض الرخصة المهنية',
+    'view_authorized_signatory' => 'عرض الموقع المفوض',
+    'view_trade_license' => 'عرض الرخصة التجارية',
 ];

@@ -447,4 +447,13 @@ return [
     'visit_schedule_added_successfully' => 'Visit schedule added successfully',
     'error_occurred' => 'An error occurred',
     'view_client_id' => 'View Client ID',
+    'no_file_uploaded' => 'No file uploaded',
+    'professional_license' => 'Professional License',
+    'company_number' => 'Company Number',
+    'agency_name' => 'Agency Name',
+    'id_number' => 'ID Number',
+    'view_id_card' => 'View ID Card',
+    'view_professional_license' => 'View Professional License',
+    'view_authorized_signatory' => 'View Authorized Signatory',
+    'view_trade_license' => 'View Trade License',
 ];

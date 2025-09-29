@@ -75,25 +75,47 @@
                                                                 <input type="email" placeholder="{{ __('messages.email_address') }}" name="email" required data-parsley-required-message="{{ __('messages.enter_email') }}" value="{{ \Auth::user()->email }}">
                                                             </div>
                                                             @if(\Auth::user()->role == 3)
-
-                                                                <div class="cs-intsputwrap agent_agency_div">
-                                                                    <input type="text" placeholder="ID" class="form-control agent_agency_inp" name="id_no" required data-parsley-required-message="{{ __('messages.enter_id') }}" value="{{ \Auth::user()->id_no }}">
-                                                                </div>
+                                                                <!-- Agent View Fields -->
+                                                                <!-- <div class="cs-intsputwrap agent_div">
+                                                                    <label for="id_no" style="float:left">{{ __('messages.id_number') }}</label>
+                                                                    <input type="text" placeholder="{{ __('messages.id_number') }}" class="form-control agent_inp" name="id_no" required data-parsley-required-message="{{ __('messages.enter_id') }}" value="{{ \Auth::user()->id_no }}">
+                                                                </div> -->
+                                                                
                                                                 <div class="cs-intsputwrap agent_div">
-                                                                    <label for="d" style="float:left" id="id_card_label">{{ __('messages.id_card') }}</label>
-                                                                    <input type="file" class="form-control agent_inp" name="id_card" data-parsley-required-message="{{ __('messages.select_id_card') }}"
-                                                                           data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
-                                                                           data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
-                                                                           data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
-                                                                           accept="image/*,application/pdf">
+                                                                    <label for="agency_name" style="float:left">{{ __('messages.agency_name') }}</label>
+                                                                    <input type="text" placeholder="{{ __('messages.agency_name') }}" class="form-control agent_inp" name="agency_name" value="{{ \Auth::user()->agency ? \Auth::user()->agency->name : '' }}" readonly>
                                                                 </div>
-                                                                <div class="cs-intsputwrap agent_agency_div">
-                                                                    <label for="d" style="float:left" id="license_label">{{ __('messages.license') }}</label>
-                                                                    <input type="file" class="form-control agent_agency_inp" name="license" data-parsley-required-message="{{ __('messages.select_license') }}"
-                                                                           data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
-                                                                           data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
-                                                                           data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
-                                                                           accept="image/*,application/pdf">
+                                                                
+                                                                <div class="file-view-container">
+                                                                    <div class="file-view-item">
+                                                                        <div class="file-view-label">
+                                                                            <i class="fa-light fa-id-card"></i>
+                                                                            <span>{{ __('messages.id_card') }}</span>
+                                                                        </div>
+                                                                        @if(\Auth::user()->id_card)
+                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->id_card) }}', '_blank')">
+                                                                                <i class="fa-light fa-eye"></i>
+                                                                                {{ __('messages.view') }}
+                                                                            </button>
+                                                                        @else
+                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
+                                                                        @endif
+                                                                    </div>
+                                                                    
+                                                                    <div class="file-view-item">
+                                                                        <div class="file-view-label">
+                                                                            <i class="fa-light fa-file-certificate"></i>
+                                                                            <span>{{ __('messages.professional_license') }}</span>
+                                                                        </div>
+                                                                        @if(\Auth::user()->license)
+                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->license) }}', '_blank')">
+                                                                                <i class="fa-light fa-eye"></i>
+                                                                                {{ __('messages.view') }}
+                                                                            </button>
+                                                                        @else
+                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
+                                                                        @endif
+                                                                    </div>
                                                                 </div>
 {{--                                                                <div class="cs-intsputwrap agent_agency_div mt-4 mb-5">--}}
 {{--                                                                    <label for="d" style="float:left">{{ __('messages.professional_practice_certificate') }}</label> <!-- Translated License -->--}}
@@ -126,13 +148,74 @@
                                                                 </div> --}}
                                                             @endif
                                                             @if(Auth::user()->role == 4)
-                                                                <div class="cs-intsputwrap agent_agency_div">
-                                                                    <label for="d" style="float:left" id="license_label">{{ __('messages.trade_license') }}</label>
-                                                                    <input type="file" class="form-control agent_agency_inp" name="license" data-parsley-required-message="{{ __('messages.select_license') }}"
-                                                                           data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
-                                                                           data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
-                                                                           data-parsley-max-file-size="5120" data-parsley-max-file-size-message="{{ __('messages.max_file_size_message') }}"
-                                                                           accept="image/*,application/pdf">
+                                                                <!-- Agency View Fields -->
+                                                                <!-- <div class="cs-intsputwrap agent_agency_div">
+                                                                    <label for="company_number" style="float:left">{{ __('messages.company_number') }}</label>
+                                                                    <input type="text" placeholder="{{ __('messages.company_number') }}" class="form-control agent_agency_inp" name="company_number" value="{{ \Auth::user()->company_number }}">
+                                                                </div> -->
+                                                                
+                                                                <div class="file-view-container">
+                                                                    <div class="file-view-item">
+                                                                        <div class="file-view-label">
+                                                                            <i class="fa-light fa-file-certificate"></i>
+                                                                            <span>{{ __('messages.professional_license') }}</span>
+                                                                        </div>
+                                                                        @if(\Auth::user()->professional_practice_certificate)
+                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->professional_practice_certificate) }}', '_blank')">
+                                                                                <i class="fa-light fa-eye"></i>
+                                                                                {{ __('messages.view') }}
+                                                                            </button>
+                                                                        @else
+                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
+                                                                        @endif
+                                                                    </div>
+                                                                    
+                                                                    <div class="file-view-item">
+                                                                        <div class="file-view-label">
+                                                                            <i class="fa-light fa-signature"></i>
+                                                                            <span>{{ __('messages.authorized_signatory') }}</span>
+                                                                        </div>
+                                                                        @if(\Auth::user()->authorized_signatory)
+                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->authorized_signatory) }}', '_blank')">
+                                                                                <i class="fa-light fa-eye"></i>
+                                                                                {{ __('messages.view') }}
+                                                                            </button>
+                                                                        @else
+                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <div class="file-view-container">
+                                                                    <div class="file-view-item">
+                                                                        <div class="file-view-label">
+                                                                            <i class="fa-light fa-building"></i>
+                                                                            <span>{{ __('messages.cr') }}</span>
+                                                                        </div>
+                                                                        @if(\Auth::user()->cr)
+                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->cr) }}', '_blank')">
+                                                                                <i class="fa-light fa-eye"></i>
+                                                                                {{ __('messages.view') }}
+                                                                            </button>
+                                                                        @else
+                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
+                                                                        @endif
+                                                                    </div>
+                                                                    
+                                                                    <div class="file-view-item">
+                                                                        <div class="file-view-label">
+                                                                            <i class="fa-light fa-certificate"></i>
+                                                                            <span>{{ __('messages.trade_license') }}</span>
+                                                                        </div>
+                                                                        @if(\Auth::user()->license)
+                                                                            <button type="button" class="view-file-btn" onclick="window.open('{{ aws_asset_path(\Auth::user()->license) }}', '_blank')">
+                                                                                <i class="fa-light fa-eye"></i>
+                                                                                {{ __('messages.view') }}
+                                                                            </button>
+                                                                        @else
+                                                                            <span class="no-file-text">{{ __('messages.no_file_uploaded') }}</span>
+                                                                        @endif
+                                                                    </div>
                                                                 </div>
                                                                 {{-- <div class="cs-intsputwrap agency_div">
                                                                     <label for="d" style="float:left">{{ __('messages.cr') }}</label>
@@ -155,7 +238,7 @@
                                                                 </div> --}}
                                                             @endif
 
-                                                            <div class="cs-intputwrap">
+                                                            <!-- <div class="cs-intputwrap">
                                                                 <i class="fa-light fa-map"></i>
                                                                 <input type="text" maxlength="255" placeholder="{{ __('messages.address') }}" name="address" required data-parsley-required-message="{{ __('messages.enter_address') }}" value="{{ \Auth::user()->address }}">
                                                             </div>
@@ -183,7 +266,7 @@
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-
+ -->
                                                             <br><br>
 
                                                             <button class="commentssubmit">{{ __('messages.update') }}</button>
@@ -388,13 +471,13 @@ $(document).ready(function() {
         $('#forgetPasswordModal').modal('show');
     });
     
-    // Close modal functionality
+    // Close modal functionality for all modals
     $('.custom-close-btn').click(function() {
-        $('#forgetPasswordModal').modal('hide');
+        $(this).closest('.modal').modal('hide');
     });
     
     // Close modal when clicking outside
-    $('#forgetPasswordModal').on('click', function(e) {
+    $('.modal').on('click', function(e) {
         if (e.target === this) {
             $(this).modal('hide');
         }
@@ -403,7 +486,7 @@ $(document).ready(function() {
     // Close modal with escape key
     $(document).keyup(function(e) {
         if (e.keyCode === 27) { // Escape key
-            $('#forgetPasswordModal').modal('hide');
+            $('.modal.show').modal('hide');
         }
     });
     
@@ -933,6 +1016,104 @@ $(document).ready(function() {
     color: #333;
 }
 
+/* File View Container Styling */
+.file-view-container {
+    margin: 20px 0;
+    padding: 0;
+}
+
+.file-view-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-view-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #f4e4bc 0%, #e6d4a8 100%);
+    border-radius: 0 2px 2px 0;
+}
+
+.file-view-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-color: #f4e4bc;
+}
+
+.file-view-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 15px;
+}
+
+.file-view-label i {
+    color: #f4e4bc;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+.view-file-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #f4e4bc 0%, #e6d4a8 100%);
+    border: none;
+    border-radius: 8px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(244, 228, 188, 0.3);
+    text-decoration: none;
+}
+
+.view-file-btn:hover {
+    background: linear-gradient(135deg, #e6d4a8 0%, #d4c19a 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(244, 228, 188, 0.4);
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.view-file-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(244, 228, 188, 0.3);
+}
+
+.view-file-btn i {
+    font-size: 14px;
+}
+
+.no-file-text {
+    color: #6c757d;
+    font-style: italic;
+    font-size: 14px;
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px dashed #dee2e6;
+}
+
 /* Responsive Design */
 @media (max-width: 480px) {
     .custom-modal-content {
@@ -955,6 +1136,20 @@ $(document).ready(function() {
     
     .custom-modal-title {
         font-size: 1.2rem;
+    }
+    
+    .file-view-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .file-view-label {
+        width: 100%;
+    }
+    
+    .view-file-btn {
+        align-self: flex-end;
     }
 }
 </style>
