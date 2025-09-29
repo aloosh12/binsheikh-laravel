@@ -257,16 +257,7 @@
       </ul>
     </div>
 
-    <div class="dropdown py-2">
-      <a href="#" class=" dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
-      {{ __("messages.news_media") }}
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      <li><a class="dropdown-item py-2" href="{{url('photos')}}">{{ __("messages.photos") }}</a></li>
-                                            <li ><a class="dropdown-item" href="{{url('videos')}}">{{ __("messages.videos") }}</a></li>
-                                            <li><a class="dropdown-item" href="{{url('blogs')}}">{{ __("messages.blog") }}</a></li>
-      </ul>
-    </div>
+    <a class="d-block py-2" href="{{url('photos')}}" @if($currentRouteUri=="photos" || $currentRouteUri=="videos" || $currentRouteUri=="blogs" || $currentRouteUri=="blog-details/{slug}") class="act-link" @endif>{{ __("messages.news_media") }}</a>
 
 
 

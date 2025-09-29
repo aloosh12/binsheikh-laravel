@@ -2,6 +2,56 @@
 @section('header')
     <style>
         /* Custom styles specific to this page */
+        
+        /* Mobile Tabs Styles */
+        .mobile-tabs {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .mobile-tabs-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+        }
+        
+        .mobile-tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            color: #6c757d;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .mobile-tab-btn:hover {
+            background: #e9ecef;
+            color: #495057;
+            text-decoration: none;
+        }
+        
+        .mobile-tab-btn.active {
+            background: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .mobile-tab-btn {
+                padding: 10px 6px;
+                font-size: 13px;
+            }
+        }
     </style>
 @stop
 
@@ -62,9 +112,22 @@
                     <div class="main-content  ms_vir_height">
                         <!--boxed-container-->
                         <div class="container">
+                            <!-- Mobile Tabs - Visible on small screens -->
+                            <div class="row d-lg-none mb-4">
+                                <div class="col-12">
+                                    <div class="mobile-tabs">
+                                        <div class="mobile-tabs-container">
+                                            <a href="#" class="mobile-tab-btn {{ request()->get('filter') == 'photos' || !request()->has('filter') ? 'active' : '' }}" data-target="photos">{{ __('messages.photos') }}</a>
+                                            <a href="#" class="mobile-tab-btn {{ request()->get('filter') == 'videos' ? 'active' : '' }}" data-target="videos">{{ __('messages.videos') }}</a>
+                                            <a href="#" class="mobile-tab-btn {{ request()->get('filter') == 'blogs' ? 'active' : '' }}" data-target="blogs">{{ __('messages.blog') }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="row">
-                                <!-- user-dasboard-menu_wrap -->
-                                <div class="col-lg-3">
+                                <!-- user-dasboard-menu_wrap - Hidden on mobile -->
+                                <div class="col-lg-3 d-none d-lg-block">
                                     <div class="boxed-content btf_init">
                                         <div class="user-dasboard-menu_wrap">
                                             <div class="user-dasboard-menu faq-nav">
@@ -80,7 +143,7 @@
                                 <!-- user-dasboard-menu_wrap end-->
 
                                 <!-- Photos Folders Section -->
-                                <div class="col-lg-9 section-content" id="photos-section" style="{{ request()->get('filter') == 'photos' || !request()->has('filter') ? 'display:block;' : 'display:none;' }}">
+                                <div class="col-12 col-lg-9 section-content" id="photos-section" style="{{ request()->get('filter') == 'photos' || !request()->has('filter') ? 'display:block;' : 'display:none;' }}">
                                     <div class="dashboard-title">
                                         <h4>{{ __('messages.photos') }}</h4>
                                     </div>
@@ -105,7 +168,7 @@
                                 </div>
 
                                 <!-- Videos Folders Section -->
-                                <div class="col-lg-9 section-content" id="videos-section" style="{{ request()->get('filter') == 'videos' ? 'display:block;' : 'display:none;' }}">
+                                <div class="col-12 col-lg-9 section-content" id="videos-section" style="{{ request()->get('filter') == 'videos' ? 'display:block;' : 'display:none;' }}">
                                     <div class="dashboard-title">
                                         <h4>{{ __('messages.videos') }}</h4>
                                     </div>
@@ -130,7 +193,7 @@
                                 </div>
 
                                 <!-- Blogs Folders Section -->
-                                <div class="col-lg-9 section-content" id="blogs-section" style="{{ request()->get('filter') == 'blogs' ? 'display:block;' : 'display:none;' }}">
+                                <div class="col-12 col-lg-9 section-content" id="blogs-section" style="{{ request()->get('filter') == 'blogs' ? 'display:block;' : 'display:none;' }}">
                                     <div class="dashboard-title">
                                         <h4>{{ __('messages.blog') }}</h4>
                                     </div>
@@ -166,12 +229,8 @@
 @section('script')
 <script>
     $(document).ready(function(){
-        // Fix for tab switching
-        $('.tab-btn').on('click', function(e){
-            e.preventDefault();
-            let target = $(this).data('target');
-
-            // Debug to console
+        // Function to switch tabs (works for both desktop and mobile)
+        function switchTab(target) {
             console.log("Switching to tab:", target);
 
             // Hide all sections
@@ -180,39 +239,28 @@
             // Show the selected section
             $('#'+target+'-section').css('display', 'block');
 
-            // Update active tab
+            // Update active tab for desktop
             $('.tab-btn').removeClass('act-scrlink');
-            $(this).addClass('act-scrlink');
+            $('.tab-btn[data-target="' + target + '"]').addClass('act-scrlink');
+
+            // Update active tab for mobile
+            $('.mobile-tab-btn').removeClass('active');
+            $('.mobile-tab-btn[data-target="' + target + '"]').addClass('active');
+        }
+
+        // Desktop tab switching
+        $('.tab-btn').on('click', function(e){
+            e.preventDefault();
+            let target = $(this).data('target');
+            switchTab(target);
         });
 
-        // Make sure sections are properly initialized
-        // setTimeout(function() {
-        //     // Show the active tab section
-        //     let activeTab = $('.tab-btn.act-scrlink').data('target');
-        //     if (activeTab) {
-        //         $('.section-content').hide();
-        //         $('#'+activeTab+'-section').css('display', 'block');
-        //     }
-        //
-        //     // Disable any JavaScript layout manipulation for our gallery
-        //     $('.no-js-layout').each(function() {
-        //         // Force grid layout
-        //         $(this).css({
-        //             'display': 'grid',
-        //             'grid-template-columns': 'repeat(3, 1fr)',
-        //             'gap': '24px',
-        //             'height': 'auto'
-        //         });
-        //
-        //         // Fix each gallery item
-        //         $(this).find('.gallery-item').css({
-        //             'position': 'relative',
-        //             'left': 'auto',
-        //             'top': 'auto',
-        //             'width': '100%'
-        //         });
-        //     });
-        // }, 100);
+        // Mobile tab switching
+        $('.mobile-tab-btn').on('click', function(e){
+            e.preventDefault();
+            let target = $(this).data('target');
+            switchTab(target);
+        });
     });
 </script>
 @stop
