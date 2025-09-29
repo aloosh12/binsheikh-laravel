@@ -302,7 +302,7 @@
 
                                                         @if(Auth::user()->role == 4)
 
-                                                                <form  style="margin-top: 20px"  data-parsley-validate="true">
+                                                                <!-- <form  style="margin-top: 20px"  data-parsley-validate="true">
 
                                                                     <div class="dashboard-widget-title-single">{{ __('messages.additional_information') }}</div>
                                                                     <div class="cs-intputwrap pass-input-wrap">
@@ -327,7 +327,7 @@
                                                                             @endforeach
                                                                         </div>
                                                                     </div>
-                                                                </form>
+                                                                </form> -->
 
                                                         @endif
                                                     </div>
