@@ -1238,8 +1238,24 @@ class HomeController extends Controller
     public function my_employees()
     {
         $page_heading = "My Employees";
-        // For now, return a simple view - you can implement the actual employee logic later
-        $employees = collect(); // Empty collection for now
+        $id = Auth::user()->id;
+        $customer = User::with(['agencyUsers'])->find($id);
+
+        if (!$customer) {
+            abort(404);
+        }
+
+        // Get employees for agency users (role 4 = agency)
+        if($customer->role == 4) {
+            $employees = $customer->agencyUsers()
+                ->where('role', 3) // role 3 = agent/employee
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            // For individual agents, return empty collection
+            $employees = collect();
+        }
+
         return view('front_end.my_employees', compact('page_heading', 'employees'));
     }
 

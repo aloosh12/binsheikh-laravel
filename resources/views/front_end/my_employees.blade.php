@@ -63,171 +63,181 @@
 
 
                                             <div class="dashboard-title">
-                                                <div class="dashboard-title-item"><span>{{ __('messages.visit_schedule') }}</span></div>
+                                                <div class="dashboard-title-item"><span>{{ __('messages.employees') }}</span></div>
                                                 <div class="dashboard-title-actions">
+                                                    <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                                                        <i class="fas fa-plus"></i> {{ __('messages.add_employee') }}
+                                                    </button> -->
                                                 </div>
                                             </div>
 
-
-                                            <!-- <div class="dashboard-widget-title-single">{{ __('messages.profile') }}</div> -->
-
-
-
-                                            <table class="table table-hover" id="visitScheduleTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="50">
-                                                            <input type="checkbox" id="selectAllVisits" onclick="toggleAllVisits(this)">
-                                                        </th>
-                                                        <th>{{ __('messages.client_name') }}</th>
-                                                        <th>{{ __('messages.unit_type') }}</th>
-                                                        <th>{{ __('messages.phone_number') }}</th>
-                                                        <th>{{ __('messages.date_of_visit') }}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @forelse($visits ?? [] as $index => $visit)
-                                                    <!-- Main Row -->
-                                                    <tr class="main-row" data-id="{{ $visit->id }}">
-                                                        <td>
-                                                            <input type="checkbox" class="visit-checkbox" value="{{ $visit->id }}">
-                                                        </td>
-                                                        <td>
-                                                            <div class="client-info">
-                                                                <div class="client-avatar">
-                                                                    <i class="fas fa-user"></i>
-                                                                    <div class="status-dot"></div>
-                                                                </div>
-                                                                <span class="client-name">{{ $visit->client_name ?? 'N/A' }}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td>{{ $visit->property->property_type->name ?? 'N/A' }}</td>
-                                                        <td>{{ $visit->client_phone_number ?? 'N/A' }}</td>
-                                                        <td>
-                                                            <div class="visit-section">
-                                                                <span class="visit-date" data-date="{{ $visit->visit_time }}">{{ web_date_in_timezone($visit->visit_time, 'd-M-Y') }}</span>
-                                                                <button class="btn btn-sm btn-info">View</button>
-                                                                <i class="fas fa-chevron-down expand-icon" style="margin-left: 10px; cursor: pointer;"></i>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                            <!-- Search and Filters -->
+                                            <div class="employees-header">
+                                                <div class="search-section">
+                                                    <div class="search-bar">
+                                                        <input type="text" class="form-control" placeholder="{{ __('messages.search_by_name_email_phone') }}" id="employeeSearch">
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="filters-section">
+                                                    <div class="date-filters">
+                                                        <div class="date-input">
+                                                            <label>{{ __('messages.from') }}</label>
+                                                            <input type="date" class="form-control" id="fromDate">
+                                                        </div>
+                                                        <div class="date-input">
+                                                            <label>{{ __('messages.to') }}</label>
+                                                            <input type="date" class="form-control" id="toDate">
+                                                        </div>
+                                                    </div>
                                                     
-                                                    <!-- Detail Row -->
-                                                    <tr class="detail-row" data-parent="{{ $visit->id }}" style="display: none;">
-                                                        <td colspan="5">
-                                                            <div class="detail-content">
-                                                                <div class="schedule-info-header">
-                                                                    <h6>{{ __('messages.schedule_info') }}</h6>
-                                                                    <div class="header-actions">
-                                                                        <div class="form-indicator">
-                                                                            <span class="badge badge-info">{{ __('messages.visit_scheduled') }}</span>
-                                                                        </div>
+                                                    <div class="selection-info">
+                                                        <span id="selectedCount">0 {{ __('messages.items_selected') }}</span>
+                                                    </div>
+                                                    
+                                                    <div class="action-buttons">
+                                                        <button class="btn btn-primary btn-sm" id="exportEmployeesBtn">{{ __('messages.export') }}</button>
+                                                        <button class="btn btn-danger btn-sm" id="deleteEmployeesBtn">{{ __('messages.delete') }}</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Master-Details Table -->
+                                            <div class="table-container">
+                                                <table class="table table-hover" id="employeesTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="50">
+                                                                <input type="checkbox" id="selectAllEmployees" onclick="toggleAllEmployees(this)">
+                                                            </th>
+                                                            <th>{{ __('messages.agent_name') }}</th>
+                                                            <th>{{ __('messages.agency_name') }}</th>
+                                                            <th>{{ __('messages.created_on') }}</th>
+                                                            <th>{{ __('messages.status') }}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @forelse($employees ?? [] as $index => $employee)
+                                                        <!-- Main Row -->
+                                                        <tr class="main-row" data-id="{{ $employee->id }}">
+                                                            <td>
+                                                                <input type="checkbox" class="employee-checkbox" value="{{ $employee->id }}">
+                                                            </td>
+                                                            <td>
+                                                                <div class="agent-info">
+                                                                    <div class="agent-avatar">
+                                                                        <i class="fas fa-user"></i>
+                                                                        <div class="status-dot"></div>
                                                                     </div>
+                                                                    <span class="agent-name">{{ $employee->name }}</span>
                                                                 </div>
-                                                                
-                                                                <div class="schedule-info-grid">
-                                                                    <!-- Left Column -->
-                                                                    <div class="info-column">
-                                                                        <div class="info-card">
-                                                                            <div class="info-icon">
-                                                                                <i class="fas fa-user"></i>
-                                                                            </div>
-                                                                            <div class="info-content">
-                                                                                <label>{{ __('messages.client_name') }}</label>
-                                                                                <span>{{ $visit->client_name ?? 'N/A' }}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        
-                                                                        <div class="info-card">
-                                                                            <div class="info-icon">
-                                                                                <i class="fas fa-envelope"></i>
-                                                                            </div>
-                                                                            <div class="info-content">
-                                                                                <label>{{ __('messages.client_email_address') }}</label>
-                                                                                <span>{{ $visit->client_email_address ?? 'N/A' }}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        
-                                                                        <div class="info-card">
-                                                                            <div class="info-icon">
-                                                                                <i class="fas fa-building"></i>
-                                                                            </div>
-                                                                            <div class="info-content">
-                                                                                <label>{{ __('messages.project') }}</label>
-                                                                                <span>{{ $visit->property->project->name ?? 'N/A' }}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        
-                                                                        <div class="info-card">
-                                                                            <div class="info-icon">
-                                                                                <i class="fas fa-id-card"></i>
-                                                                            </div>
-                                                                            <div class="info-content">
-                                                                                <label>{{ __('messages.client_id') }}</label>
-                                                                                @if($visit->client_id)
-                                                                                    <a href="{{ aws_asset_path($visit->client_id) }}" target="_blank" class="btn btn-sm btn-info">
-                                                                                        <i class="fas fa-eye"></i> {{ __('messages.view_client_id') }}
-                                                                                    </a>
-                                                                                @else
-                                                                                    <span>N/A</span>
-                                                                                @endif
+                                                            </td>
+                                                            <td>{{ \Auth::user()->name }}</td>
+                                                            <td><span data-date="{{ $employee->created_at }}">{{ web_date_in_timezone($employee->created_at, 'd-M-Y') }}</span></td>
+                                                            <td>
+                                                                <div class="status-section">
+                                                                    <span class="status-text {{ $employee->active ? 'text-success' : 'text-danger' }}">
+                                                                        {{ $employee->active ? __('messages.active') : __('messages.inactive') }}
+                                                                    </span>
+                                                                    <button class="btn btn-sm btn-info">{{ __('messages.view') }}</button>
+                                                                    <i class="fas fa-chevron-down expand-icon" style="margin-left: 10px; cursor: pointer;"></i>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                        <!-- Detail Row -->
+                                                        <tr class="detail-row" data-parent="{{ $employee->id }}" style="display: none;">
+                                                            <td colspan="5">
+                                                                <div class="detail-content">
+                                                                    <div class="agent-info-header">
+                                                                        <h6>{{ __('messages.agent_info') }}</h6>
+                                                                        <div class="header-actions">
+                                                                            <div class="form-indicator">
+                                                                                <span class="badge badge-info">1 {{ __('messages.active_form_submitted') }}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                     
-                                                                    <!-- Right Column -->
-                                                                    <div class="info-column">
-                                                                        <div class="info-card">
-                                                                            <div class="info-icon">
-                                                                                <i class="fas fa-phone"></i>
+                                                                    <div class="agent-info-grid">
+                                                                        <!-- Left Column -->
+                                                                        <div class="info-column">
+                                                                            <div class="info-card">
+                                                                                <div class="info-icon">
+                                                                                    <i class="fas fa-user"></i>
+                                                                                </div>
+                                                                                <div class="info-content">
+                                                                                    <label>{{ __('messages.agency_name') }}</label>
+                                                                                    <span>{{ \Auth::user()->name ?? __('messages.not_available') }}</span>
+                                                                                </div>
                                                                             </div>
-                                                                            <div class="info-content">
-                                                                                <label>{{ __('messages.client_phone_number') }}</label>
-                                                                                <span>{{ $visit->client_phone_number ?? 'N/A' }}</span>
+                                                                            
+                                                                            <div class="info-card">
+                                                                                <div class="info-icon">
+                                                                                    <i class="fas fa-envelope"></i>
+                                                                                </div>
+                                                                                <div class="info-content">
+                                                                                    <label>{{ __('messages.agent_email_address') }}</label>
+                                                                                    <span>{{ $employee->email ?? __('messages.not_available') }}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                            
+                                                                            <div class="info-card">
+                                                                                <div class="info-icon">
+                                                                                    <i class="fas fa-id-card"></i>
+                                                                                </div>
+                                                                                <div class="info-content">
+                                                                                    <label>{{ __('messages.id_card') }}</label>
+                                                                                    @if($employee->id_no)
+                                                                                        <a href="{{ aws_asset_path($employee->id_no) }}" target="_blank" class="btn btn-sm btn-info">
+                                                                                            <i class="fas fa-eye"></i> {{ __('messages.view_id_card') }}
+                                                                                        </a>
+                                                                                    @else
+                                                                                        <span>{{ __('messages.not_available') }}</span>
+                                                                                    @endif
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                         
-                                                                        <div class="info-card">
-                                                                            <div class="info-icon">
-                                                                                <i class="fas fa-clock"></i>
+                                                                        <!-- Right Column -->
+                                                                        <div class="info-column">
+                                                                            <div class="info-card">
+                                                                                <div class="info-icon">
+                                                                                    <i class="fas fa-phone"></i>
+                                                                                </div>
+                                                                                <div class="info-content">
+                                                                                    <label>{{ __('messages.agent_phone_number') }}</label>
+                                                                                    <span>{{ $employee->phone ?? __('messages.not_available') }}</span>
+                                                                                </div>
                                                                             </div>
-                                                                            <div class="info-content">
-                                                                                <label>{{ __('messages.visit_time') }}</label>
-                                                                                <span>{{ web_date_in_timezone($visit->visit_time, 'd-M-Y h:i A') ?? 'N/A' }}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        
-                                                                        <div class="info-card">
-                                                                            <div class="info-icon">
-                                                                                <i class="fas fa-home"></i>
-                                                                            </div>
-                                                                            <div class="info-content">
-                                                                                <label>{{ __('messages.apartment_info') }}</label>
-                                                                                <span>{{ $visit->property->name ?? 'N/A' }}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        
-                                                                        <div class="info-card">
-                                                                            <div class="info-icon">
-                                                                                <i class="fas fa-user-tie"></i>
-                                                                            </div>
-                                                                            <div class="info-content">
-                                                                                <label>{{ __('messages.agent_name') }}</label>
-                                                                                <span>{{ $visit->agent->name ?? 'N/A' }}</span>
+                                                                            
+                                                                            <div class="info-card">
+                                                                                <div class="info-icon">
+                                                                                    <i class="fas fa-certificate"></i>
+                                                                                </div>
+                                                                                <div class="info-content">
+                                                                                    <label>{{ __('messages.professional_license') }}</label>
+                                                                                    @if($employee->discount_number)
+                                                                                        <a href="{{ aws_asset_path($employee->discount_number) }}" target="_blank" class="btn btn-sm btn-info">
+                                                                                            <i class="fas fa-eye"></i> {{ __('messages.view_license') }}
+                                                                                        </a>
+                                                                                    @else
+                                                                                        <span>{{ __('messages.not_available') }}</span>
+                                                                                    @endif
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    @empty
-                                                    <tr>
-                                                        <td colspan="5" class="text-center">{{ __('messages.no_visits_scheduled') }}</td>
-                                                    </tr>
-                                                    @endforelse
-                                                </tbody>
-                                            </table>
+                                                            </td>
+                                                        </tr>
+                                                        @empty
+                                                        <tr>
+                                                            <td colspan="5" class="text-center">{{ __('messages.no_employees_found') }}</td>
+                                                        </tr>
+                                                        @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </div>
 
 
 
@@ -394,14 +404,77 @@
         color: #333;
     }
     
-    /* Client Info Styles */
-    .client-info {
+    /* Employees Header Styles */
+    .employees-header {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .search-section {
+        margin-bottom: 15px;
+    }
+    
+    .search-bar input {
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    .filters-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .date-filters {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .date-input {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .date-input label {
+        font-size: 12px;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .date-input input {
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .selection-info {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    /* Agent Info Styles */
+    .agent-info {
         display: flex;
         align-items: center;
         gap: 10px;
     }
     
-    .client-avatar {
+    .agent-avatar {
         width: 30px;
         height: 30px;
         background: #333;
@@ -412,12 +485,12 @@
         position: relative;
     }
     
-    .client-avatar i {
+    .agent-avatar i {
         color: white;
         font-size: 14px;
     }
     
-    .client-avatar .status-dot {
+    .agent-avatar .status-dot {
         position: absolute;
         top: 2px;
         right: 2px;
@@ -428,21 +501,54 @@
         border: 1px solid white;
     }
     
-    .client-name {
+    .agent-name {
         font-weight: 500;
         color: #333;
     }
     
-    /* Visit Section Styles */
-    .visit-section {
+    .status-section {
         display: flex;
         align-items: center;
         gap: 10px;
     }
     
-    .visit-date {
+    .status-text {
         font-weight: 500;
+    }
+    
+    .text-success {
+        color: #28a745 !important;
+    }
+    
+    .text-danger {
+        color: #dc3545 !important;
+    }
+    
+    .agent-info-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .agent-info-header h6 {
+        margin: 0;
+        font-weight: bold;
         color: #333;
+    }
+    
+    .form-indicator .badge {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+    
+    /* Agent Info Grid */
+    .agent-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
     }
     
     /* Detail Row Styles */
@@ -472,13 +578,6 @@
     .form-indicator .badge {
         font-size: 11px;
         padding: 4px 8px;
-    }
-    
-    /* Schedule Info Grid */
-    .schedule-info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
     }
     
     .info-column {
@@ -534,37 +633,68 @@
         color: #333;
         font-weight: 600;
     }
-    
 
     /* Responsive */
     @media (max-width: 768px) {
-        .schedule-info-grid {
+        .agent-info-grid {
             grid-template-columns: 1fr;
         }
         
-        .client-info {
+        .agent-info {
             flex-direction: column;
             align-items: flex-start;
             gap: 5px;
         }
         
-        .visit-section {
+        .status-section {
             flex-direction: column;
             align-items: flex-start;
             gap: 5px;
         }
         
+        .filters-section {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .date-filters {
+            justify-content: center;
+        }
+        
+        .action-buttons {
+            justify-content: center;
+        }
     }
 </style>
 
 <script>
-    $(document).ready(function() {
-        // Toggle all visits
-        function toggleAllVisits(source) {
-            document.querySelectorAll('.visit-checkbox').forEach(checkbox => {
-                checkbox.checked = source.checked;
-            });
+    // Global functions for HTML onclick events
+    function toggleAllEmployees(source) {
+        console.log('toggleAllEmployees called', source.checked);
+        const checkboxes = document.querySelectorAll('.employee-checkbox');
+        console.log('Found checkboxes:', checkboxes.length);
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = source.checked;
+        });
+        updateSelectedCount();
+    }
+    
+    function updateSelectedCount() {
+        const selected = document.querySelectorAll('.employee-checkbox:checked').length;
+        const countElement = document.getElementById('selectedCount');
+        if (countElement) {
+            countElement.textContent = `${selected} {{ __('messages.items_selected') }}`;
         }
+        console.log('Selected count updated:', selected);
+    }
+
+    $(document).ready(function() {
+        
+        // Employee checkbox change
+        document.querySelectorAll('.employee-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
         
         // Expand/collapse functionality
         document.querySelectorAll('.expand-icon').forEach(icon => {
@@ -629,79 +759,226 @@
             });
         });
         
-        // Modal form handling
-        $('#addVisitScheduleForm').on('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(this);
-            
-            // Show loading state
-            const submitBtn = $(this).find('button[type="submit"]');
-            const originalText = submitBtn.html();
-            submitBtn.html('<i class="fas fa-spinner fa-spin"></i> {{ __("messages.saving") }}...').prop('disabled', true);
-            
-            // Submit form via AJAX
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.success) {
-                        // Show success message
-                        showNotification(response.message || '{{ __("messages.visit_schedule_added_successfully") }}', 'success');
-                        
-                        // Close modal
-                        $('#addVisitScheduleModal').modal('hide');
-                        
-                        // Reset form
-                        $('#addVisitScheduleForm')[0].reset();
-                        
-                        // Reload page to show new visit schedule
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        // Show error message from response
-                        showNotification(response.message || '{{ __("messages.error_occurred") }}', 'error');
-                    }
-                },
-                error: function(xhr) {
-                    // Show error message
-                    let errorMessage = '{{ __("messages.error_occurred") }}';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    } else if (xhr.responseJSON && xhr.responseJSON.errors) {
-                        // Handle validation errors
-                        let errors = xhr.responseJSON.errors;
-                        let errorMessages = [];
-                        for (let field in errors) {
-                            errorMessages.push(errors[field][0]);
-                        }
-                        errorMessage = errorMessages.join('<br>');
-                    }
-                    showNotification(errorMessage, 'error');
-                },
-                complete: function() {
-                    // Reset button state
-                    submitBtn.html(originalText).prop('disabled', false);
-                }
-            });
+        // Employee search functionality
+        document.getElementById('employeeSearch').addEventListener('input', function() {
+            filterEmployees();
         });
         
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        $('#visit_date').attr('min', today);
+        // Employee date filtering functionality
+        document.getElementById('fromDate').addEventListener('change', function() {
+            filterEmployees();
+        });
+        
+        document.getElementById('toDate').addEventListener('change', function() {
+            filterEmployees();
+        });
+        
+        function filterEmployees() {
+            const searchTerm = document.getElementById('employeeSearch').value.toLowerCase();
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const rows = document.querySelectorAll('#employeesTable tbody tr.main-row');
+            
+            rows.forEach(row => {
+                const agentName = row.querySelector('.agent-name').textContent.toLowerCase();
+                const agencyName = row.cells[2].textContent.toLowerCase();
+                const createdDateText = row.cells[3].textContent.toLowerCase();
+                
+                // Extract created date from the created date cell
+                const createdDateSpan = row.cells[3].querySelector('span[data-date]');
+                const createdDateValue = createdDateSpan ? createdDateSpan.getAttribute('data-date') : null;
+                
+                let showRow = true;
+                
+                // Apply search filter
+                if (searchTerm && !agentName.includes(searchTerm) && !agencyName.includes(searchTerm) && !createdDateText.includes(searchTerm)) {
+                    showRow = false;
+                }
+                
+                // Apply date filter
+                if (showRow && (fromDate || toDate)) {
+                    if (createdDateValue) {
+                        const createdDate = new Date(createdDateValue);
+                        const fromDateObj = fromDate ? new Date(fromDate) : null;
+                        const toDateObj = toDate ? new Date(toDate) : null;
+                        
+                        // Set time to start of day for inclusive comparison
+                        if (fromDateObj) {
+                            fromDateObj.setHours(0, 0, 0, 0);
+                        }
+                        if (toDateObj) {
+                            toDateObj.setHours(23, 59, 59, 999);
+                        }
+                        createdDate.setHours(0, 0, 0, 0);
+                        
+                        if (fromDateObj && createdDate < fromDateObj) {
+                            showRow = false;
+                        }
+                        if (toDateObj && createdDate > toDateObj) {
+                            showRow = false;
+                        }
+                    } else {
+                        // If no data-date attribute, try to parse from the displayed text
+                        showRow = false;
+                    }
+                }
+                
+                if (showRow) {
+                    row.style.display = '';
+                    // Also show the corresponding detail row
+                    const rowId = row.getAttribute('data-id');
+                    const detailRow = document.querySelector(`.detail-row[data-parent="${rowId}"]`);
+                    if (detailRow) {
+                        detailRow.style.display = '';
+                    }
+                } else {
+                    row.style.display = 'none';
+                    // Also hide the corresponding detail row
+                    const rowId = row.getAttribute('data-id');
+                    const detailRow = document.querySelector(`.detail-row[data-parent="${rowId}"]`);
+                    if (detailRow) {
+                        detailRow.style.display = 'none';
+                    }
+                }
+            });
+        }
+        
+        // Export functionality
+        document.getElementById('exportEmployeesBtn').addEventListener('click', function() {
+            console.log('Export button clicked');
+            const selectedEmployees = document.querySelectorAll('.employee-checkbox:checked');
+            console.log('Selected employees:', selectedEmployees.length);
+            
+            if (selectedEmployees.length === 0) {
+                showNotification('{{ __("messages.please_select_employees_to_export") }}', 'warning');
+                return;
+            }
+            
+            const employeeIds = Array.from(selectedEmployees).map(cb => cb.value);
+            console.log('Employee IDs to export:', employeeIds);
+            
+            // For now, create a simple CSV export
+            exportEmployeesToCSV(employeeIds);
+            
+            showNotification('{{ __("messages.employee_export_started") }}', 'success');
+        });
+        
+        // Simple CSV export function
+        function exportEmployeesToCSV(employeeIds) {
+            console.log('Starting CSV export for IDs:', employeeIds);
+            const rows = [];
+            const headers = ['Agent Name', 'Agency Name', 'Email', 'Phone', 'Created Date', 'Status'];
+            rows.push(headers.join(','));
+            
+            // Get selected employee data
+            employeeIds.forEach(id => {
+                const row = document.querySelector(`tr[data-id="${id}"]`);
+                console.log('Processing row for ID:', id, row);
+                
+                if (row) {
+                    const agentName = row.querySelector('.agent-name').textContent.trim();
+                    const agencyName = row.cells[2].textContent.trim();
+                    const createdDate = row.cells[3].textContent.trim();
+                    const status = row.querySelector('.status-text').textContent.trim();
+                    
+                    // Get email and phone from detail row
+                    const detailRow = document.querySelector(`tr[data-parent="${id}"]`);
+                    const email = detailRow ? detailRow.querySelector('.info-content span').textContent.trim() : '';
+                    const phone = detailRow ? detailRow.querySelectorAll('.info-content span')[1]?.textContent.trim() || '' : '';
+                    
+                    console.log('Employee data:', { agentName, agencyName, email, phone, createdDate, status });
+                    
+                    const rowData = [
+                        `"${agentName}"`,
+                        `"${agencyName}"`,
+                        `"${email}"`,
+                        `"${phone}"`,
+                        `"${createdDate}"`,
+                        `"${status}"`
+                    ];
+                    rows.push(rowData.join(','));
+                }
+            });
+            
+            console.log('CSV rows:', rows);
+            
+            // Create and download CSV
+            const csvContent = rows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'employees_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            console.log('CSV download initiated');
+        }
+        
+        // Delete functionality
+        document.getElementById('deleteEmployeesBtn').addEventListener('click', function() {
+            const selectedEmployees = document.querySelectorAll('.employee-checkbox:checked');
+            if (selectedEmployees.length === 0) {
+                showNotification('{{ __("messages.please_select_employees_to_delete") }}', 'warning');
+                return;
+            }
+            
+            if (confirm(`{{ __("messages.are_you_sure_delete_employees") }} ${selectedEmployees.length} {{ __("messages.selected_employees") }}?`)) {
+                const employeeIds = Array.from(selectedEmployees).map(cb => cb.value);
+                
+                // Get CSRF token
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                
+                // Make AJAX call to delete employees
+                fetch('/my-employees/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        employee_ids: employeeIds
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === '1') {
+                        // Remove deleted rows from the table
+                        selectedEmployees.forEach(checkbox => {
+                            const row = checkbox.closest('.main-row');
+                            const rowId = row.getAttribute('data-id');
+                            const detailRow = document.querySelector(`.detail-row[data-parent="${rowId}"]`);
+                            
+                            row.remove();
+                            if (detailRow) {
+                                detailRow.remove();
+                            }
+                        });
+                        
+                        // Update selection count
+                        updateSelectedCount();
+                        
+                        showNotification(data.message || '{{ __("messages.employees_deleted_successfully") }}', 'success');
+                    } else {
+                        showNotification(data.message || '{{ __("messages.error_occurred") }}', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('{{ __("messages.something_went_wrong") }}', 'error');
+                });
+            }
+        });
         
         // Notification function
         function showNotification(message, type) {
-            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            const alertClass = type === 'success' ? 'alert-success' : type === 'warning' ? 'alert-warning' : 'alert-danger';
             const notification = $(`
                 <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
                      style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
                     ${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
