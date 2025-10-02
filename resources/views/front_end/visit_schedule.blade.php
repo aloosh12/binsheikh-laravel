@@ -80,7 +80,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th width="50">
-                                                            <input type="checkbox" id="selectAllVisits" onclick="toggleAllVisits(this)">
+                                                            <input type="checkbox" id="selectAllVisits">
                                                         </th>
                                                         <th>{{ __('messages.client_name') }}</th>
                                                         <th>{{ __('messages.unit_number') }}</th>
@@ -780,12 +780,18 @@
 
 <script>
     $(document).ready(function() {
-        // Toggle all visits
-        function toggleAllVisits(source) {
-            document.querySelectorAll('.visit-checkbox').forEach(checkbox => {
-                checkbox.checked = source.checked;
-            });
-        }
+        // Toggle all visits functionality
+        $('#selectAllVisits').on('change', function() {
+            const isChecked = this.checked;
+            $('.visit-checkbox').prop('checked', isChecked);
+        });
+        
+        // Individual checkbox change handler
+        $('.visit-checkbox').on('change', function() {
+            const totalCheckboxes = $('.visit-checkbox').length;
+            const checkedCheckboxes = $('.visit-checkbox:checked').length;
+            $('#selectAllVisits').prop('checked', totalCheckboxes === checkedCheckboxes);
+        });
         
         // Expand/collapse functionality
         document.querySelectorAll('.expand-icon').forEach(icon => {

@@ -108,7 +108,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th width="50">
-                                                                <input type="checkbox" id="selectAllEmployees" onclick="toggleAllEmployees(this)">
+                                                                <input type="checkbox" id="selectAllEmployees">
                                                             </th>
                                                             <th>{{ __('messages.agent_name') }}</th>
                                                             <th>{{ __('messages.agency_name') }}</th>
@@ -669,16 +669,6 @@
 
 <script>
     // Global functions for HTML onclick events
-    function toggleAllEmployees(source) {
-        console.log('toggleAllEmployees called', source.checked);
-        const checkboxes = document.querySelectorAll('.employee-checkbox');
-        console.log('Found checkboxes:', checkboxes.length);
-        
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = source.checked;
-        });
-        updateSelectedCount();
-    }
     
     function updateSelectedCount() {
         const selected = document.querySelectorAll('.employee-checkbox:checked').length;
@@ -691,9 +681,19 @@
 
     $(document).ready(function() {
         
-        // Employee checkbox change
-        document.querySelectorAll('.employee-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', updateSelectedCount);
+        // Select all employees functionality
+        $('#selectAllEmployees').on('change', function() {
+            const isChecked = this.checked;
+            $('.employee-checkbox').prop('checked', isChecked);
+            updateSelectedCount();
+        });
+        
+        // Individual checkbox change handler
+        $('.employee-checkbox').on('change', function() {
+            const totalCheckboxes = $('.employee-checkbox').length;
+            const checkedCheckboxes = $('.employee-checkbox:checked').length;
+            $('#selectAllEmployees').prop('checked', totalCheckboxes === checkedCheckboxes);
+            updateSelectedCount();
         });
         
         // Expand/collapse functionality
