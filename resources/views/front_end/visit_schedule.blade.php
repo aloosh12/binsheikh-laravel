@@ -71,8 +71,36 @@
                                                 </div>
                                             </div>
 
-
-                                            <!-- <div class="dashboard-widget-title-single">{{ __('messages.profile') }}</div> -->
+                                            <!-- Search and Filters -->
+                                            <div class="visit-schedule-header">
+                                                <div class="search-section">
+                                                    <div class="search-bar">
+                                                        <input type="text" class="form-control" placeholder="{{ __('messages.search_by_name_email_phone') }}" id="visitScheduleSearch">
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="filters-section">
+                                                    <div class="date-filters">
+                                                        <div class="date-input">
+                                                            <label>{{ __('messages.from') }}</label>
+                                                            <input type="date" class="form-control" id="fromDateVisit">
+                                                        </div>
+                                                        <div class="date-input">
+                                                            <label>{{ __('messages.to') }}</label>
+                                                            <input type="date" class="form-control" id="toDateVisit">
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="selection-info">
+                                                        <span id="selectedCountVisit">0 {{ __('messages.items_selected') }}</span>
+                                                    </div>
+                                                    
+                                                    <div class="action-buttons">
+                                                        <button class="btn btn-primary btn-sm" id="exportVisitSchedulesBtn">{{ __('messages.export') }}</button>
+                                                        <button class="btn btn-danger btn-sm" id="deleteVisitSchedulesBtn">{{ __('messages.delete') }}</button>
+                                                    </div>
+                                                </div>
+                                            </div>
 
 
 
@@ -82,7 +110,7 @@
                                                         <th width="50">
                                                             <input type="checkbox" id="selectAllVisits">
                                                         </th>
-                                                        <th>{{ __('messages.client_name') }}</th>
+                                                        <th>{{ __('messages.agent_name') }}</th>
                                                         <th>{{ __('messages.unit_number') }}</th>
                                                         <th>{{ __('messages.phone_number') }}</th>
                                                         <th>{{ __('messages.date_of_visit') }}</th>
@@ -101,7 +129,7 @@
                                                                     <i class="fas fa-user"></i>
                                                                     <div class="status-dot"></div>
                                                                 </div>
-                                                                <span class="client-name">{{ $visit->client_name ?? 'N/A' }}</span>
+                                                                <span class="client-name">{{ $visit->agent->name ?? 'N/A' }}</span>
                                                             </div>
                                                         </td>
                                                         <td>{{ $visit->property->apartment_no ?? 'N/A' }}</td>
@@ -615,6 +643,69 @@
         color: #333;
     }
     
+    /* Visit Schedule Header Styles */
+    .visit-schedule-header {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .search-section {
+        margin-bottom: 15px;
+    }
+    
+    .search-bar input {
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    .filters-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .date-filters {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .date-input {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .date-input label {
+        font-size: 12px;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .date-input input {
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .selection-info {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
     /* Client Info Styles */
     .client-info {
         display: flex;
@@ -775,6 +866,18 @@
             gap: 5px;
         }
         
+        .filters-section {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .date-filters {
+            justify-content: center;
+        }
+        
+        .action-buttons {
+            justify-content: center;
+        }
     }
 </style>
 
@@ -791,7 +894,14 @@
             const totalCheckboxes = $('.visit-checkbox').length;
             const checkedCheckboxes = $('.visit-checkbox:checked').length;
             $('#selectAllVisits').prop('checked', totalCheckboxes === checkedCheckboxes);
+            updateSelectedCountVisit();
         });
+        
+        // Update selected count function
+        function updateSelectedCountVisit() {
+            const selected = $('.visit-checkbox:checked').length;
+            $('#selectedCountVisit').text(`${selected} {{ __('messages.items_selected') }}`);
+        }
         
         // Expand/collapse functionality
         document.querySelectorAll('.expand-icon').forEach(icon => {
@@ -922,13 +1032,219 @@
         const today = new Date().toISOString().split('T')[0];
         $('#visit_date').attr('min', today);
         
+        // Visit schedule search functionality
+        $('#visitScheduleSearch').on('input', function() {
+            filterVisitSchedules();
+        });
+        
+        // Visit schedule date filtering functionality
+        $('#fromDateVisit').on('change', function() {
+            filterVisitSchedules();
+        });
+        
+        $('#toDateVisit').on('change', function() {
+            filterVisitSchedules();
+        });
+        
+        function filterVisitSchedules() {
+            const searchTerm = $('#visitScheduleSearch').val().toLowerCase();
+            const fromDate = $('#fromDateVisit').val();
+            const toDate = $('#toDateVisit').val();
+            const rows = $('#visitScheduleTable tbody tr.main-row');
+            
+            rows.each(function() {
+                const row = $(this);
+                const agentName = row.find('.client-name').text().toLowerCase();
+                const unitNumber = row.find('td:eq(2)').text().toLowerCase();
+                const phoneNumber = row.find('td:eq(3)').text().toLowerCase();
+                const visitDateText = row.find('td:eq(4)').text().toLowerCase();
+                
+                // Extract visit date from the visit date cell
+                const visitDateSpan = row.find('.visit-date');
+                const visitDateValue = visitDateSpan.attr('data-date');
+                
+                let showRow = true;
+                
+                // Apply search filter
+                if (searchTerm && !agentName.includes(searchTerm) && !unitNumber.includes(searchTerm) && !phoneNumber.includes(searchTerm) && !visitDateText.includes(searchTerm)) {
+                    showRow = false;
+                }
+                
+                // Apply date filter
+                if (showRow && (fromDate || toDate)) {
+                    if (visitDateValue) {
+                        const visitDate = new Date(visitDateValue);
+                        const fromDateObj = fromDate ? new Date(fromDate) : null;
+                        const toDateObj = toDate ? new Date(toDate) : null;
+                        
+                        // Set time to start of day for inclusive comparison
+                        if (fromDateObj) {
+                            fromDateObj.setHours(0, 0, 0, 0);
+                        }
+                        if (toDateObj) {
+                            toDateObj.setHours(23, 59, 59, 999);
+                        }
+                        visitDate.setHours(0, 0, 0, 0);
+                        
+                        if (fromDateObj && visitDate < fromDateObj) {
+                            showRow = false;
+                        }
+                        if (toDateObj && visitDate > toDateObj) {
+                            showRow = false;
+                        }
+                    } else {
+                        showRow = false;
+                    }
+                }
+                
+                if (showRow) {
+                    row.show();
+                    // Also show the corresponding detail row
+                    const rowId = row.attr('data-id');
+                    const detailRow = $(`.detail-row[data-parent="${rowId}"]`);
+                    if (detailRow.length) {
+                        detailRow.show();
+                    }
+                } else {
+                    row.hide();
+                    // Also hide the corresponding detail row
+                    const rowId = row.attr('data-id');
+                    const detailRow = $(`.detail-row[data-parent="${rowId}"]`);
+                    if (detailRow.length) {
+                        detailRow.hide();
+                    }
+                }
+            });
+        }
+        
+        // Export functionality
+        $('#exportVisitSchedulesBtn').on('click', function() {
+            const selectedVisits = $('.visit-checkbox:checked');
+            if (selectedVisits.length === 0) {
+                showNotification('{{ __("messages.please_select_employees_to_export") }}', 'warning');
+                return;
+            }
+            
+            const visitIds = selectedVisits.map(function() {
+                return this.value;
+            }).get();
+            
+            // Create CSV export
+            exportVisitSchedulesToCSV(visitIds);
+            
+            showNotification('{{ __("messages.employee_export_started") }}', 'success');
+        });
+        
+        // CSV export function
+        function exportVisitSchedulesToCSV(visitIds) {
+            const rows = [];
+            const headers = ['Agent Name', 'Unit Number', 'Phone Number', 'Visit Date', 'Client Email', 'Property Name', 'Project Name'];
+            rows.push(headers.join(','));
+            
+            // Get selected visit schedule data
+            visitIds.forEach(id => {
+                const row = $(`tr[data-id="${id}"]`);
+                
+                if (row.length) {
+                    const agentName = row.find('.client-name').text().trim();
+                    const unitNumber = row.find('td:eq(2)').text().trim();
+                    const phoneNumber = row.find('td:eq(3)').text().trim();
+                    const visitDate = row.find('.visit-date').text().trim();
+                    
+                    // Get additional data from detail row
+                    const detailRow = $(`.detail-row[data-parent="${id}"]`);
+                    const clientEmail = detailRow.find('.info-content span').eq(1).text().trim() || 'N/A';
+                    const propertyName = detailRow.find('.info-content span').eq(5).text().trim() || 'N/A';
+                    const projectName = detailRow.find('.info-content span').eq(2).text().trim() || 'N/A';
+                    
+                    const rowData = [
+                        `"${agentName}"`,
+                        `"${unitNumber}"`,
+                        `"${phoneNumber}"`,
+                        `"${visitDate}"`,
+                        `"${clientEmail}"`,
+                        `"${propertyName}"`,
+                        `"${projectName}"`
+                    ];
+                    rows.push(rowData.join(','));
+                }
+            });
+            
+            // Create and download CSV
+            const csvContent = rows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'visit_schedules_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Delete functionality
+        $('#deleteVisitSchedulesBtn').on('click', function() {
+            const selectedVisits = $('.visit-checkbox:checked');
+            if (selectedVisits.length === 0) {
+                showNotification('{{ __("messages.please_select_employees_to_delete") }}', 'warning');
+                return;
+            }
+            
+            if (confirm(`{{ __("messages.are_you_sure_delete_employees") }} ${selectedVisits.length} {{ __("messages.selected_employees") }}?`)) {
+                const visitIds = selectedVisits.map(function() {
+                    return this.value;
+                }).get();
+                
+                // Get CSRF token
+                const csrfToken = $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}';
+                
+                // Make AJAX call to delete visit schedules
+                $.ajax({
+                    url: '/visit-schedule/delete',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    data: {
+                        visit_ids: visitIds
+                    },
+                    success: function(response) {
+                        if (response.status === '1') {
+                            // Remove deleted rows from the table
+                            selectedVisits.each(function() {
+                                const row = $(this).closest('.main-row');
+                                const rowId = row.attr('data-id');
+                                const detailRow = $(`.detail-row[data-parent="${rowId}"]`);
+                                
+                                row.remove();
+                                if (detailRow.length) {
+                                    detailRow.remove();
+                                }
+                            });
+                            
+                            // Update selection count
+                            updateSelectedCountVisit();
+                            
+                            showNotification(response.message || '{{ __("messages.employees_deleted_successfully") }}', 'success');
+                        } else {
+                            showNotification(response.message || '{{ __("messages.error_occurred") }}', 'error');
+                        }
+                    },
+                    error: function() {
+                        showNotification('{{ __("messages.something_went_wrong") }}', 'error');
+                    }
+                });
+            }
+        });
+        
         // Notification function
         function showNotification(message, type) {
-            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            const alertClass = type === 'success' ? 'alert-success' : type === 'warning' ? 'alert-warning' : 'alert-danger';
             const notification = $(`
                 <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
                      style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
                     ${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>

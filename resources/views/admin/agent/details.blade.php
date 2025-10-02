@@ -1248,8 +1248,8 @@
             <div class="agency-details-header">
                 <h1 class="breadcrumb-title">AGENTS / {{ strtoupper($agent->name) }} / <span id="currentTabTitle">AGENT INFO</span></h1>
                 <div class="header-actions">
-                    <button class="btn-action btn-gray">Edit</button>
-                    <button class="btn-action btn-gold">Approve</button>
+                    <!-- <button class="btn-action btn-gray">Edit</button>
+                    <button class="btn-action btn-gold">Approve</button> -->
                 </div>
             </div>
             
