@@ -299,6 +299,8 @@ return [
     'county'=>'Country',
     'floor_number'=> 'Floor Number',
     'floor_no' => 'Floor No ',
+    'unit_price' => 'Unit Price',
+    'unit_size' => 'Unit Size',
     'payment_calculator'=>'Payment Calculator',
     'advance_amount'=>'Advance Amount',
     'rental_duration'=>'Installlment  Duration',

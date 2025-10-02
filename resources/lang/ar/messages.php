@@ -312,6 +312,8 @@ return [
     'county'=>'دولة',
     'floor_number'=>'رقم الطابق',
     'floor_no' => 'ر.الطابق ',
+    'unit_price' => 'سعر الوحدة',
+    'unit_size' => 'حجم الوحدة',
     'payment_calculator'=>'حاسبة الدفع',
     'advance_amount'=>'المبلغ المسبق',
     'rental_duration'=>'مدة التقسيط',

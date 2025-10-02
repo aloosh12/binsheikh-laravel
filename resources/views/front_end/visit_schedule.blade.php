@@ -83,7 +83,7 @@
                                                             <input type="checkbox" id="selectAllVisits" onclick="toggleAllVisits(this)">
                                                         </th>
                                                         <th>{{ __('messages.client_name') }}</th>
-                                                        <th>{{ __('messages.unit_type') }}</th>
+                                                        <th>{{ __('messages.unit_number') }}</th>
                                                         <th>{{ __('messages.phone_number') }}</th>
                                                         <th>{{ __('messages.date_of_visit') }}</th>
                                                     </tr>
@@ -104,7 +104,7 @@
                                                                 <span class="client-name">{{ $visit->client_name ?? 'N/A' }}</span>
                                                             </div>
                                                         </td>
-                                                        <td>{{ $visit->property->property_type->name ?? 'N/A' }}</td>
+                                                        <td>{{ $visit->property->apartment_no ?? 'N/A' }}</td>
                                                         <td>{{ $visit->client_phone_number ?? 'N/A' }}</td>
                                                         <td>
                                                             <div class="visit-section">
