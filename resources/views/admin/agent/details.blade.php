@@ -1284,14 +1284,14 @@
                         <div class="info-column">
                             <div class="info-card">
                                 <div class="info-icon">
-                                    <i class="fas fa-user"></i>
+                                    <i class="fas fa-building"></i>
                                 </div>
                                 <div class="info-content">
-                                    <label>Agent Name</label>
-                                    <span>{{ $agent->name ?? 'N/A' }}</span>
+                                    <label>Agency Name</label>
+                                    <span>{{ $agent->agency->name ?? 'N/A' }}</span>
                                 </div>
                             </div>
-                            
+
                             <div class="info-card">
                                 <div class="info-icon">
                                     <i class="fas fa-envelope"></i>
@@ -1301,29 +1301,22 @@
                                     <span>{{ $agent->email ?? 'N/A' }}</span>
                                 </div>
                             </div>
-                            
+
                             <div class="info-card">
                                 <div class="info-icon">
-                                    <i class="fas fa-building"></i>
+                                    <i class="fas fa-id-card"></i>
                                 </div>
                                 <div class="info-content">
-                                    <label>Agency</label>
-                                    <span>{{ $agent->agency->name ?? 'N/A' }}</span>
+                                    <label>ID Card</label>
+                                    @if(!$agent->id_card)
+                                        <span>N/A</span>
+                                    @endif
                                 </div>
-                            </div>
-                            
-                            <div class="info-card">
-                                <div class="info-icon">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <div class="info-content">
-                                    <label>Professional Practice Certificate</label>
-                                    <span>{{ $agent->professional_practice_certificate ? 'Available' : 'N/A' }}</span>
-                                </div>
-                                @if($agent->professional_practice_certificate)
-                                <button class="view-btn" onclick="downloadDocument('{{ basename($agent->professional_practice_certificate) }}')">View</button>
+                                @if($agent->id_card)
+                                    <button class="view-btn" onclick="window.open('{{ aws_asset_path($agent->id_card) }}', '_blank')">View</button>
                                 @endif
                             </div>
+                            
                         </div>
                         
                         <!-- Right Column -->
@@ -1343,36 +1336,16 @@
                                     <i class="fas fa-certificate"></i>
                                 </div>
                                 <div class="info-content">
-                                    <label>License</label>
-                                    <span>{{ $agent->license ? 'Available' : 'N/A' }}</span>
+                                    <label>Professional License</label>
+                                    @if(!$agent->license)
+                                        <span>N/A</span>
+                                    @endif
                                 </div>
                                 @if($agent->license)
-                                <button class="view-btn" onclick="downloadDocument('{{ basename($agent->license) }}')">View</button>
+                                    <button class="view-btn" onclick="window.open('{{ aws_asset_path($agent->license) }}', '_blank')">View</button>
                                 @endif
                             </div>
-                            
-                            <div class="info-card">
-                                <div class="info-icon">
-                                    <i class="fas fa-id-card"></i>
-                                </div>
-                                <div class="info-content">
-                                    <label>ID Card</label>
-                                    <span>{{ $agent->id_card ? 'Available' : 'N/A' }}</span>
-                                </div>
-                                @if($agent->id_card)
-                                <button class="view-btn" onclick="downloadDocument('{{ basename($agent->id_card) }}')">View</button>
-                                @endif
-                            </div>
-                            
-                            <div class="info-card">
-                                <div class="info-icon">
-                                    <i class="fas fa-calendar"></i>
-                                </div>
-                                <div class="info-content">
-                                    <label>Created Date</label>
-                                    <span>{{ web_date_in_timezone($agent->created_at, 'd-M-Y h:i A') }}</span>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>

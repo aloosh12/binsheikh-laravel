@@ -1309,9 +1309,11 @@
                                 </div>
                                 <div class="info-content">
                                     <label>CR</label>
-                                    <span>{{ $customer->CR ?? 'N/A' }}</span>
+                                    @if(!$customer->cr)
+                                      <span>N/A</span>
+                                    @endif
                                 </div>
-                                <button class="view-btn">View</button>
+                                <button class="view-btn" onclick="window.open('{{ aws_asset_path($customer->cr) }}', '_blank')">View</button>
                             </div>
                             
                             <div class="info-card">
@@ -1320,9 +1322,11 @@
                                 </div>
                                 <div class="info-content">
                                     <label>Authorized signatory</label>
-                                    <span>{{ $customer->authorized_signatory ?? 'N/A' }}</span>
+                                    @if(!$customer->authorized_signatory)
+                                      <span>N/A</span>
+                                    @endif
                                 </div>
-                                <button class="view-btn">View</button>
+                                <button class="view-btn" onclick="window.open('{{ aws_asset_path($customer->authorized_signatory) }}', '_blank')">View</button>
                             </div>
                         </div>
                         
@@ -1344,9 +1348,11 @@
                                 </div>
                                 <div class="info-content">
                                     <label>Trade License</label>
-                                    <span>{{ $customer->commission_number ?? 'N/A' }}</span>
+                                    @if(!$customer->license)
+                                      <span>N/A</span>
+                                    @endif
                                 </div>
-                                <button class="view-btn">View</button>
+                                <button class="view-btn" onclick="window.open('{{ aws_asset_path($customer->license) }}', '_blank')">View</button>
                             </div>
                             
                             <div class="info-card">
@@ -1355,9 +1361,11 @@
                                 </div>
                                 <div class="info-content">
                                     <label>Professional License</label>
-                                    <span>{{ $customer->discount_number ?? 'N/A' }}</span>
+                                    @if(!$customer->professional_practice_certificate)
+                                      <span>N/A</span>
+                                    @endif
                                 </div>
-                                <button class="view-btn">View</button>
+                                <button class="view-btn" onclick="window.open('{{ aws_asset_path($customer->professional_practice_certificate) }}', '_blank')">View</button>
                             </div>
                         </div>
                     </div>
@@ -1433,7 +1441,7 @@
                                             <span class="status-text {{ $agent->active ? 'text-success' : 'text-danger' }}">
                                                 {{ $agent->active ? 'Active' : 'Inactive' }}
                                             </span>
-                                            <button class="btn btn-sm btn-info">View</button>
+                                            <a href="{{ url('admin/agent/details/' . $agent->id) }}"  target="_blank" class="btn btn-sm btn-info">View</a>
                                             <i class="fas fa-chevron-down expand-icon" style="margin-left: 10px; cursor: pointer;"></i>
                                         </div>
                                     </td>
@@ -1457,16 +1465,6 @@
                                                 <div class="info-column">
                                                     <div class="info-card">
                                                         <div class="info-icon">
-                                                            <i class="fas fa-user"></i>
-                                                        </div>
-                                                        <div class="info-content">
-                                                            <label>Agency Name</label>
-                                                            <span>{{ $customer->name ?? 'N/A' }}</span>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="info-card">
-                                                        <div class="info-icon">
                                                             <i class="fas fa-envelope"></i>
                                                         </div>
                                                         <div class="info-content">
@@ -1474,16 +1472,33 @@
                                                             <span>{{ $agent->email ?? 'N/A' }}</span>
                                                         </div>
                                                     </div>
-                                                    
                                                     <div class="info-card">
                                                         <div class="info-icon">
                                                             <i class="fas fa-id-card"></i>
                                                         </div>
                                                         <div class="info-content">
                                                             <label>ID Card</label>
-                                                            <span>{{ $agent->id_no ?? 'N/A' }}</span>
+                                                            @if(!$agent->id_card)
+                                                              <span>N/A</span>
+                                                            @endif
                                                         </div>
-                                                        <button class="view-btn">View</button>
+                                                        @if($agent->id_card)
+                                                            <button class="view-btn" onclick="window.open('{{ aws_asset_path($agent->id_card) }}', '_blank')">View</button>
+                                                        @endif
+                                                    </div>
+                                                    <div class="info-card">
+                                                        <div class="info-icon">
+                                                            <i class="fas fa-certificate"></i>
+                                                        </div>
+                                                        <div class="info-content">
+                                                            <label>Professional License</label>
+                                                            @if(!$agent->license)
+                                                              <span>N/A</span>
+                                                            @endif
+                                                        </div>
+                                                        @if($agent->license)
+                                                          <button class="view-btn" onclick="window.open('{{ aws_asset_path($agent->license) }}', '_blank')">View</button>
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 
@@ -1498,16 +1513,14 @@
                                                             <span>{{ $agent->phone ?? 'N/A' }}</span>
                                                         </div>
                                                     </div>
-                                                    
                                                     <div class="info-card">
                                                         <div class="info-icon">
-                                                            <i class="fas fa-certificate"></i>
+                                                            <i class="fas fa-user"></i>
                                                         </div>
                                                         <div class="info-content">
-                                                            <label>Professional License</label>
-                                                            <span>{{ $agent->discount_number ?? 'N/A' }}</span>
+                                                            <label>Agency Name</label>
+                                                            <span>{{ $customer->name ?? 'N/A' }}</span>
                                                         </div>
-                                                        <button class="view-btn">View</button>
                                                     </div>
                                                 </div>
                                             </div>

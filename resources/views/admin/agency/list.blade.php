@@ -251,7 +251,7 @@
                                                     class="btn btn-outline-danger active deleteListItem" data-role="unlink"
                                                     data-message="Do you want to remove this agency?" title="Delete"
                                                     aria-hidden="true"><i class="fas fa-trash-alt fa-1x"></i></a>
-                                                <a href="{{ url('admin/agency/details/' . $cust->id . '?role=' . $role) }}"
+                                                <a href="{{ url('admin/agency/details/' . $cust->id) }}"
                                                     class="btn btn-outline-info active" title="View Details"
                                                     aria-hidden="true"><i class="fas fa-eye fa-1x"></i></a>
                                                 @if(!$cust->verified)
