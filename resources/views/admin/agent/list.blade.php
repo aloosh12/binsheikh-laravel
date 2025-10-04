@@ -1,6 +1,7 @@
 @extends('admin.template.layout')
 
 @section('header')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .agent-name {
         cursor: pointer;
@@ -269,9 +270,15 @@
                                                     <div class="agency-info-header">
                                                         <h5>AGENT INFO</h5>
                                                         <div class="header-actions">
-                                                            <button class="btn-action btn-success" title="Approve">
+                                                            @if(!$cust->verified)
+                                                            <a href="{{ url('admin/agent/approve/' . $cust->id) }}"
+                                                                class="btn-action btn-success approveCustomer" 
+                                                                title="Approve Agent"
+                                                                data-message="Do you want to approve this agent?"
+                                                                aria-hidden="true">
                                                                 <i class="fas fa-check"></i>
-                                                            </button>
+                                                            </a>
+                                                            @endif
                                                             <button class="btn-action btn-danger" title="Reject">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
@@ -279,100 +286,73 @@
                                                     </div>
                                                     
                                                     <div class="agency-info-grid">
-                                                        <!-- Left Column -->
-                                                        <div class="info-column">
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-user"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Agent Name</label>
-                                                                    <span>{{ $cust->name ?? 'N/A' }}</span>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-envelope"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Agent Email Address</label>
-                                                                    <span>{{ $cust->email ?? 'N/A' }}</span>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-building"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Agency</label>
-                                                                    <span>{{ $cust->agency->name ?? 'N/A' }}</span>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-file-alt"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Professional Practice Certificate</label>
-                                                                    <span>{{ $cust->professional_practice_certificate ? 'Available' : 'N/A' }}</span>
-                                                                </div>
-                                                                @if($cust->professional_practice_certificate)
-                                                                <button class="view-btn" onclick="downloadDocument('{{ basename($cust->professional_practice_certificate) }}')">View</button>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                        
-                                                        <!-- Right Column -->
-                                                        <div class="info-column">
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-phone"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Agent Phone Number</label>
-                                                                    <span>{{ $cust->phone ?? 'N/A' }}</span>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-certificate"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>License</label>
-                                                                    <span>{{ $cust->license ? 'Available' : 'N/A' }}</span>
-                                                                </div>
-                                                                @if($cust->license)
-                                                                <button class="view-btn" onclick="downloadDocument('{{ basename($cust->license) }}')">View</button>
-                                                                @endif
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-id-card"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>ID Card</label>
-                                                                    <span>{{ $cust->id_card ? 'Available' : 'N/A' }}</span>
-                                                                </div>
-                                                                @if($cust->id_card)
-                                                                <button class="view-btn" onclick="downloadDocument('{{ basename($cust->id_card) }}')">View</button>
-                                                                @endif
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-calendar"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Created Date</label>
-                                                                    <span>{{ web_date_in_timezone($cust->created_at, 'd-M-Y h:i A') }}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                           <!-- Left Column -->
+                                           <div class="info-column">
+                                                <div class="info-card">
+                                                    <div class="info-icon">
+                                                        <i class="fas fa-building"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <label>Agency Name</label>
+                                                        <span>{{ $cust->agency->name ?? 'N/A' }}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="info-card">
+                                                    <div class="info-icon">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <label>Agent Email Address</label>
+                                                        <span>{{ $cust->email ?? 'N/A' }}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="info-card">
+                                                    <div class="info-icon">
+                                                        <i class="fas fa-id-card"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <label>ID Card</label>
+                                                        @if(!$cust->id_card)
+                                                            <span>N/A</span>
+                                                        @endif
+                                                    </div>
+                                                    @if($cust->id_card)
+                                                        <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->id_card) }}', '_blank')">View</button>
+                                                    @endif
+                                                </div>
+                            
+                                            </div>
+                        
+                                            <!-- Right Column -->
+                                            <div class="info-column">
+                                                <div class="info-card">
+                                                    <div class="info-icon">
+                                                        <i class="fas fa-phone"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <label>Agent Phone Number</label>
+                                                        <span>{{ $cust->phone ?? 'N/A' }}</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="info-card">
+                                                    <div class="info-icon">
+                                                        <i class="fas fa-certificate"></i>
+                                                    </div>
+                                                    <div class="info-content">
+                                                        <label>Professional License</label>
+                                                        @if(!$cust->license)
+                                                            <span>N/A</span>
+                                                        @endif
+                                                    </div>
+                                                    @if($cust->license)
+                                                        <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->license) }}', '_blank')">View</button>
+                                                    @endif
+                                                </div>
+
+                                            </div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -472,30 +452,25 @@
                 });
             });
 
-            // Header action buttons
-            document.querySelectorAll('.btn-action').forEach(btn => {
+            // Reject button handler (Approve is handled by the approveCustomer class below)
+            document.querySelectorAll('.btn-action.btn-danger').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    const isApprove = this.classList.contains('btn-success');
-                    const action = isApprove ? 'approve' : 'reject';
-                    const icon = isApprove ? 'success' : 'error';
-                    const title = isApprove ? 'Approve Agent' : 'Reject Agent';
-                    const text = isApprove ? 'Are you sure you want to approve this agent?' : 'Are you sure you want to reject this agent?';
                     
                     Swal.fire({
-                        title: title,
-                        text: text,
-                        icon: icon,
+                        title: 'Reject Agent',
+                        text: 'Are you sure you want to reject this agent?',
+                        icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: isApprove ? '#28a745' : '#dc3545',
+                        confirmButtonColor: '#dc3545',
                         cancelButtonColor: '#6c757d',
-                        confirmButtonText: isApprove ? 'Yes, approve!' : 'Yes, reject!'
+                        confirmButtonText: 'Yes, reject!'
                     }).then((result) => {
                         if (result.value) {
-                            // Here you can add the actual approval/rejection logic
+                            // Here you can add the actual rejection logic
                             Swal.fire({
                                 title: 'Success!',
-                                text: `Agent has been ${action}d successfully.`,
+                                text: 'Agent has been rejected successfully.',
                                 icon: 'success',
                                 timer: 2000,
                                 showConfirmButton: false
@@ -560,12 +535,16 @@
             });
         });
 
-        // Approval Handler
-        document.querySelectorAll('.approveCustomer').forEach(button => {
-            button.addEventListener('click', function(e) {
+        // Approval Handler - Using event delegation to handle dynamically shown elements
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.approveCustomer')) {
                 e.preventDefault();
-                const message = this.getAttribute('data-message');
-                const url = this.getAttribute('href');
+                e.stopPropagation();
+                
+                const button = e.target.closest('.approveCustomer');
+                const message = button.getAttribute('data-message');
+                const url = button.getAttribute('href');
+                const agentId = url.split('/').pop(); // Extract agent ID from URL
 
                 Swal.fire({
                     title: 'Are you sure?',
@@ -577,10 +556,84 @@
                     confirmButtonText: 'Yes, approve!'
                 }).then((result) => {
                     if (result.value) {
-                        window.location.href = url;
+                        // Show loading state
+                        Swal.fire({
+                            title: 'Processing...',
+                            text: 'Please wait while we approve the agent.',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Make AJAX request to approve the agent
+                        fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Hide the loading state
+                                Swal.close();
+                                
+                                // Show success message
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Agent has been approved successfully.',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+
+                                // Update the UI - hide approve buttons and update status
+                                const approveButtons = document.querySelectorAll(`[href*="${agentId}"]`);
+                                approveButtons.forEach(btn => {
+                                    if (btn.classList.contains('approveCustomer')) {
+                                        btn.style.display = 'none';
+                                    }
+                                });
+
+                                // Update the toggle status to active if it exists
+                                const toggleSwitch = document.querySelector(`input[data-id="${agentId}"]`);
+                                if (toggleSwitch) {
+                                    toggleSwitch.checked = true;
+                                    toggleSwitch.closest('.toggle').classList.remove('off');
+                                    toggleSwitch.closest('.toggle').classList.add('on');
+                                }
+
+                                // Update any status indicators
+                                const statusCells = document.querySelectorAll(`tr[data-parent="${agentId}"] .status-indicator`);
+                                statusCells.forEach(cell => {
+                                    cell.textContent = 'Approved';
+                                    cell.className = 'status-indicator approved';
+                                });
+
+                            } else {
+                                // Show error message
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: data.message || 'Failed to approve agent. Please try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred while approving the agent. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        });
                     }
                 });
-            });
+            }
         });
 
         // Download Document Function

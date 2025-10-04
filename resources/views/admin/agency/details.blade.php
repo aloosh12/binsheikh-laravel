@@ -627,7 +627,72 @@
     
     /* Reservations Tab Styles */
     .reservations-header {
+        margin-bottom: 30px;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .reservations-header .filters-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
         margin-bottom: 20px;
+    }
+    
+    .reservations-header .date-filters {
+        display: flex;
+        gap: 20px;
+        align-items: end;
+    }
+    
+    .reservations-header .date-input {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 150px;
+    }
+    
+    .reservations-header .date-input label {
+        font-size: 13px;
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+    
+    .reservations-header .date-input input {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 10px 12px;
+        font-size: 14px;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    .reservations-header .date-input input:focus {
+        border-color: #007bff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .reservations-header .selection-info {
+        font-size: 14px;
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .reservations-header .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .reservations-header .action-buttons .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+        border-radius: 6px;
+        font-weight: 500;
     }
     
     .reservations-title-bar {
@@ -658,6 +723,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+        margin-top: 10px;
     }
     
     .reservation-card {
@@ -1235,6 +1301,25 @@
         }
         
         .action-buttons {
+            justify-content: center;
+        }
+        
+        .reservations-header .filters-section {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+        
+        .reservations-header .date-filters {
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .reservations-header .date-input {
+            min-width: 120px;
+        }
+        
+        .reservations-header .action-buttons {
             justify-content: center;
         }
     }

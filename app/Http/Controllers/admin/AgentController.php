@@ -336,12 +336,21 @@ class AgentController extends Controller
             $mailbody = view('front_end.approve_mail')->render();
             if(send_email($customer->email, 'Account Approved - Bin Al Sheikh', $mailbody)) {
                 $status = "1";
-                $message = "Customer approved successfully";
+                $message = "Agent approved successfully";
             } else {
-                $message = "Customer approved but email sending failed";
+                $status = "1"; // Still consider it success even if email fails
+                $message = "Agent approved but email sending failed";
             }
         } else {
             $message = "Something went wrong";
+        }
+
+        // Check if it's an AJAX request
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => $status == "1",
+                'message' => $message
+            ]);
         }
 
         return redirect()->back()->with('success', $message);

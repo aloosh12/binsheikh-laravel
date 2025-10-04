@@ -1,6 +1,7 @@
 @extends('admin.template.layout')
 
 @section('header')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .agency-name {
         cursor: pointer;
@@ -269,9 +270,15 @@
                                                     <div class="agency-info-header">
                                                         <h5>AGENCY INFO</h5>
                                                         <div class="header-actions">
-                                                            <button class="btn-action btn-success" title="Approve">
+                                                            @if(!$cust->verified)
+                                                            <a href="{{ url('admin/customer/approve/' . $cust->id) }}"
+                                                                class="btn-action btn-success approveCustomer" 
+                                                                title="Approve Agency"
+                                                                data-message="Do you want to approve this agency?"
+                                                                aria-hidden="true">
                                                                 <i class="fas fa-check"></i>
-                                                            </button>
+                                                            </a>
+                                                            @endif
                                                             <button class="btn-action btn-danger" title="Reject">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
@@ -279,85 +286,93 @@
                                                     </div>
                                                     
                                                     <div class="agency-info-grid">
-                                                        <!-- Left Column -->
-                                                        <div class="info-column">
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-user"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Agency Name</label>
-                                                                    <span>{{ $cust->name ?? 'N/A' }}</span>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-envelope"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Agency Email Address</label>
-                                                                    <span>{{ $cust->email ?? 'N/A' }}</span>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-file-alt"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>CR</label>
-                                                                    <span>{{ $cust->CR ?? 'N/A' }}</span>
-                                                                </div>
-                                                                <button class="view-btn">View</button>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-file-signature"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Authorized signatory</label>
-                                                                    <span>{{ $cust->authorized_signatory ?? 'N/A' }}</span>
-                                                                </div>
-                                                                <button class="view-btn">View</button>
-                                                            </div>
-                                                        </div>
-                                                        
-                                                        <!-- Right Column -->
-                                                        <div class="info-column">
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-phone"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Agency Phone Number</label>
-                                                                    <span>{{ $cust->phone ?? 'N/A' }}</span>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-certificate"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Trade License</label>
-                                                                    <span>{{ $cust->commission_number ?? 'N/A' }}</span>
-                                                                </div>
-                                                                <button class="view-btn">View</button>
-                                                            </div>
-                                                            
-                                                            <div class="info-card">
-                                                                <div class="info-icon">
-                                                                    <i class="fas fa-id-card"></i>
-                                                                </div>
-                                                                <div class="info-content">
-                                                                    <label>Professional License</label>
-                                                                    <span>{{ $cust->discount_number ?? 'N/A' }}</span>
-                                                                </div>
-                                                                <button class="view-btn">View</button>
-                                                            </div>
-                                                        </div>
+                                                      <!-- Left Column -->
+                        <div class="info-column">
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="info-content">
+                                    <label>Agency Name</label>
+                                    <span>{{ $cust->name ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="info-content">
+                                    <label>Agency Email Address</label>
+                                    <span>{{ $cust->email ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="info-content">
+                                    <label>CR</label>
+                                    @if(!$cust->cr)
+                                      <span>N/A</span>
+                                    @endif
+                                </div>
+                                <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->cr) }}', '_blank')">View</button>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-file-signature"></i>
+                                </div>
+                                <div class="info-content">
+                                    <label>Authorized signatory</label>
+                                    @if(!$cust->authorized_signatory)
+                                      <span>N/A</span>
+                                    @endif
+                                </div>
+                                <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->authorized_signatory) }}', '_blank')">View</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column -->
+                        <div class="info-column">
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="info-content">
+                                    <label>Agency Phone Number</label>
+                                    <span>{{ $cust->phone ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-certificate"></i>
+                                </div>
+                                <div class="info-content">
+                                    <label>Trade License</label>
+                                    @if(!$cust->license)
+                                      <span>N/A</span>
+                                    @endif
+                                </div>
+                                <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->license) }}', '_blank')">View</button>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                                <div class="info-content">
+                                    <label>Professional License</label>
+                                    @if(!$cust->professional_practice_certificate)
+                                      <span>N/A</span>
+                                    @endif
+                                </div>
+                                <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->professional_practice_certificate) }}', '_blank')">View</button>
+                            </div>
+                        </div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -457,30 +472,25 @@
                 });
             });
 
-            // Header action buttons
-            document.querySelectorAll('.btn-action').forEach(btn => {
+            // Reject button handler (Approve is handled by the approveCustomer class below)
+            document.querySelectorAll('.btn-action.btn-danger').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    const isApprove = this.classList.contains('btn-success');
-                    const action = isApprove ? 'approve' : 'reject';
-                    const icon = isApprove ? 'success' : 'error';
-                    const title = isApprove ? 'Approve Agency' : 'Reject Agency';
-                    const text = isApprove ? 'Are you sure you want to approve this agency?' : 'Are you sure you want to reject this agency?';
                     
                     Swal.fire({
-                        title: title,
-                        text: text,
-                        icon: icon,
+                        title: 'Reject Agency',
+                        text: 'Are you sure you want to reject this agency?',
+                        icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: isApprove ? '#28a745' : '#dc3545',
+                        confirmButtonColor: '#dc3545',
                         cancelButtonColor: '#6c757d',
-                        confirmButtonText: isApprove ? 'Yes, approve!' : 'Yes, reject!'
+                        confirmButtonText: 'Yes, reject!'
                     }).then((result) => {
                         if (result.value) {
-                            // Here you can add the actual approval/rejection logic
+                            // Here you can add the actual rejection logic
                             Swal.fire({
                                 title: 'Success!',
-                                text: `Agency has been ${action}d successfully.`,
+                                text: 'Agency has been rejected successfully.',
                                 icon: 'success',
                                 timer: 2000,
                                 showConfirmButton: false
@@ -546,12 +556,16 @@
             });
         });
 
-        // Approval Handler
-        document.querySelectorAll('.approveCustomer').forEach(button => {
-            button.addEventListener('click', function(e) {
+        // Approval Handler - Using event delegation to handle dynamically shown elements
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.approveCustomer')) {
                 e.preventDefault();
-                const message = this.getAttribute('data-message');
-                const url = this.getAttribute('href');
+                e.stopPropagation();
+                
+                const button = e.target.closest('.approveCustomer');
+                const message = button.getAttribute('data-message');
+                const url = button.getAttribute('href');
+                const agencyId = url.split('/').pop(); // Extract agency ID from URL
 
                 Swal.fire({
                     title: 'Are you sure?',
@@ -563,10 +577,84 @@
                     confirmButtonText: 'Yes, approve!'
                 }).then((result) => {
                     if (result.value) {
-                        window.location.href = url;
+                        // Show loading state
+                        Swal.fire({
+                            title: 'Processing...',
+                            text: 'Please wait while we approve the agency.',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Make AJAX request to approve the agency
+                        fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Hide the loading state
+                                Swal.close();
+                                
+                                // Show success message
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Agency has been approved successfully.',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+
+                                // Update the UI - hide approve buttons and update status
+                                const approveButtons = document.querySelectorAll(`[href*="${agencyId}"]`);
+                                approveButtons.forEach(btn => {
+                                    if (btn.classList.contains('approveCustomer')) {
+                                        btn.style.display = 'none';
+                                    }
+                                });
+
+                                // Update the toggle status to active if it exists
+                                const toggleSwitch = document.querySelector(`input[data-id="${agencyId}"]`);
+                                if (toggleSwitch) {
+                                    toggleSwitch.checked = true;
+                                    toggleSwitch.closest('.toggle').classList.remove('off');
+                                    toggleSwitch.closest('.toggle').classList.add('on');
+                                }
+
+                                // Update any status indicators
+                                const statusCells = document.querySelectorAll(`tr[data-parent="${agencyId}"] .status-indicator`);
+                                statusCells.forEach(cell => {
+                                    cell.textContent = 'Approved';
+                                    cell.className = 'status-indicator approved';
+                                });
+
+                            } else {
+                                // Show error message
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: data.message || 'Failed to approve agency. Please try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred while approving the agency. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        });
                     }
                 });
-            });
+            }
         });
     </script>
 @stop
