@@ -45,9 +45,40 @@
             border-color: #007bff;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 576px) {
-            .mobile-tab-btn {
+        /* Gallery item corner fix */
+        .gallery-item .grid-item-holder {
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+        
+        .gallery-item .grid-item-holder a {
+            display: block;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+        
+        .gallery-item .grid-item-holder img {
+            display: block !important;
+            border-radius: 0 !important;
+        }
+        
+        .gallery-item .folder-title {
+            border-radius: 0 0 8px 8px !important;
+        }
+        
+        /* Additional fix for hover effects */
+        .gallery-item .grid-item-holder.hovzoom {
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+        
+        .gallery-item .grid-item-holder.hovzoom a {
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+        
+        /* Gallery item corner fix */
+        .      .mobile-tab-btn {
                 padding: 10px 6px;
                 font-size: 13px;
             }
