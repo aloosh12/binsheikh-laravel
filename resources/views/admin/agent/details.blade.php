@@ -1645,7 +1645,7 @@
                                         <input type="checkbox" id="selectAllVisitSchedules" onclick="toggleAllVisitSchedules(this)">
                                     </th>
                                     <th>Client Name</th>
-                                    <th>Unit Type</th>
+                                    <th>Unit Number</th>
                                     <th>Phone Number</th>
                                     <th>Date Of Visit</th>
                                 </tr>
@@ -1666,7 +1666,7 @@
                                             <span class="client-name">{{ $schedule->client_name }}</span>
                                         </div>
                                     </td>
-                                    <td>{{ $schedule->property->property_type->name ?? 'N/A' }}</td>
+                                    <td>{{ $schedule->property->apartment_no ?? 'N/A' }}</td>
                                     <td>{{ $schedule->client_phone_number }}</td>
                                     <td>
                                         <div class="visit-section">
