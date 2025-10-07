@@ -1277,23 +1277,29 @@ class HomeController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
+        // Get all active projects for the dropdown
+        $projects = \App\Models\Projects::where('active', 1)
+            ->where('deleted', 0)
+            ->orderBy('name', 'asc')
+            ->get();
+
         if($customer ->role == 4)
         {
             $agentIds = $customer->agencyUsers->pluck('id')->toArray();
 
-            $visits = \App\Models\VisiteSchedule::with(['agent', 'property'])
+            $visits = \App\Models\VisiteSchedule::with(['agent', 'project'])
             ->whereIn('agent_id', $agentIds)
             ->orderBy('created_at', 'desc')
             ->get();
-            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties'));
+            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties', 'projects'));
         }
         else
         {
-            $visits = \App\Models\VisiteSchedule::with(['agent', 'property'])
+            $visits = \App\Models\VisiteSchedule::with(['agent', 'project'])
             ->where('agent_id', $id)
             ->orderBy('created_at', 'desc')
             ->get();
-            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties'));
+            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties', 'projects'));
 
         }
 
@@ -2819,11 +2825,13 @@ class HomeController extends Controller
                 'client_phone_number' => 'required|string|max:20',
                 'client_email_address' => 'nullable|email|max:255',
                 'client_id' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-                'property_id' => 'required|integer|exists:properties,id',
+                'project_id' => 'required|integer|exists:projects,id',
+                'unit_type' => 'nullable|string|max:255',
                 'visit_date' => 'required|date|after_or_equal:today',
                 'visit_time' => 'required|date_format:H:i',
                 'notes' => 'nullable|string|max:1000',
-                'visit_purpose' => 'required|in:buy,rent',
+                'visit_purpose' => 'required|array|min:1',
+                'visit_purpose.*' => 'in:buy,rent',
             ], [
                 'client_name.required' => 'Client name is required',
                 'client_phone_number.required' => 'Client phone number is required',
@@ -2831,14 +2839,16 @@ class HomeController extends Controller
                 'client_id.file' => 'Client ID must be a file',
                 'client_id.mimes' => 'Client ID file must be jpg, jpeg, png, or pdf',
                 'client_id.max' => 'Client ID file size must not exceed 5MB',
-                'property_id.required' => 'Property selection is required',
-                'property_id.exists' => 'Selected property does not exist',
+                'project_id.required' => 'Project selection is required',
+                'project_id.exists' => 'Selected project does not exist',
                 'visit_date.required' => 'Visit date is required',
                 'visit_date.after_or_equal' => 'Visit date cannot be in the past',
                 'visit_time.required' => 'Visit time is required',
                 'visit_time.date_format' => 'Please provide a valid time format (HH:MM)',
                 'visit_purpose.required' => 'Visit purpose is required',
-                'visit_purpose.in' => 'Visit purpose must be either buy or rent',
+                'visit_purpose.array' => 'Visit purpose must be an array',
+                'visit_purpose.min' => 'At least one visit purpose must be selected',
+                'visit_purpose.*.in' => 'Visit purpose must be either buy or rent',
             ]);
 
             if ($validator->fails()) {
@@ -2849,16 +2859,16 @@ class HomeController extends Controller
                 ], 422);
             }
 
-            // Check if property exists and is active
-            $property = \App\Models\Properties::where('id', $request->property_id)
+            // Check if project exists and is active
+            $project = \App\Models\Projects::where('id', $request->project_id)
                 ->where('active', 1)
                 ->where('deleted', 0)
                 ->first();
 
-            if (!$property) {
+            if (!$project) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Selected property is not available',
+                    'message' => 'Selected project is not available',
                 ], 404);
             }
 
@@ -2893,10 +2903,11 @@ class HomeController extends Controller
                 'client_phone_number' => $request->client_phone_number,
                 'client_email_address' => $request->client_email_address,
                 'client_id' => $clientIdFileName,
-                'property_id' => $request->property_id,
+                'project_id' => $request->project_id,
+                'unit_type' => $request->unit_type,
                 'visit_time' => $visitDateTime,
                 'notes' => $request->notes,
-                'visit_purpose' => $request->visit_purpose,
+                'visit_purpose' => is_array($request->visit_purpose) ? implode(',', $request->visit_purpose) : $request->visit_purpose,
                 'status' => 'scheduled', // Default status
             ]);
 
