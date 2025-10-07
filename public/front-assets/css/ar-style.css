@@ -1564,6 +1564,29 @@ nav li ul a:before , nav li ul a:after {
     font-weight: 900;
     color: var(--main-color);
 }
+
+.view-view-button-verify-phone {
+	position: absolute;
+	left: 20px;
+	cursor: pointer;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	z-index: 5;
+}
+.view-button-verify-phone:before {
+    font-family: "Font Awesome 6 Pro";
+ 
+    position: absolute;
+    left: 0;
+    top: 50%;
+	transform: translateY(-50%);
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--main-color);
+}
 .daterangepicker  {
 	border-radius: 20px;
 	box-shadow: 0 9px 36px rgba(58, 87, 135, 0.15) !important;

@@ -568,8 +568,10 @@
                                                         <div class="cs-intputwrap">
                                                             <i class="fa-light fa-mobile"></i>
                                                             <input type="text" placeholder="{{ __('messages.phone_number') }}" name="phone" required
-                                                                data-parsley-required-message="{{ __('messages.enter_your_phone') }}"> <!-- Translated Phone Number -->
-                                                            <button type="button" class="verify-phone-btn">{{ __('messages.verify') }}</button>
+                                                                data-parsley-required-message="{{ __('messages.enter_your_phone') }}">
+                                                                <div class="view-view-button-verify-phone"> <!-- Translated Phone Number -->
+                                                                        <button type="button" class="verify-phone-btn">{{ __('messages.verify') }}</button>
+                                                                </div>
                                                         </div>
 
                                                         <!-- Email Address -->
@@ -618,7 +620,7 @@
                                                         </div>
                                                         <!-- Agency Selection for Agents -->
                                                         <div class="cs-intputwrap agent_agency_select_div d-none">
-                                                            <i class="fa-light fa-building"></i>
+                                                        <label for="d" style="float:left">{{ __('messages.select_agency') }}</label> 
                                                             <select name="agency_id" id="agency_id" class="agent_agency_select_inp">
                                                                 <option value="">{{ __('messages.select_agency') }}</option>
                                                                 @php
