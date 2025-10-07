@@ -18,7 +18,8 @@ class VisiteSchedule extends Model
         'client_email_address',
         'visit_time',
         'client_id',
-        'property_id',
+        'project_id',
+        'unit_type',
         'notes',
         'visit_purpose',
     ];
@@ -36,10 +37,10 @@ class VisiteSchedule extends Model
     }
 
     /**
-     * Get the property that the visit is scheduled for.
+     * Get the project that the visit is scheduled for.
      */
-    public function property()
+    public function project()
     {
-        return $this->belongsTo(Properties::class, 'property_id');
+        return $this->belongsTo(Projects::class, 'project_id');
     }
 }

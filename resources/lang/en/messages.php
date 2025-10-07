@@ -495,4 +495,17 @@ return [
     'error_occurred' => 'An error occurred',
     'something_went_wrong' => 'Something went wrong',
     'not_available' => 'N/A',
+    
+    // Missing visit schedule translations
+    'agent_contact_info' => 'Agent Contact Info',
+    'client_contact_info' => 'Client Contact Info',
+    'enter_client_full_name' => 'Enter Client Full Name...',
+    'enter_client_phone_number' => 'Enter Client Phone Number...',
+    'enter_your_email_address' => 'Enter Your Email Address...',
+    'choose_file' => 'Choose File',
+    'select_project' => 'Select Project',
+    'enter_unit_type' => 'Enter Unit Type...',
+    'preferred_date_time' => 'Preferred Date & Time',
+    'time' => 'Time',
+    'enter_your_main_message_here' => 'Enter Your Main Message Here...',
 ];

@@ -111,7 +111,7 @@
                                                             <input type="checkbox" id="selectAllVisits">
                                                         </th>
                                                         <th>{{ __('messages.agent_name') }}</th>
-                                                        <th>{{ __('messages.unit_number') }}</th>
+                                                        <th>{{ __('messages.unit_type') }}</th>
                                                         <th>{{ __('messages.phone_number') }}</th>
                                                         <th>{{ __('messages.date_of_visit') }}</th>
                                                     </tr>
@@ -132,7 +132,7 @@
                                                                 <span class="client-name">{{ $visit->agent->name ?? 'N/A' }}</span>
                                                             </div>
                                                         </td>
-                                                        <td>{{ $visit->property->apartment_no ?? 'N/A' }}</td>
+                                                        <td>{{ $visit->unit_type ?? 'N/A' }}</td>
                                                         <td>{{ $visit->client_phone_number ?? 'N/A' }}</td>
                                                         <td>
                                                             <div class="visit-section">
@@ -185,7 +185,7 @@
                                                                             </div>
                                                                             <div class="info-content">
                                                                                 <label>{{ __('messages.project') }}</label>
-                                                                                <span>{{ $visit->property->project->name ?? 'N/A' }}</span>
+                                                                                <span>{{ $visit->project->name ?? 'N/A' }}</span>
                                                                             </div>
                                                                         </div>
                                                                         
@@ -233,8 +233,8 @@
                                                                                 <i class="fas fa-home"></i>
                                                                             </div>
                                                                             <div class="info-content">
-                                                                                <label>{{ __('messages.apartment_info') }}</label>
-                                                                                <span>{{ $visit->property->name ?? 'N/A' }}</span>
+                                                                                <label>{{ __('messages.unit_type') }}</label>
+                                                                                <span>{{ $visit->unit_type ?? 'N/A' }}</span>
                                                                             </div>
                                                                         </div>
                                                                         
@@ -423,89 +423,206 @@
                                                     <form id="addVisitScheduleForm" action="{{ url('visit-schedule/store') }}" method="POST" enctype="multipart/form-data">
                                                         @csrf
                                                         <div class="modal-body">
-                                                            <div class="row">
-                                                                <!-- Client Information -->
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="client_name" class="form-label">{{ __('messages.client_name') }} <span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control" id="client_name" name="client_name" required>
+                                                            <div class="visit-schedule-form">
+                                                                <!-- AGENT CONTACT INFO Section -->
+                                                                <div class="form-section">
+                                                                    <div class="section-header">
+                                                                        <h6>{{ __('messages.agent_contact_info') }}</h6>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="agent_name" class="form-label">{{ __('messages.name') }}</label>
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                                                    <input type="text" class="form-control" id="agent_name" name="agent_name" value="{{ \Auth::user()->name }}" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="agent_phone" class="form-label">{{ __('messages.phone_number') }}</label>
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                                                                    <input type="tel" class="form-control" id="agent_phone" name="agent_phone" value="{{ \Auth::user()->phone ?? '' }}" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="client_email" class="form-label">{{ __('messages.client_email_address') }}</label>
-                                                                        <input type="email" class="form-control" id="client_email_address" name="client_email_address">
+
+                                                                <!-- CLIENT CONTACT INFO Section -->
+                                                                <div class="form-section">
+                                                                    <div class="section-header">
+                                                                        <h6>{{ __('messages.client_contact_info') }}</h6>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="client_name" class="form-label">{{ __('messages.name') }}</label>
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                                                    <input type="text" class="form-control" id="client_name" name="client_name" placeholder="{{ __('messages.enter_client_full_name') }}" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="client_phone" class="form-label">{{ __('messages.phone_number') }}</label>
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                                                                    <input type="tel" class="form-control" id="client_phone_number" name="client_phone_number" placeholder="{{ __('messages.enter_client_phone_number') }}" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="client_email" class="form-label">{{ __('messages.email') }}</label>
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                                                                    <input type="email" class="form-control" id="client_email_address" name="client_email_address" placeholder="{{ __('messages.enter_your_email_address') }}">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="client_id" class="form-label">{{ __('messages.client_id') }}</label>
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                                                                    <input type="file" class="form-control" id="client_id" name="client_id" accept=".jpg,.jpeg,.png,.pdf">
+                                                                                    <button type="button" class="btn btn-outline-secondary">{{ __('messages.choose_file') }}</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="client_phone" class="form-label">{{ __('messages.phone_number') }} <span class="text-danger">*</span></label>
-                                                                        <input type="tel" class="form-control" id="client_phone_number" name="client_phone_number" required>
+
+                                                                <!-- VISIT PURPOSE & PROJECT Section -->
+                                                                <div class="form-section">
+                                                                    <div class="row">
+                                                                        <!-- VISIT PURPOSE Column -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="section-header">
+                                                                                <h6>{{ __('messages.visit_purpose') }}</h6>
+                                                                                <div class="section-header-icons">
+                                                                                    <span class="icon-circle dark-grey"></span>
+                                                                                    <span class="icon-circle gold"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <div class="purpose-options">
+                                                                                    <div class="form-check">
+                                                                                        <input class="form-check-input" type="checkbox" name="visit_purpose[]" id="visit_purpose_buy" value="buy">
+                                                                                        <label class="form-check-label" for="visit_purpose_buy">
+                                                                                            {{ __('messages.buy') }}
+                                                                                        </label>
+                                                                                    </div>
+                                                                                    <div class="form-check">
+                                                                                        <input class="form-check-input" type="checkbox" name="visit_purpose[]" id="visit_purpose_rent" value="rent">
+                                                                                        <label class="form-check-label" for="visit_purpose_rent">
+                                                                                            {{ __('messages.rent') }}
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                        <!-- PROJECT Column -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="section-header">
+                                                                                <h6>{{ __('messages.project') }}</h6>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-chevron-down"></i></span>
+                                                                                    <select class="form-control" id="project_id" name="project_id" required>
+                                                                                        <option value="">{{ __('messages.select_project') }}</option>
+                                                                                        @if(isset($projects))
+                                                                                            @foreach($projects as $project)
+                                                                                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                                                                            @endforeach
+                                                                                        @endif
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="client_id" class="form-label">{{ __('messages.client_id') }}</label>
-                                                                        <input type="file" class="form-control" id="client_id" name="client_id" accept=".jpg,.jpeg,.png,.pdf">
-                                                                        <small class="form-text text-muted">{{ __('messages.client_id_file_help') }}</small>
+
+                                                                <!-- APARTMENT INFO & PREFERRED DATE & TIME Section -->
+                                                                <div class="form-section">
+                                                                    <div class="row">
+                                                                        <!-- VISIT PURPOSE Column -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="section-header">
+                                                                                <h6>{{ __('messages.apartment_info') }}</h6>
+                                                                                <div class="section-header-icons">
+                                                                                    <span class="icon-circle dark-grey"></span>
+                                                                                    <span class="icon-circle gold"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label for="unit_type" class="form-label">{{ __('messages.unit_type') }}</label>
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                                                                    <input type="text" class="form-control" id="unit_type" name="unit_type" placeholder="{{ __('messages.enter_unit_type') }}">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                        <!-- PROJECT Column -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="section-header">
+                                                                                <h6>{{ __('messages.preferred_date_time') }}</h6>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="form-group">
+                                                                                            <label for="visit_date" class="form-label">{{ __('messages.date') }}</label>
+                                                                                            <div class="input-group">
+                                                                                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                                                                                <input type="date" class="form-control" id="visit_date" name="visit_date" required>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="form-group">
+                                                                                            <label for="visit_time" class="form-label">{{ __('messages.time') }}</label>
+                                                                                            <div class="input-group">
+                                                                                                <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                                                                                                <input type="time" class="form-control" id="visit_time" name="visit_time" required>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                     </div>
+                                                                 </div>
+
+                                                                <!-- NOTES Section -->
+                                                                <div class="form-section">
+                                                                    <div class="section-header">
+                                                                        <h6>{{ __('messages.notes') }}</h6>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-12">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-comment"></i></span>
+                                                                                    <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="{{ __('messages.enter_your_main_message_here') }}"></textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                
-                                                                <!-- Property Information -->
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="property_id" class="form-label">{{ __('messages.property') }} <span class="text-danger">*</span></label>
-                                                                        <select class="form-control" id="property_id" name="property_id" required>
-                                                                            <option value="">{{ __('messages.select_property') }}</option>
-                                                                            @if(isset($properties))
-                                                                                @foreach($properties as $property)
-                                                                                    <option value="{{ $property->id }}">{{ $property->name }} - {{ $property->project->name ?? 'N/A' }}</option>
-                                                                                @endforeach
-                                                                            @endif
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                
-                                                                <!-- Visit Schedule -->
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="visit_date" class="form-label">{{ __('messages.visit_date') }} <span class="text-danger">*</span></label>
-                                                                        <input type="date" class="form-control" id="visit_date" name="visit_date" required>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="visit_time" class="form-label">{{ __('messages.visit_time') }} <span class="text-danger">*</span></label>
-                                                                        <input type="time" class="form-control" id="visit_time" name="visit_time" required>
-                                                                    </div>
-                                                                </div>
-                                                                
-                                                                                                                                <!-- Visit Purpose -->
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="visit_purpose" class="form-label">{{ __('messages.visit_purpose') }} <span class="text-danger">*</span></label>
-                                                                        <select class="form-control" id="visit_purpose" name="visit_purpose" required>
-                                                                            <option value="">{{ __('messages.select_visit_purpose') }}</option>
-                                                                            <option value="buy">{{ __('messages.buy') }}</option>
-                                                                            <option value="rent">{{ __('messages.rent') }}</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <!-- Notes -->
-                                                                <div class="col-12">
-                                                                    <div class="form-group mb-3">
-                                                                        <label for="notes" class="form-label">{{ __('messages.notes') }}</label>
-                                                                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="{{ __('messages.additional_notes') }}"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                
 
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
-                                                            <button type="submit" class="btn btn-primary">
-                                                                <i class="fas fa-save"></i> {{ __('messages.save_visit_schedule') }}
+                                                            <button type="submit" class="btn btn-submit">
+                                                                {{ __('messages.submit') }}
                                                             </button>
                                                         </div>
                                                     </form>
@@ -560,14 +677,15 @@
         border-radius: 12px;
         border: none;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        background: #f9f9f9;
     }
     
     .modal-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: #f9f9f9;
+        color: #333;
         border-radius: 12px 12px 0 0;
         padding: 20px;
-        border-bottom: none;
+        border-bottom: 1px solid #e0e0e0;
     }
     
     .modal-title {
@@ -575,10 +693,10 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        color: #333;
     }
     
     .btn-close {
-        filter: invert(1);
         opacity: 0.8;
     }
     
@@ -588,40 +706,208 @@
     
     .modal-body {
         padding: 30px;
+        background: #f9f9f9;
+    }
+    
+    /* Visit Schedule Form Styles */
+    .visit-schedule-form {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+    }
+    
+    .form-section {
+        margin-bottom: 25px;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 20px;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .section-header {
+        margin-bottom: 15px;
+        position: relative;
+    }
+    
+    .section-header h6 {
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .section-header {
+        position: relative;
+        margin-bottom: 15px;
+    }
+    
+    .section-header-icons {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+    
+    .icon-circle {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    
+    .icon-circle.dark-grey {
+        background-color: #343a40;
+    }
+    
+    .icon-circle.gold {
+        background-color: #d4af37;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
     }
     
     .form-label {
-        font-weight: 600;
+        font-weight: 500;
         color: #333;
-        margin-bottom: 8px;
+        margin-bottom: 5px;
+        font-size: 13px;
+    }
+    
+    .input-group {
+        position: relative;
+    }
+    
+    .input-group-text {
+        background: #ffd700;
+        border: 1px solid #e0e0e0;
+        border-right: none;
+        color: #333;
+        font-size: 14px;
+        padding: 10px 12px;
     }
     
     .form-control {
-        border: 2px solid #e9ecef;
-        border-radius: 8px;
-        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 0 6px 6px 0;
+        padding: 10px 15px;
         transition: all 0.3s ease;
+        background: #f9f9f9;
+        font-size: 14px;
     }
     
     .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        border-color: #ffd700;
+        box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+        background: white;
     }
     
-    .modal-footer {
-        padding: 20px 30px;
-        border-top: 1px solid #e9ecef;
-        background-color: #f8f9fa;
-        border-radius: 0 0 12px 12px;
+    .form-control[readonly] {
+        background: #f0f0f0;
+        color: #666;
     }
     
-    .modal-footer .btn {
-        padding: 10px 25px;
-        border-radius: 6px;
-        font-weight: 500;
+    /* Purpose Options */
+    .purpose-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .form-check {
         display: flex;
         align-items: center;
         gap: 8px;
+    }
+    
+    .form-check-input {
+        width: 16px;
+        height: 16px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        background-color: #f5f5f5;
+        margin-top: 0;
+    }
+    
+    .form-check-input:checked {
+        background-color: #ffd700;
+        border-color: #ffd700;
+    }
+    
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+    }
+    
+    .form-check-label {
+        font-weight: 500;
+        color: #333;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* File Input Styling */
+    .input-group .btn-outline-secondary {
+        border: 1px solid #e0e0e0;
+        border-left: none;
+        background: #f9f9f9;
+        color: #333;
+        font-size: 12px;
+        padding: 10px 15px;
+    }
+    
+    .input-group .btn-outline-secondary:hover {
+        background: #e9e9e9;
+        border-color: #e0e0e0;
+    }
+    
+    /* Textarea Styling */
+    .input-group textarea.form-control {
+        border-radius: 6px;
+        border: 1px solid #e0e0e0;
+        resize: vertical;
+        min-height: 80px;
+    }
+    
+    .input-group textarea.form-control:focus {
+        border-color: #ffd700;
+        box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+    }
+    
+    /* Modal Footer */
+    .modal-footer {
+        padding: 20px 30px;
+        border-top: 1px solid #e0e0e0;
+        background-color: #f9f9f9;
+        border-radius: 0 0 12px 12px;
+        text-align: center;
+    }
+    
+    .btn-submit {
+        background: #ffd700;
+        border: none;
+        color: #333;
+        padding: 12px 40px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .btn-submit:hover {
+        background: #ffed4e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
     
     /* Table Container Styles */
@@ -878,6 +1164,38 @@
         .action-buttons {
             justify-content: center;
         }
+        
+        /* Form responsive styles */
+        .visit-schedule-form {
+            padding: 15px;
+        }
+        
+        .form-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+        }
+        
+        .purpose-options {
+            gap: 8px;
+        }
+        
+        /* Stack columns on mobile */
+        .form-section .row .col-md-6 {
+            margin-bottom: 20px;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+        }
     }
 </style>
 
@@ -1060,7 +1378,7 @@
             rows.each(function() {
                 const row = $(this);
                 const agentName = row.find('.client-name').text().toLowerCase();
-                const unitNumber = row.find('td:eq(2)').text().toLowerCase();
+                const unitType = row.find('td:eq(2)').text().toLowerCase();
                 const phoneNumber = row.find('td:eq(3)').text().toLowerCase();
                 const visitDateText = row.find('td:eq(4)').text().toLowerCase();
                 
@@ -1071,7 +1389,7 @@
                 let showRow = true;
                 
                 // Apply search filter
-                if (searchTerm && !agentName.includes(searchTerm) && !unitNumber.includes(searchTerm) && !phoneNumber.includes(searchTerm) && !visitDateText.includes(searchTerm)) {
+                if (searchTerm && !agentName.includes(searchTerm) && !unitType.includes(searchTerm) && !phoneNumber.includes(searchTerm) && !visitDateText.includes(searchTerm)) {
                     showRow = false;
                 }
                 
@@ -1143,7 +1461,7 @@
         // CSV export function
         function exportVisitSchedulesToCSV(visitIds) {
             const rows = [];
-            const headers = ['Agent Name', 'Unit Number', 'Phone Number', 'Visit Date', 'Client Email', 'Property Name', 'Project Name'];
+            const headers = ['Agent Name', 'Unit Type', 'Phone Number', 'Visit Date', 'Client Email', 'Unit Type', 'Project Name'];
             rows.push(headers.join(','));
             
             // Get selected visit schedule data
@@ -1152,23 +1470,23 @@
                 
                 if (row.length) {
                     const agentName = row.find('.client-name').text().trim();
-                    const unitNumber = row.find('td:eq(2)').text().trim();
+                    const unitType = row.find('td:eq(2)').text().trim();
                     const phoneNumber = row.find('td:eq(3)').text().trim();
                     const visitDate = row.find('.visit-date').text().trim();
                     
                     // Get additional data from detail row
                     const detailRow = $(`.detail-row[data-parent="${id}"]`);
                     const clientEmail = detailRow.find('.info-content span').eq(1).text().trim() || 'N/A';
-                    const propertyName = detailRow.find('.info-content span').eq(5).text().trim() || 'N/A';
+                    const unitTypeDetail = detailRow.find('.info-content span').eq(5).text().trim() || 'N/A';
                     const projectName = detailRow.find('.info-content span').eq(2).text().trim() || 'N/A';
                     
                     const rowData = [
                         `"${agentName}"`,
-                        `"${unitNumber}"`,
+                        `"${unitType}"`,
                         `"${phoneNumber}"`,
                         `"${visitDate}"`,
                         `"${clientEmail}"`,
-                        `"${propertyName}"`,
+                        `"${unitTypeDetail}"`,
                         `"${projectName}"`
                     ];
                     rows.push(rowData.join(','));

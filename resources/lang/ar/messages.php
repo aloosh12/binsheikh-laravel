@@ -475,4 +475,17 @@ return [
     'are_you_sure_delete_visits' => 'هل أنت متأكد من أنك تريد حذف',
     'selected_visits' => 'الزيارة(ات) المختارة؟',
     'visits_deleted_successfully' => 'تم حذف الزيارات بنجاح',
+    
+    // Missing visit schedule translations
+    'agent_contact_info' => 'معلومات الاتصال بالوكيل',
+    'client_contact_info' => 'معلومات الاتصال بالعميل',
+    'enter_client_full_name' => 'أدخل الاسم الكامل للعميل...',
+    'enter_client_phone_number' => 'أدخل رقم هاتف العميل...',
+    'enter_your_email_address' => 'أدخل عنوان بريدك الإلكتروني...',
+    'choose_file' => 'اختر ملف',
+    'select_project' => 'اختر المشروع',
+    'enter_unit_type' => 'أدخل نوع الوحدة...',
+    'preferred_date_time' => 'التاريخ والوقت المفضل',
+    'time' => 'الوقت',
+    'enter_your_main_message_here' => 'أدخل رسالتك الرئيسية هنا...',
 ];
