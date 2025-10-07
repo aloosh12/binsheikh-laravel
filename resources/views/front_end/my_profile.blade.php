@@ -33,7 +33,7 @@
                                                 </div>
                                                 <div class="user-dasboard-menu faq-nav">
                                                     <ul>
-                                                        <li><a href="{{ url('my-profile') }}" class="act-scrlink">{{ __('messages.profile') }}</a></li>
+                                                        <li><a href="{{ url('my-profile') }}" style="background-color: rgb(242, 233, 224);">{{ __('messages.profile') }}</a></li>
                                                         
                                                         @if(\Auth::user()->role == 4)
                                                             <!-- Agency Role (role 4) - Show Employees -->

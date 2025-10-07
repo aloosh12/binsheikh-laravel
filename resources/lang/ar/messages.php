@@ -466,4 +466,13 @@ return [
     'view_professional_license' => 'عرض الرخصة المهنية',
     'view_authorized_signatory' => 'عرض الموقع المفوض',
     'view_trade_license' => 'عرض الرخصة التجارية',
+    
+    // Visit Schedule specific translations
+    'visits_selected' => 'زيارات مختارة',
+    'please_select_visits_to_export' => 'يرجى اختيار الزيارات للتصدير',
+    'visit_export_started' => 'بدأ تصدير الزيارات',
+    'please_select_visits_to_delete' => 'يرجى اختيار الزيارات للحذف',
+    'are_you_sure_delete_visits' => 'هل أنت متأكد من أنك تريد حذف',
+    'selected_visits' => 'الزيارة(ات) المختارة؟',
+    'visits_deleted_successfully' => 'تم حذف الزيارات بنجاح',
 ];

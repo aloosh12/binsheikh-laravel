@@ -1671,7 +1671,7 @@
                                     <td>
                                         <div class="visit-section">
                                             <span class="visit-date" data-date="{{ $schedule->visit_time }}">{{ web_date_in_timezone($schedule->visit_time, 'd-M-Y') }}</span>
-                                            <button class="btn btn-sm btn-info">View</button>
+                                            <!-- <button class="btn btn-sm btn-info">View</button> -->
                                             <i class="fas fa-chevron-down expand-icon" style="margin-left: 10px; cursor: pointer;"></i>
                                         </div>
                                     </td>
@@ -1729,9 +1729,13 @@
                                                         </div>
                                                         <div class="info-content">
                                                             <label>Client ID</label>
-                                                            <span>{{ $schedule->client_id ?? 'N/A' }}</span>
+                                                            @if(!$schedule->client_id)
+                                                                <span>N/A</span>
+                                                            @endif
                                                         </div>
-                                                        <button class="view-btn">View</button>
+                                                        @if($schedule->client_id)
+                                                            <button class="view-btn" onclick="window.open('{{ aws_asset_path($schedule->client_id) }}', '_blank')">View</button>
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 

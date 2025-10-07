@@ -1283,7 +1283,7 @@ class HomeController extends Controller
 
             $visits = \App\Models\VisiteSchedule::with(['agent', 'property'])
             ->whereIn('agent_id', $agentIds)
-            ->orderBy('visit_time', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
             return view('front_end.visit_schedule', compact('page_heading','visits', 'properties'));
         }
@@ -1291,7 +1291,7 @@ class HomeController extends Controller
         {
             $visits = \App\Models\VisiteSchedule::with(['agent', 'property'])
             ->where('agent_id', $id)
-            ->orderBy('visit_time', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
             return view('front_end.visit_schedule', compact('page_heading','visits', 'properties'));
 

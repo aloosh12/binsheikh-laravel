@@ -44,7 +44,7 @@
                                                         <li><a href="{{ url('favorite') }}">{{ __('messages.favorite') }}
                                                             <!-- <span>6</span> -->
                                                         </a></li>
-                                                        <li><a href="{{ url('visit-schedule') }}">{{ __('messages.visit_schedule') }}</a></li>
+                                                        <li><a href="{{ url('visit-schedule') }}" style="background-color: rgb(242, 233, 224);">{{ __('messages.visit_schedule') }}</a></li>
                                                     </ul>
                                                     <a href="{{ url('user/logout') }}" class="hum_log-out_btn"><i class="fa-light fa-power-off"></i> {{ __('messages.log_out') }}</a>
                                                 </div>
@@ -92,7 +92,7 @@
                                                     </div>
                                                     
                                                     <div class="selection-info">
-                                                        <span id="selectedCountVisit">0 {{ __('messages.items_selected') }}</span>
+                                                        <span id="selectedCountVisit">0 of 0 {{ __('messages.visits_selected') }}</span>
                                                     </div>
                                                     
                                                     <div class="action-buttons">
@@ -883,10 +883,14 @@
 
 <script>
     $(document).ready(function() {
+        // Initialize selected count
+        updateSelectedCountVisit();
+        
         // Toggle all visits functionality
         $('#selectAllVisits').on('change', function() {
             const isChecked = this.checked;
             $('.visit-checkbox').prop('checked', isChecked);
+            updateSelectedCountVisit();
         });
         
         // Individual checkbox change handler
@@ -900,7 +904,8 @@
         // Update selected count function
         function updateSelectedCountVisit() {
             const selected = $('.visit-checkbox:checked').length;
-            $('#selectedCountVisit').text(`${selected} {{ __('messages.items_selected') }}`);
+            const total = $('.visit-checkbox').length;
+            $('#selectedCountVisit').text(`${selected} of ${total} {{ __('messages.visits_selected') }}`);
         }
         
         // Expand/collapse functionality
@@ -1121,7 +1126,7 @@
         $('#exportVisitSchedulesBtn').on('click', function() {
             const selectedVisits = $('.visit-checkbox:checked');
             if (selectedVisits.length === 0) {
-                showNotification('{{ __("messages.please_select_employees_to_export") }}', 'warning');
+                showNotification('{{ __("messages.please_select_visits_to_export") }}', 'warning');
                 return;
             }
             
@@ -1132,7 +1137,7 @@
             // Create CSV export
             exportVisitSchedulesToCSV(visitIds);
             
-            showNotification('{{ __("messages.employee_export_started") }}', 'success');
+            showNotification('{{ __("messages.visit_export_started") }}', 'success');
         });
         
         // CSV export function
@@ -1187,11 +1192,11 @@
         $('#deleteVisitSchedulesBtn').on('click', function() {
             const selectedVisits = $('.visit-checkbox:checked');
             if (selectedVisits.length === 0) {
-                showNotification('{{ __("messages.please_select_employees_to_delete") }}', 'warning');
+                showNotification('{{ __("messages.please_select_visits_to_delete") }}', 'warning');
                 return;
             }
             
-            if (confirm(`{{ __("messages.are_you_sure_delete_employees") }} ${selectedVisits.length} {{ __("messages.selected_employees") }}?`)) {
+            if (confirm(`{{ __("messages.are_you_sure_delete_visits") }} ${selectedVisits.length} {{ __("messages.selected_visits") }}?`)) {
                 const visitIds = selectedVisits.map(function() {
                     return this.value;
                 }).get();
@@ -1226,7 +1231,7 @@
                             // Update selection count
                             updateSelectedCountVisit();
                             
-                            showNotification(response.message || '{{ __("messages.employees_deleted_successfully") }}', 'success');
+                            showNotification(response.message || '{{ __("messages.visits_deleted_successfully") }}', 'success');
                         } else {
                             showNotification(response.message || '{{ __("messages.error_occurred") }}', 'error');
                         }

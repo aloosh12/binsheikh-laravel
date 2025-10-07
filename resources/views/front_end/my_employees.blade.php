@@ -37,7 +37,7 @@
                                                         
                                                         @if(\Auth::user()->role == 4)
                                                             <!-- Agency Role (role 4) - Show Employees -->
-                                                            <li><a href="{{ url('my-employees') }}">{{ __('messages.employees') }}</a></li>
+                                                            <li><a href="{{ url('my-employees') }}" style="background-color: rgb(242, 233, 224);">{{ __('messages.employees') }}</a></li>
                                                         @endif
                                                         
                                                         <li><a href="{{ url('my-reservations') }}">{{ __('messages.my_reservations') }}</a></li>

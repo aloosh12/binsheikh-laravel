@@ -465,6 +465,7 @@ return [
     'from' => 'From',
     'to' => 'To',
     'items_selected' => 'items selected',
+    'visits_selected' => 'visits selected',
     'export' => 'Export',
     'delete' => 'Delete',
     'agent_name' => 'Agent Name',
@@ -483,6 +484,14 @@ return [
     'are_you_sure_delete_employees' => 'Are you sure you want to delete',
     'selected_employees' => 'selected employee(s)?',
     'employees_deleted_successfully' => 'Employees deleted successfully',
+    
+    // Visit Schedule specific translations
+    'please_select_visits_to_export' => 'Please select visits to export',
+    'visit_export_started' => 'Visit export started',
+    'please_select_visits_to_delete' => 'Please select visits to delete',
+    'are_you_sure_delete_visits' => 'Are you sure you want to delete',
+    'selected_visits' => 'selected visit(s)?',
+    'visits_deleted_successfully' => 'Visits deleted successfully',
     'error_occurred' => 'An error occurred',
     'something_went_wrong' => 'Something went wrong',
     'not_available' => 'N/A',

@@ -41,7 +41,7 @@
                                                         @endif
                                                         
                                                         <li><a href="{{ url('my-reservations') }}">{{ __('messages.my_reservations') }}</a></li>
-                                                        <li><a href="{{ url('favorite') }}" class="act-scrlink">{{ __('messages.favorite') }}
+                                                        <li><a href="{{ url('favorite') }}" style="background-color: rgb(242, 233, 224);">{{ __('messages.favorite') }}
                                                             <!-- <span>6</span> -->
                                                         </a></li>
                                                         <li><a href="{{ url('visit-schedule') }}">{{ __('messages.visit_schedule') }}</a></li>
