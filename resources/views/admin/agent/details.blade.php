@@ -18,6 +18,17 @@
         margin: 0;
     }
     
+    .breadcrumb-title a {
+        color: #007bff;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    
+    .breadcrumb-title a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+    
     .header-actions {
         display: flex;
         gap: 10px;
@@ -1331,7 +1342,12 @@
         <div class="fade-in">
             <!-- Header -->
             <div class="agency-details-header">
-                <h1 class="breadcrumb-title">AGENTS / {{ strtoupper($agent->name) }} / <span id="currentTabTitle">AGENT INFO</span></h1>
+                <h1 class="breadcrumb-title">
+                    AGENCIES / 
+                    <a href="{{ url('admin/agency/details/' . $agent->agency_id) }}" style="color: #007bff; text-decoration: none;">{{ strtoupper($agent->agency->name ?? 'N/A') }}</a> / 
+                    {{ strtoupper($agent->name) }} / 
+                    <span id="currentTabTitle">AGENT INFO</span>
+                </h1>
                 <div class="header-actions">
                     <!-- <button class="btn-action btn-gray">Edit</button>
                     <button class="btn-action btn-gold">Approve</button> -->
