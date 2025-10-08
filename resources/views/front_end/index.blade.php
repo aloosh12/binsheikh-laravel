@@ -40,6 +40,118 @@
             height: 29.4%; !important;
         }
     }
+
+    /* Project carousel mobile fixes */
+    @media screen and (max-width: 768px) {
+        .city-carousel-item {
+            margin: 0 10px !important;
+            min-height: 300px;
+        }
+        
+        .city-carousel-content {
+            padding: 15px !important;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        }
+        
+        .city-carousel-content h3 {
+            font-size: 18px !important;
+            margin-bottom: 8px !important;
+            line-height: 1.2 !important;
+        }
+        
+        .city-carousel-content p {
+            font-size: 14px !important;
+            margin-bottom: 10px !important;
+        }
+        
+        .d-flex.justify-content-between.mb-2 {
+            margin-bottom: 10px !important;
+        }
+        
+        .units-left-box, .buy-units, .rent-units {
+            width: 30% !important;
+            padding: 5px !important;
+        }
+        
+        .units-left-box span, .buy-units span, .rent-units span {
+            font-size: 10px !important;
+        }
+        
+        .units-left-box div, .buy-units div, .rent-units div {
+            font-size: 14px !important;
+        }
+        
+        .hc-counter {
+            font-size: 12px !important;
+            padding: 8px 15px !important;
+        }
+        
+        .swiper-slide {
+            width: 280px !important;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        .city-carousel-item {
+            margin: 0 5px !important;
+            min-height: 280px;
+        }
+        
+        .swiper-slide {
+            width: 260px !important;
+        }
+        
+        .city-carousel-content h3 {
+            font-size: 16px !important;
+        }
+        
+        .units-left-box, .buy-units, .rent-units {
+            width: 28% !important;
+            padding: 3px !important;
+        }
+        
+        .units-left-box span, .buy-units span, .rent-units span {
+            font-size: 9px !important;
+        }
+        
+        .units-left-box div, .buy-units div, .rent-units div {
+            font-size: 12px !important;
+        }
+    }
+    
+    /* Additional project carousel fixes */
+    .project-stats-container {
+        gap: 2px !important;
+    }
+    
+    .city-carousel-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    
+    .city-carousel-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+    }
+    
+    @media screen and (max-width: 768px) {
+        .project-stats-container {
+            gap: 1px !important;
+            margin-bottom: 8px !important;
+        }
+        
+        .city-carousel-item {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    }
 </style>
 @stop
 
@@ -605,7 +717,6 @@
                                 <!--city-carousel-item-->
                                 @foreach($recommended_prj as $project)
                                     <div class="swiper-slide">
-
                                         <div class="city-carousel-item">
                                             <div class="bg-wrap fs-wrapper">
                                                 <div class="bg unzoom"  data-bg="{{aws_asset_path($project->image)}}" data-swiper-parallax="10%"></div>
@@ -614,10 +725,7 @@
                                             <div class="city-carousel-content">
                                                 <h3><a href="{{url('project-details/'.$project->slug)}}">{{$project->name}}</a></h3>
                                                 <p>{{$project->location}}</p>
-{{--                                                <div class="d-flex justify-content-between align-items-center mb-3">--}}
-{{--                                                    --}}
-{{--                                                </div>--}}
-                                                <div class="d-flex justify-content-between mb-2">
+                                                <div class="d-flex justify-content-between mb-2 project-stats-container">
                                                     <div class="units-left-box p-1 text-center" style="background-color: rgba(255, 255, 255, 0.1); border-radius: 5px; width: 32%;">
                                                         <span style="font-size: 12px; font-weight: bold; color: white;">{{ __('messages.units_left') }}</span>
                                                         <div style="font-size: 16px; font-weight: bold; color: white;">{{$project->total_units}}</div>
@@ -626,7 +734,7 @@
                                                         <span style="font-size: 12px; color: white;">{{ __('messages.buy') }}</span>
                                                         <div style="font-size: 16px; font-weight: bold; color: white;">{{$project->buy_units}}</div>
                                                     </div>
-                                                    <div class="rent-units p-1 text-center" style="background-color: rgba(40, 167, 69, 0.2); border-radius: 5px; width: 32%; margin-right: 5px;">
+                                                    <div class="rent-units p-1 text-center" style="background-color: rgba(40, 167, 69, 0.2); border-radius: 5px; width: 32%;">
                                                         <span style="font-size: 12px; color: white;">{{ __('messages.rent') }}</span>
                                                         <div style="font-size: 16px; font-weight: bold; color: white;">{{$project->rent_units}}</div>
                                                     </div>
