@@ -1830,8 +1830,8 @@
                                     <th width="50">
                                         <input type="checkbox" id="selectAllVisitSchedules" onclick="toggleAllVisitSchedules(this)">
                                     </th>
-                                    <th>Client Name</th>
-                                    <th>Unit Number</th>
+                                    <th>Agent Name</th>
+                                    <th>Unit Type</th>
                                     <th>Phone Number</th>
                                     <th>Date Of Visit</th>
                                 </tr>
@@ -1849,10 +1849,10 @@
                                                 <i class="fas fa-user"></i>
                                                 <div class="status-dot"></div>
                                             </div>
-                                            <span class="client-name">{{ $schedule->client_name }}</span>
+                                            <span class="client-name">{{ $schedule->agent->name ?? 'N/A' }}</span>
                                         </div>
                                     </td>
-                                    <td>{{ $schedule->property->apartment_no ?? 'N/A' }}</td>
+                                    <td>{{ $schedule->unit_type ?? 'N/A' }}</td>
                                     <td>{{ $schedule->client_phone_number }}</td>
                                     <td>
                                         <div class="visit-section">
@@ -1905,7 +1905,7 @@
                                                         </div>
                                                         <div class="info-content">
                                                             <label>Project</label>
-                                                            <span>{{ $schedule->property->project->name ?? 'N/A' }}</span>
+                                                            <span>{{ $schedule->project->name ?? 'N/A' }}</span>
                                                         </div>
                                                     </div>
                                                     
@@ -1952,8 +1952,8 @@
                                                             <i class="fas fa-home"></i>
                                                         </div>
                                                         <div class="info-content">
-                                                            <label>Apartment Info</label>
-                                                            <span>{{ $schedule->property->name ?? 'N/A' }}</span>
+                                                            <label>Unit Type</label>
+                                                            <span>{{ $schedule->unit_type ?? 'N/A' }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2597,7 +2597,7 @@
             const rows = document.querySelectorAll('#visitScheduleTable tbody tr.main-row');
             
             rows.forEach(row => {
-                const clientName = row.querySelector('.client-name').textContent.toLowerCase();
+                const agentName = row.querySelector('.client-name').textContent.toLowerCase();
                 const unitType = row.cells[2].textContent.toLowerCase();
                 const phoneNumber = row.cells[3].textContent.toLowerCase();
                 const visitDateText = row.cells[4].textContent.toLowerCase();
@@ -2609,7 +2609,7 @@
                 let showRow = true;
                 
                 // Apply search filter
-                if (searchTerm && !clientName.includes(searchTerm) && !unitType.includes(searchTerm) && !phoneNumber.includes(searchTerm) && !visitDateText.includes(searchTerm)) {
+                if (searchTerm && !agentName.includes(searchTerm) && !unitType.includes(searchTerm) && !phoneNumber.includes(searchTerm) && !visitDateText.includes(searchTerm)) {
                     showRow = false;
                 }
                 

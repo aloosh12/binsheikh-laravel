@@ -278,7 +278,7 @@ class AgencyController extends Controller
         $agentIds = $customer->agencyUsers->pluck('id')->toArray();
         
         // Load visit schedules for all agents in this agency
-        $visitSchedules = \App\Models\VisiteSchedule::with(['agent', 'property'])
+        $visitSchedules = \App\Models\VisiteSchedule::with(['agent', 'project'])
             ->whereIn('agent_id', $agentIds)
             ->orderBy('visit_time', 'desc')
             ->get();
@@ -644,7 +644,7 @@ class AgencyController extends Controller
         $ids = $request->get('ids');
         $scheduleIds = $ids ? explode(',', $ids) : [];
         
-        $query = \App\Models\VisiteSchedule::with(['agent', 'property']);
+        $query = \App\Models\VisiteSchedule::with(['agent', 'project']);
         
         if (!empty($scheduleIds)) {
             $query->whereIn('id', $scheduleIds);
@@ -684,8 +684,8 @@ class AgencyController extends Controller
                     $schedule->client_email_address,
                     $schedule->client_phone_number,
                     $schedule->client_id,
-                    $schedule->property->name ?? 'N/A',
-                    $schedule->property->property_type->name ?? 'N/A',
+                    $schedule->unit_type ?? 'N/A',
+                    $schedule->project->name ?? 'N/A',
                     $schedule->visit_time->format('Y-m-d H:i:s'),
                     $schedule->agent->name ?? 'N/A',
                     $schedule->created_at->format('Y-m-d H:i:s')

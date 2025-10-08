@@ -948,7 +948,7 @@ class HomeController extends Controller
         $agentIds = $employees->pluck('id')->toArray();
 
         // Get visit schedules for agents in this agency
-        $visit_schedules = \App\Models\VisiteSchedule::with(['agent', 'property.project', 'property.property_type'])
+        $visit_schedules = \App\Models\VisiteSchedule::with(['agent', 'project'])
             ->whereIn('agent_id', $agentIds)
             ->orderBy('visit_time', 'desc')
             ->get()
@@ -967,19 +967,11 @@ class HomeController extends Controller
                         'name' => $visit->agent->name,
                         'email' => $visit->agent->email,
                     ],
-                    'property' => [
-                        'id' => $visit->property->id,
-                        'name' => $visit->property->name,
-                        'apartment_no' => $visit->property->apartment_no,
-                        'project' => [
-                            'id' => $visit->property->project->id,
-                            'name' => $visit->property->project->name,
-                        ],
-                        'property_type' => [
-                            'id' => $visit->property->property_type->id,
-                            'name' => $visit->property->property_type->name,
-                        ],
+                    'project' => [
+                        'id' => $visit->project->id,
+                        'name' => $visit->project->name,
                     ],
+                    'unit_type' => $visit->unit_type,
                     'created_at' => $visit->created_at ? $visit->created_at->toISOString() : '',
                 ];
             });

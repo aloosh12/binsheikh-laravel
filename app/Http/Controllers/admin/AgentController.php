@@ -275,7 +275,7 @@ class AgentController extends Controller
         $last_id_card = end($parts);
 
         // Load visit schedules for this specific agent
-        $visitSchedules = \App\Models\VisiteSchedule::with(['agent', 'property'])
+        $visitSchedules = \App\Models\VisiteSchedule::with(['agent', 'project'])
             ->where('agent_id', $id)
             ->orderBy('visit_time', 'desc')
             ->get();
@@ -657,7 +657,7 @@ class AgentController extends Controller
         $agentId = $request->get('agent_id'); // Get the specific agent ID
         $scheduleIds = $ids ? explode(',', $ids) : [];
         
-        $query = \App\Models\VisiteSchedule::with(['agent', 'property']);
+        $query = \App\Models\VisiteSchedule::with(['agent', 'project']);
         
         // Filter by specific agent if agent_id is provided
         if ($agentId) {
@@ -702,8 +702,8 @@ class AgentController extends Controller
                     $schedule->client_email_address,
                     $schedule->client_phone_number,
                     $schedule->client_id,
-                    $schedule->property->name ?? 'N/A',
-                    $schedule->property->property_type->name ?? 'N/A',
+                    $schedule->unit_type ?? 'N/A',
+                    $schedule->project->name ?? 'N/A',
                     $schedule->visit_time->format('Y-m-d H:i:s'),
                     $schedule->agent->name ?? 'N/A',
                     $schedule->created_at->format('Y-m-d H:i:s')
