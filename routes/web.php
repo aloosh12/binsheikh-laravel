@@ -299,6 +299,10 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::post('agent/update-reservation-commission', 'AgentController@updateReservationCommission')->name('admin.agent.update-reservation-commission');
     Route::post('agent/update-reservation-status', 'AgentController@updateReservationStatus')->name('admin.agent.update-reservation-status');
     
+    // AJAX data loading routes
+    Route::get('agent/reservations', 'AgentController@getReservations')->name('admin.agent.reservations');
+    Route::get('agent/visit-schedules', 'AgentController@getVisitSchedules')->name('admin.agent.visit-schedules');
+    
     // Agent management routes
     Route::post('agent/change_status', 'AgentController@change_status')->name('admin.agent.change_status');
     Route::delete('agent/delete/{id}', 'AgentController@destroy')->name('admin.agent.delete');

@@ -152,6 +152,291 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
     }
+
+    /* Popup Modal Styles */
+    .popup-modal-dialog {
+        max-width: 800px;
+        margin: 1.75rem auto;
+        display: flex;
+        align-items: center;
+        min-height: calc(100vh - 3.5rem);
+    }
+    
+    .popup-modal-content {
+        background-color: #f8f5f0;
+        max-width: 800px;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        width: 100%;
+    }
+    
+    .popup-image-col {
+        min-height: 400px;
+        position: relative;
+        border-radius: 8px 0 0 8px;
+        overflow: hidden;
+    }
+    
+    .popup-image-col img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+    }
+    
+    .popup-content-col {
+        padding: 2.5rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background-color: #f8f5f0;
+        min-height: 400px;
+    }
+    
+    .popup-title {
+        font-size: 2.5rem;
+        font-weight: 300;
+        letter-spacing: 1px;
+        line-height: 1.3;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .popup-title-bold {
+        font-weight: 700;
+        color: #2c3e50;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    
+    .popup-subtitle {
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: #666;
+        display: block;
+        line-height: 1.4;
+    }
+    
+    .popup-button {
+        letter-spacing: 1px;
+        padding: 14px 24px;
+        font-size: 15px;
+        font-weight: 600;
+        background-color: #2c3e50;
+        border: none;
+        color: white !important;
+        text-decoration: none;
+        display: block;
+        transition: all 0.3s ease;
+        border-radius: 4px;
+        min-height: 48px;
+        line-height: 1.4;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .popup-button:hover {
+        background-color: #34495e;
+        color: white !important;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+    }
+    
+    .popup-text-content {
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-bottom: 1rem;
+    }
+    
+    .popup-button-container {
+        width: 100%;
+        margin-top: auto;
+        padding-top: 1rem;
+    }
+    
+    /* Mobile Responsive Styles */
+    @media screen and (max-width: 768px) {
+        .popup-modal-dialog {
+            max-width: 95%;
+            margin: 0.5rem auto;
+            min-height: calc(100vh - 1rem);
+            align-items: center;
+        }
+        
+        .popup-modal-content {
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+        
+        .popup-image-col {
+            min-height: 180px;
+            max-height: 220px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .popup-content-col {
+            padding: 1.5rem 1.2rem;
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .popup-text-content {
+            flex: 0 1 auto;
+            padding-bottom: 1rem;
+        }
+        
+        .popup-title {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem !important;
+            line-height: 1.3;
+        }
+        
+        .popup-subtitle {
+            font-size: 0.95rem;
+            margin-bottom: 0 !important;
+            line-height: 1.4;
+        }
+        
+        .popup-button-container {
+            margin-top: 1.5rem;
+            padding-top: 0;
+        }
+        
+        .popup-button {
+            padding: 12px 20px;
+            font-size: 14px;
+            min-height: 44px;
+            width: 100%;
+            display: block;
+            line-height: 1.4;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        .popup-modal-dialog {
+            max-width: 96%;
+            margin: 0.25rem auto;
+            min-height: calc(100vh - 0.5rem);
+        }
+        
+        .popup-modal-content {
+            max-height: 92vh;
+        }
+        
+        .popup-image-col {
+            min-height: 160px;
+            max-height: 200px;
+        }
+        
+        .popup-content-col {
+            padding: 1.2rem 1rem;
+        }
+        
+        .popup-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.4rem !important;
+        }
+        
+        .popup-subtitle {
+            font-size: 0.85rem;
+        }
+        
+        .popup-button-container {
+            margin-top: 1.2rem;
+        }
+        
+        .popup-button {
+            padding: 11px 18px;
+            font-size: 13px;
+            min-height: 42px;
+        }
+    }
+    
+    /* Extra small devices */
+    @media screen and (max-width: 360px) {
+        .popup-modal-dialog {
+            max-width: 98%;
+            margin: 0.2rem auto;
+        }
+        
+        .popup-modal-content {
+            max-height: 94vh;
+        }
+        
+        .popup-image-col {
+            min-height: 140px;
+            max-height: 180px;
+        }
+        
+        .popup-content-col {
+            padding: 1rem 0.8rem;
+        }
+        
+        .popup-title {
+            font-size: 1.25rem;
+        }
+        
+        .popup-subtitle {
+            font-size: 0.8rem;
+        }
+        
+        .popup-button-container {
+            margin-top: 1rem;
+        }
+        
+        .popup-button {
+            padding: 10px 16px;
+            font-size: 12px;
+            min-height: 40px;
+        }
+    }
+    
+    /* Landscape mobile orientation */
+    @media screen and (max-height: 600px) and (orientation: landscape) {
+        .popup-modal-dialog {
+            min-height: auto;
+            margin: 0.5rem auto;
+        }
+        
+        .popup-modal-content {
+            max-height: 95vh;
+        }
+        
+        .popup-image-col {
+            min-height: 120px;
+            max-height: 150px;
+        }
+        
+        .popup-content-col {
+            padding: 1rem;
+            min-height: auto;
+        }
+        
+        .popup-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem !important;
+        }
+        
+        .popup-subtitle {
+            font-size: 0.85rem;
+        }
+        
+        .popup-button-container {
+            margin-top: 0.8rem;
+        }
+        
+        .popup-button {
+            padding: 8px 16px;
+            min-height: 36px;
+            font-size: 12px;
+        }
+    }
 </style>
 @stop
 
@@ -163,45 +448,37 @@
     <!-- Popup Modal -->
     @if(isset($popup) && $popup)
         <div class="modal fade" id="popupModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" style="max-width: 800px;">
-                <div class="modal-content border-0 rounded-0" style="background-color: #f8f5f0; max-width: 800px;">
+            <div class="modal-dialog modal-dialog-centered popup-modal-dialog">
+                <div class="modal-content border-0 rounded-0 popup-modal-content">
                     <!-- Close Button -->
-{{--                    <button type="button" class="btn-close position-absolute end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>--}}
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3 bg-white p-2 rounded-circle shadow-sm" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1030; opacity: 0.9; transform: scale(1.2);"></button>
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2 bg-white p-1 rounded-circle shadow-sm" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1030; opacity: 0.9; transform: scale(1.1);"></button>
                     <div class="modal-body p-0">
                         <div class="row g-0">
                             <!-- Left Column - Image -->
-                            <div class="col-md-6">
+                            <div class="col-md-6 popup-image-col">
                                 <img src="{{ aws_asset_path($popup->image) }}" class="img-fluid h-100 w-100 object-fit-cover" alt="Special Offer">
                             </div>
 
                             <!-- Right Column - Content -->
-                            <div class="col-md-6 p-5 d-flex flex-column justify-content-center">
-                                <div class="text-center">
-                                    <!-- "enro" text (assuming this is a logo/brand) -->
-{{--                                    <p class="mb-2" style="font-size: 16px; letter-spacing: 2px;">enro</p>--}}
-
+                            <div class="col-md-6 popup-content-col">
+                                <div class="text-center d-flex flex-column h-100">
                                     <!-- Main Offer Text -->
-                                    <h2 class="mb-4" style="font-size: 42px; font-weight: 300; letter-spacing: 1px;">
-{{--                                        Unlock<br>--}}
-                                        <span style="font-weight: 700;">{{ $popup->title }}</span><br>
-                                        {{ $popup->subtitle }}
-                                    </h2>
-
-                                    <!-- Disclaimer -->
-                                    <!-- <p class="mb-4" style="font-size: 12px; font-style: italic;">"Exclusions apply!</p> -->
+                                    <div class="popup-text-content">
+                                        <h2 class="popup-title">
+                                            <span class="popup-title-bold">{{ $popup->title }}</span><br>
+                                            <span class="popup-subtitle">{{ $popup->subtitle }}</span>
+                                        </h2>
+                                    </div>
 
                                     <!-- Sign Up Button -->
-                                    <a href="{{ $popup->link }}"
-                                       class="btn btn-dark rounded-0 w-100 py-2"
-                                       style="letter-spacing: 1px;"
-                                       target="_blank"
-                                       rel="noopener noreferrer">
-                                        {{ $popup->button_text ?? 'SIGN UP' }}
-                                    </a>
-{{--                                    <button class="btn btn-dark rounded-0 w-100 py-3" style="letter-spacing: 1px; font-size: 16px;">--}}
-{{--                                        SIGN UP--}}
-{{--                                    </button>--}}
+                                    <div class="popup-button-container mt-auto">
+                                        <a href="{{ $popup->link }}"
+                                           class="popup-button"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
+                                            {{ $popup->button_text ?? 'BOOK NOW' }}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -449,7 +726,7 @@
                         <div class="listing-grid gisp">
                         @foreach($recommended as $property)
                             <!-- listing-grid-item-->
-                                <div class="listing-grid-item @if($property->sale_type==1 || $property->sale_type==3) cat-sale @endif @if($property->sale_type==2 || $property->sale_type==3) cat-rent @endif">
+                                <div class="listing-grid-item @if($property->sale_type==1) cat-sale @endif @if($property->sale_type==2) cat-rent @endif">
                                     <div class="listing-item">
                                         <div class="geodir-category-listing">
                                             <div class="geodir-category-img">

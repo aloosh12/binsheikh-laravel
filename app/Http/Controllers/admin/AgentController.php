@@ -683,14 +683,15 @@ class AgentController extends Controller
             // CSV Headers
             fputcsv($file, [
                 'ID',
+                'Agent Name',
                 'Client Name',
                 'Client Email',
                 'Client Phone',
                 'Client ID',
-                'Property Name',
+                'Project Name',
                 'Unit Type',
                 'Visit Time',
-                'Agent Name',
+                'Visit Purpose',
                 'Created At'
             ]);
             
@@ -698,14 +699,15 @@ class AgentController extends Controller
             foreach ($schedules as $schedule) {
                 fputcsv($file, [
                     $schedule->id,
-                    $schedule->client_name,
-                    $schedule->client_email_address,
-                    $schedule->client_phone_number,
-                    $schedule->client_id,
-                    $schedule->unit_type ?? 'N/A',
-                    $schedule->project->name ?? 'N/A',
-                    $schedule->visit_time->format('Y-m-d H:i:s'),
                     $schedule->agent->name ?? 'N/A',
+                    $schedule->client_name ?? 'N/A',
+                    $schedule->client_email_address ?? 'N/A',
+                    $schedule->client_phone_number ?? 'N/A',
+                    $schedule->client_id ?? 'N/A',
+                    $schedule->project->name ?? 'N/A',
+                    $schedule->unit_type ?? 'N/A',
+                    $schedule->visit_time ? $schedule->visit_time->format('Y-m-d H:i:s') : 'N/A',
+                    $schedule->visit_purpose ?? 'N/A',
                     $schedule->created_at->format('Y-m-d H:i:s')
                 ]);
             }
@@ -869,6 +871,83 @@ class AgentController extends Controller
             'message' => $message,
             'errors' => $errors
         ]);
+    }
+
+    /**
+     * Get reservations for AJAX loading
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getReservations()
+    {
+        try {
+            $reservations = \App\Models\Reservation::with(['agent', 'property'])
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function($reservation) {
+                    return [
+                        'id' => $reservation->id,
+                        'agent_name' => $reservation->agent->name ?? 'N/A',
+                        'property_name' => $reservation->property->name ?? 'N/A',
+                        'status' => $reservation->status,
+                        'status_label' => $reservation->status_label,
+                        'commission' => $reservation->commission,
+                        'created_at' => $reservation->created_at->format('d-M-Y')
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'reservations' => $reservations
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error loading reservations: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading reservations'
+            ]);
+        }
+    }
+
+    /**
+     * Get visit schedules for AJAX loading
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getVisitSchedules()
+    {
+        try {
+            $visits = \App\Models\VisiteSchedule::with(['agent', 'project'])
+                ->orderBy('visit_time', 'desc')
+                ->get()
+                ->map(function($visit) {
+                    return [
+                        'id' => $visit->id,
+                        'agent_name' => $visit->agent->name ?? 'N/A',
+                        'client_name' => $visit->client_name ?? 'N/A',
+                        'client_email_address' => $visit->client_email_address ?? 'N/A',
+                        'client_phone_number' => $visit->client_phone_number ?? 'N/A',
+                        'client_id' => $visit->client_id ?? 'N/A',
+                        'client_id_url' => $visit->client_id ? aws_asset_path($visit->client_id) : null,
+                        'project_name' => $visit->project->name ?? 'N/A',
+                        'unit_type' => $visit->unit_type ?? 'N/A',
+                        'visit_time' => $visit->visit_time ? $visit->visit_time->format('d-M-Y H:i') : 'N/A',
+                        'visit_purpose' => $visit->visit_purpose ?? 'N/A',
+                        'created_at' => $visit->created_at->format('d-M-Y')
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'visits' => $visits
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error loading visit schedules: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading visit schedules'
+            ]);
+        }
     }
 
 }
