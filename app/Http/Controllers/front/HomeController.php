@@ -2554,6 +2554,16 @@ class HomeController extends Controller
     public function forget_password(Request $request)
     {
         try {
+            // Check if the entered email is the same as the authenticated user's email
+            // No check to compare entered email with authenticated user's email as per new requirements.
+            if (\Auth::check() && $request->email !== \Auth::user()->email) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('messages.reset_password_own_account_only')
+                ]);
+            }
+
+            
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email|exists:users,email'
             ]);

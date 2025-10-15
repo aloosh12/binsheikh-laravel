@@ -36,15 +36,16 @@
                                                         <li><a href="{{ url('my-profile') }}" class="act-scrlink">{{ __('messages.profile') }}</a></li>
                                                         
                                                         @if(\Auth::user()->role == 4)
-                                                            <!-- Agency Role (role 4) - Show Employees -->
                                                             <li><a href="{{ url('my-employees') }}">{{ __('messages.employees') }}</a></li>
                                                         @endif
                                                         
                                                         <li><a href="{{ url('my-reservations') }}">{{ __('messages.my_reservations') }}</a></li>
-                                                        <li><a href="{{ url('favorite') }}">{{ __('messages.favorite') }}
+                                                        <li><a href="{{ url('favorite') }}">{{ __('messages.my_favorite') }}
                                                             <!-- <span>6</span> -->
                                                         </a></li>
-                                                        <li><a href="{{ url('visit-schedule') }}" style="background-color: rgb(242, 233, 224);">{{ __('messages.visit_schedule') }}</a></li>
+                                                        @if(\Auth::user()->role == 4 || \Auth::user()->role == 3)
+                                                            <li><a href="{{ url('visit-schedule') }}" style="background-color: rgb(242, 233, 224);">{{ __('messages.my_visit_schedule') }}</a></li>
+                                                        @endif
                                                     </ul>
                                                     <a href="{{ url('user/logout') }}" class="hum_log-out_btn"><i class="fa-light fa-power-off"></i> {{ __('messages.log_out') }}</a>
                                                 </div>
@@ -1575,7 +1576,7 @@
         // CSV export function
         function exportVisitSchedulesToCSV(visitIds) {
             const rows = [];
-            const headers = ['Agent Name', 'Unit Type', 'Phone Number', 'Visit Date', 'Client Email', 'Unit Type', 'Project Name'];
+            const headers = ['Agent Name', 'Unit Type', 'Phone Number', 'Visit Date', 'Client Email', 'Project Name'];
             rows.push(headers.join(','));
             
             // Get selected visit schedule data
@@ -1591,7 +1592,6 @@
                     // Get additional data from detail row
                     const detailRow = $(`.detail-row[data-parent="${id}"]`);
                     const clientEmail = detailRow.find('.info-content span').eq(1).text().trim() || 'N/A';
-                    const unitTypeDetail = detailRow.find('.info-content span').eq(5).text().trim() || 'N/A';
                     const projectName = detailRow.find('.info-content span').eq(2).text().trim() || 'N/A';
                     
                     const rowData = [
@@ -1600,7 +1600,6 @@
                         `"${phoneNumber}"`,
                         `"${visitDate}"`,
                         `"${clientEmail}"`,
-                        `"${unitTypeDetail}"`,
                         `"${projectName}"`
                     ];
                     rows.push(rowData.join(','));

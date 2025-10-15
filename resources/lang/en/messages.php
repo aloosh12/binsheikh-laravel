@@ -231,7 +231,8 @@ return [
     'profile' => 'Profile',
     'my_bookings' => 'My Bookings',
     'my_reservations' => 'My Reservations',
-    'favorite' => 'Favorite',
+    'my_favorite' => 'My Favorite',
+    'my_visit_schedule' => 'My Visit Schedule',
     'log_out' => 'Log Out',
     'enter_name' => 'Enter your name',
     'enter_phone' => 'Enter your phone',
@@ -432,6 +433,7 @@ return [
     'old_password_incorrect' => 'Old password is incorrect',
     'new_password_same_as_old' => 'New password cannot be the same as old password',
     'password_changed_successfully' => 'Password changed successfully',
+    'reset_password_own_account_only' => 'You can only reset password for your own account',
     
     // Visit Schedule Modal Translations
     'add_new_visit_schedule' => 'Add New Visit Schedule',

@@ -244,7 +244,8 @@ return [
     'profile' => 'الملف الشخصي',
     'my_bookings' => 'حجوزاتي',
     'my_reservations' => 'حجوزاتي',
-    'favorite' => 'المفضلة',
+    'my_favorite' => 'المفضلة',
+    'my_visit_schedule' => 'جدول زياراتي',
     'log_out' => 'تسجيل الخروج',
     'enter_name' => 'أدخل اسمك',
     'enter_phone' => 'أدخل رقم هاتفك',
@@ -440,6 +441,7 @@ return [
     'old_password_incorrect' => 'كلمة المرور القديمة غير صحيحة',
     'new_password_same_as_old' => 'لا يمكن أن تكون كلمة المرور الجديدة نفس كلمة المرور القديمة',
     'password_changed_successfully' => 'تم تغيير كلمة المرور بنجاح',
+    'reset_password_own_account_only' => 'يمكنك فقط إعادة تعيين كلمة المرور لحسابك الخاص',
     
     // Visit Schedule Modal Translations
     'add_new_visit_schedule' => 'إضافة جدولة زيارة جديدة',

@@ -1755,9 +1755,7 @@
                                                 </div>
                                                 <div class="info-content">
                                                     <label>Client ID</label>
-                                                    @if(!$visit->client_id)
-                                                        <span>N/A</span>
-                                                    @endif
+                                                     <span>${visit.client_id || 'N/A'}</span>
                                                 </div>
                                                 ${visit.client_id_url ? '<button class="view-btn" onclick="window.open(\'' + visit.client_id_url + '\', \'_blank\')">View</button>' : ''}
                                             </div>
