@@ -148,7 +148,7 @@ class HomeController extends Controller
         $properties = Properties::select('properties.*')->with(['property_type', 'images'])->where(['properties.active' => '1', 'properties.deleted' => 0])->leftjoin('projects','projects.id','properties.project_id');
 
         if ($sort =="featured") {
-            $properties = $properties->orderBy('properties.order', 'asc');
+            $properties = $properties->orderBy('properties.is_featured', 'desc')->orderBy('properties.order', 'asc');
         }
 //        if ($sort =="latest") {
 //            $properties = $properties->orderBy('properties.created_at', 'desc');

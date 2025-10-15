@@ -412,8 +412,8 @@
 
                                                             <!-- Add Visit Schedule Modal -->
                                                             <div class="modal fade" id="addVisitScheduleModal" tabindex="-1" aria-labelledby="addVisitScheduleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
+                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                <div class="modal-content" style="max-height: 90vh;">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="addVisitScheduleModalLabel">
                                                             <i class="fas fa-calendar-plus"></i> {{ __('messages.add_new_visit_schedule') }}
@@ -678,6 +678,22 @@
         border: none;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         background: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .modal-dialog-scrollable {
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .modal-dialog-scrollable .modal-content {
+        max-height: calc(100vh - 2rem);
+        overflow: hidden;
+    }
+    
+    .modal-dialog-scrollable .modal-body {
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
     }
     
     .modal-header {
@@ -686,6 +702,7 @@
         border-radius: 12px 12px 0 0;
         padding: 20px;
         border-bottom: 1px solid #e0e0e0;
+        flex-shrink: 0;
     }
     
     .modal-title {
@@ -707,6 +724,8 @@
     .modal-body {
         padding: 30px;
         background: #f9f9f9;
+        flex: 1 1 auto;
+        overflow-y: auto;
     }
     
     /* Visit Schedule Form Styles */
@@ -889,6 +908,10 @@
         background-color: #f9f9f9;
         border-radius: 0 0 12px 12px;
         text-align: center;
+        flex-shrink: 0;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
     }
     
     .btn-submit {
@@ -902,6 +925,7 @@
         transition: all 0.3s ease;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        min-width: 150px;
     }
     
     .btn-submit:hover {
@@ -1165,6 +1189,33 @@
             justify-content: center;
         }
         
+        /* Modal responsive styles */
+        .modal-dialog {
+            margin: 0.5rem;
+            max-width: calc(100% - 1rem);
+        }
+        
+        .modal-dialog-scrollable {
+            max-height: calc(100vh - 1rem);
+        }
+        
+        .modal-dialog-scrollable .modal-content {
+            max-height: calc(100vh - 1rem);
+        }
+        
+        .modal-dialog-scrollable .modal-body {
+            max-height: calc(100vh - 180px);
+            padding: 15px;
+        }
+        
+        .modal-header {
+            padding: 15px;
+        }
+        
+        .modal-title {
+            font-size: 16px;
+        }
+        
         /* Form responsive styles */
         .visit-schedule-form {
             padding: 15px;
@@ -1181,20 +1232,83 @@
         
         /* Stack columns on mobile */
         .form-section .row .col-md-6 {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
-        .modal-body {
-            padding: 20px;
+        .form-group {
+            margin-bottom: 12px;
         }
         
         .modal-footer {
-            padding: 15px 20px;
+            padding: 15px;
+            position: sticky;
+            bottom: 0;
         }
         
         .btn-submit {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
+            font-size: 13px;
+        }
+        
+        .input-group-text {
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+        
+        .form-control {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .modal-dialog {
+            margin: 0.25rem;
+            max-width: calc(100% - 0.5rem);
+        }
+        
+        .modal-dialog-scrollable {
+            max-height: calc(100vh - 0.5rem);
+        }
+        
+        .modal-dialog-scrollable .modal-content {
+            max-height: calc(100vh - 0.5rem);
+        }
+        
+        .modal-dialog-scrollable .modal-body {
+            max-height: calc(100vh - 160px);
+            padding: 12px;
+        }
+        
+        .modal-header {
+            padding: 12px;
+        }
+        
+        .modal-title {
+            font-size: 14px;
+        }
+        
+        .visit-schedule-form {
+            padding: 10px;
+        }
+        
+        .form-section {
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+        }
+        
+        .section-header h6 {
+            font-size: 12px;
+        }
+        
+        .modal-footer {
+            padding: 12px;
+        }
+        
+        .btn-submit {
+            padding: 12px;
+            font-size: 12px;
         }
     }
 </style>
