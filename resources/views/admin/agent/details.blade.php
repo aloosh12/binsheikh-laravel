@@ -54,6 +54,11 @@
         color: #333;
     }
     
+    .btn-action.btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+    
     .btn-action:hover {
         opacity: 0.8;
     }
@@ -1349,8 +1354,8 @@
                     <span id="currentTabTitle">AGENT INFO</span>
                 </h1>
                 <div class="header-actions">
-                    <!-- <button class="btn-action btn-gray">Edit</button>
-                    <button class="btn-action btn-gold">Approve</button> -->
+                    <button class="btn-action btn-danger" onclick="rejectAgent({{ $agent->id }})">Delete</button>
+                    <button class="btn-action btn-gray" onclick="deleteAgent({{ $agent->id }})">Delete</button>
                 </div>
             </div>
             
@@ -2695,5 +2700,127 @@
             closeStatusModal();
         }
     });
+    
+    // Reject Agent Function
+    function rejectAgent(agentId) {
+        Swal.fire({
+            title: 'Delete Agent',
+            text: 'Are you sure you want to delete this agent? This will set verified to 0 and mark as deleted.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete!'
+        }).then((result) => {
+            if (result.value) {
+                // Get CSRF token
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                
+                // Make AJAX call to reject agent
+                fetch('/admin/agent/reject', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        agent_id: agentId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === '1') {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Redirect back to agent list or refresh page
+                            window.location.href = '/admin/agent';
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong while deleting agent',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+            }
+        });
+    }
+    
+    // Delete Agent Function
+    function deleteAgent(agentId) {
+        Swal.fire({
+            title: 'Delete Agent',
+            text: 'Are you sure you want to delete this agent? This will set verified to 0 and mark as deleted.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete!'
+        }).then((result) => {
+            if (result.value) {
+                // Get CSRF token
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                
+                // Make AJAX call to delete agent
+                fetch('/admin/agent/delete-agent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        agent_id: agentId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === '1') {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Redirect back to agent list or refresh page
+                            window.location.href = '/admin/agent';
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong while deleting agent',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+            }
+        });
+    }
 </script>
 @stop

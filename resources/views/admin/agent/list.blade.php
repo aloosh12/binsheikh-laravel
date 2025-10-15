@@ -18,11 +18,14 @@
     
     .detail-row {
         background-color: #f8f9fa;
+        width: 100%;
+        grid-column: 1 / -1;
     }
     
     .detail-content {
         padding: 20px;
         background-color: #f8f9fa;
+        width: 100%;
     }
     
     .main-row:hover {
@@ -304,6 +307,12 @@
         transition: background-color 0.2s;
         background: white;
         min-height: 60px;
+    }
+    
+    .table-row.detail-row {
+        display: block;
+        padding: 0;
+        border-bottom: none;
     }
     
     .table-row:hover {
@@ -953,71 +962,71 @@
                                                     </div>
                                                     
                                                     <div class="agency-info-grid">
-                                           <!-- Left Column -->
-                                           <div class="info-column">
-                                                <div class="info-card">
-                                                    <div class="info-icon">
-                                                        <i class="fas fa-building"></i>
-                                                    </div>
-                                                    <div class="info-content">
-                                                        <label>Agency Name</label>
-                                                        <span>{{ $cust->agency->name ?? 'N/A' }}</span>
-                                                    </div>
-                                                </div>
+                                                        <!-- Left Column -->
+                                                        <div class="info-column">
+                                                            <div class="info-card">
+                                                                <div class="info-icon">
+                                                                    <i class="fas fa-building"></i>
+                                                                </div>
+                                                                <div class="info-content">
+                                                                    <label>Agency Name</label>
+                                                                    <span>{{ $cust->agency->name ?? 'N/A' }}</span>
+                                                                </div>
+                                                            </div>
 
-                                                <div class="info-card">
-                                                    <div class="info-icon">
-                                                        <i class="fas fa-envelope"></i>
-                                                    </div>
-                                                    <div class="info-content">
-                                                        <label>Agent Email Address</label>
-                                                        <span>{{ $cust->email ?? 'N/A' }}</span>
-                                                    </div>
-                                                </div>
+                                                            <div class="info-card">
+                                                                <div class="info-icon">
+                                                                    <i class="fas fa-envelope"></i>
+                                                                </div>
+                                                                <div class="info-content">
+                                                                    <label>Agent Email Address</label>
+                                                                    <span>{{ $cust->email ?? 'N/A' }}</span>
+                                                                </div>
+                                                            </div>
 
-                                                <div class="info-card">
-                                                    <div class="info-icon">
-                                                        <i class="fas fa-id-card"></i>
-                                                    </div>
-                                                    <div class="info-content">
-                                                        <label>ID Card</label>
-                                                        @if(!$cust->id_card)
-                                                            <span>N/A</span>
-                                                        @endif
-                                                    </div>
-                                                    @if($cust->id_card)
-                                                        <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->id_card) }}', '_blank')">View</button>
-                                                    @endif
-                                                </div>
-                                            </div>
+                                                            <div class="info-card">
+                                                                <div class="info-icon">
+                                                                    <i class="fas fa-id-card"></i>
+                                                                </div>
+                                                                <div class="info-content">
+                                                                    <label>ID Card</label>
+                                                                    @if(!$cust->id_card)
+                                                                        <span>N/A</span>
+                                                                    @endif
+                                                                </div>
+                                                                @if($cust->id_card)
+                                                                    <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->id_card) }}', '_blank')">View</button>
+                                                                @endif
+                                                            </div>
+                                                        </div>
                         
-                                            <!-- Right Column -->
-                                            <div class="info-column">
-                                                <div class="info-card">
-                                                    <div class="info-icon">
-                                                        <i class="fas fa-phone"></i>
-                                                    </div>
-                                                    <div class="info-content">
-                                                        <label>Agent Phone Number</label>
-                                                        <span>{{ $cust->phone ?? 'N/A' }}</span>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="info-card">
-                                                    <div class="info-icon">
-                                                        <i class="fas fa-certificate"></i>
-                                                    </div>
-                                                    <div class="info-content">
-                                                        <label>Professional License</label>
-                                                        @if(!$cust->license)
-                                                            <span>N/A</span>
-                                                        @endif
-                                                    </div>
-                                                    @if($cust->license)
-                                                        <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->license) }}', '_blank')">View</button>
-                                                    @endif
-                                                </div>
-                                            </div>
+                                                        <!-- Right Column -->
+                                                        <div class="info-column">
+                                                            <div class="info-card">
+                                                                <div class="info-icon">
+                                                                    <i class="fas fa-phone"></i>
+                                                                </div>
+                                                                <div class="info-content">
+                                                                    <label>Agent Phone Number</label>
+                                                                    <span>{{ $cust->phone ?? 'N/A' }}</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="info-card">
+                                                                <div class="info-icon">
+                                                                    <i class="fas fa-certificate"></i>
+                                                                </div>
+                                                                <div class="info-content">
+                                                                    <label>Professional License</label>
+                                                                    @if(!$cust->license)
+                                                                        <span>N/A</span>
+                                                                    @endif
+                                                                </div>
+                                                                @if($cust->license)
+                                                                    <button class="view-btn" onclick="window.open('{{ aws_asset_path($cust->license) }}', '_blank')">View</button>
+                                                                @endif
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1839,7 +1848,7 @@
                         });
                         
                         // Open this detail row
-                        detailRow.style.display = 'table-row';
+                        detailRow.style.display = 'block';
                         this.classList.remove('fa-chevron-down');
                         this.classList.add('fa-chevron-up');
                     } else {
@@ -1895,7 +1904,7 @@
                         });
                         
                         // Open this detail row
-                        detailRow.style.display = 'table-row';
+                        detailRow.style.display = 'block';
                         this.classList.remove('fa-chevron-down');
                         this.classList.add('fa-chevron-up');
                     } else {
@@ -1947,23 +1956,75 @@
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     
+                    // Get the agent ID from the parent row
+                    const row = this.closest('.detail-row');
+                    const parentRow = document.querySelector(`.main-row[data-id="${row.getAttribute('data-parent')}"]`);
+                    const agentId = parentRow ? parentRow.getAttribute('data-id') : null;
+                    
+                    if (!agentId) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Could not find agent ID',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+                    
                     Swal.fire({
-                        title: 'Reject Agent',
-                        text: 'Are you sure you want to reject this agent?',
+                        title: 'Delete Agent',
+                        text: 'Are you sure you want to delete this agent? This will set verified to 0 and mark as deleted.',
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#dc3545',
                         cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Yes, reject!'
+                        confirmButtonText: 'Yes, delete!'
                     }).then((result) => {
                         if (result.value) {
-                            // Here you can add the actual rejection logic
-                            Swal.fire({
-                                title: 'Success!',
-                                text: 'Agent has been rejected successfully.',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
+                            // Get CSRF token
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                            
+                            // Make AJAX call to reject agent
+                            fetch('/admin/agent/reject', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({
+                                    agent_id: agentId
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === '1') {
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    }).then(() => {
+                                        // Reload the page to reflect changes
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Something went wrong while deleting agent',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
                             });
                         }
                     });
@@ -1985,7 +2046,7 @@
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Selected agents will be deleted!",
+                text: "Selected agents will be deleted (set as deleted, unverified, and inactive)!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',

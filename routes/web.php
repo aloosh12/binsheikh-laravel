@@ -319,6 +319,8 @@ Route::namespace('App\Http\Controllers\admin')->prefix('admin')->middleware('adm
     Route::post('agent/delete-employees', 'AgentController@deleteEmployees')->name('admin.agent.delete-employees');
     Route::post('agent/delete-reservations', 'AgentController@deleteReservations')->name('admin.agent.delete-reservations');
     Route::post('agent/delete-visit-schedules', 'AgentController@deleteVisitSchedules')->name('admin.agent.delete-visit-schedules');
+    Route::post('agent/reject', 'AgentController@rejectAgent')->name('admin.agent.reject');
+    Route::post('agent/delete-agent', 'AgentController@deleteAgent')->name('admin.agent.delete-agent');
 
     // Popups routes
     Route::resource('popups', 'PopupController');

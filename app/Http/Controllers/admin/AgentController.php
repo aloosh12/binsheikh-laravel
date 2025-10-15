@@ -246,11 +246,18 @@ class AgentController extends Controller
         if ($request->has('delete_all_id')) {
             $ids = explode(',', $request->delete_all_id);
             //Log::info($ids);
-            User::whereIn('id', $ids)->delete();
+            
+            // Soft delete: set deleted=1, verified=0, active=0
+            User::whereIn('id', $ids)->update([
+                'deleted' => 1,
+                'verified' => 0,
+                'active' => 0,
+                'updated_at' => gmdate('Y-m-d H:i:s')
+            ]);
 
-            return redirect()->back()->with('success', 'Selected customers deleted successfully.');
+            return redirect()->back()->with('success', 'Selected agents deleted successfully.');
         }
-        return redirect()->back()->with('error', 'No customers selected.');
+        return redirect()->back()->with('error', 'No agents selected.');
 //        $delete_all_id = explode(",", $request->delete_all_id);
 //        User::whereIn('id', $delete_all_id)->delete();
 //        return redirect('admin/sections')->with('success', 'Sections deleted successfully.');
@@ -863,6 +870,108 @@ class AgentController extends Controller
             } catch (\Exception $e) {
                 Log::error('Error deleting visit schedules: ' . $e->getMessage());
                 $message = "Something went wrong while deleting visit schedules";
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'errors' => $errors
+        ]);
+    }
+
+    /**
+     * Reject agent (set verified to 0 and deleted to 1)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function rejectAgent(Request $request)
+    {
+        $status = "0";
+        $message = "";
+        $errors = [];
+
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'agent_id' => 'required|integer|exists:users,id'
+        ]);
+
+        if ($validator->fails()) {
+            $status = "0";
+            $message = "Validation error occurred";
+            $errors = $validator->errors();
+        } else {
+            try {
+                $agent = \App\Models\User::find($request->agent_id);
+                
+                if ($agent) {
+                    // Set verified to 0 and deleted to 1 (reject action)
+                    $agent->verified = 0;
+                    $agent->deleted = 1;
+                    $agent->active = 0;
+                    $agent->updated_at = gmdate('Y-m-d H:i:s');
+                    $agent->save();
+                    
+                    $status = "1";
+                    $message = "Agent rejected successfully";
+                } else {
+                    $message = "Agent not found";
+                }
+            } catch (\Exception $e) {
+                Log::error('Error rejecting agent: ' . $e->getMessage());
+                $message = "Something went wrong while rejecting agent";
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'errors' => $errors
+        ]);
+    }
+
+    /**
+     * Delete agent (set verified to 0 and deleted to 1)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteAgent(Request $request)
+    {
+        $status = "0";
+        $message = "";
+        $errors = [];
+
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'agent_id' => 'required|integer|exists:users,id'
+        ]);
+
+        if ($validator->fails()) {
+            $status = "0";
+            $message = "Validation error occurred";
+            $errors = $validator->errors();
+        } else {
+            try {
+                $agent = \App\Models\User::find($request->agent_id);
+                
+                if ($agent) {
+                    // Set verified to 0 and deleted to 1 (delete action)
+                    $agent->verified = 0;
+                    $agent->deleted = 1;
+                    $agent->active = 0;
+                    $agent->updated_at = gmdate('Y-m-d H:i:s');
+                    $agent->save();
+                    
+                    $status = "1";
+                    $message = "Agent deleted successfully";
+                } else {
+                    $message = "Agent not found";
+                }
+            } catch (\Exception $e) {
+                Log::error('Error deleting agent: ' . $e->getMessage());
+                $message = "Something went wrong while deleting agent";
             }
         }
 
