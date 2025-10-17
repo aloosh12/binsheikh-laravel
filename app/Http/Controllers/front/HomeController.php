@@ -1283,15 +1283,25 @@ class HomeController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
+        // Initialize agents variable
+        $agents = collect();
+
         if($customer ->role == 4)
         {
+            // Get agents for this agency
+            $agents = $customer->agencyUsers()
+                ->where('role', 3) // role 3 = agent/employee
+                ->where('active', 1) // only active agents
+                ->orderBy('name', 'asc')
+                ->get();
+
             $agentIds = $customer->agencyUsers->pluck('id')->toArray();
 
             $visits = \App\Models\VisiteSchedule::with(['agent', 'project'])
             ->whereIn('agent_id', $agentIds)
             ->orderBy('created_at', 'desc')
             ->get();
-            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties', 'projects'));
+            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties', 'projects', 'agents'));
         }
         else
         {
@@ -1299,7 +1309,7 @@ class HomeController extends Controller
             ->where('agent_id', $id)
             ->orderBy('created_at', 'desc')
             ->get();
-            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties', 'projects'));
+            return view('front_end.visit_schedule', compact('page_heading','visits', 'properties', 'projects', 'agents'));
 
         }
 
@@ -2806,7 +2816,7 @@ class HomeController extends Controller
 
     /**
      * Store a new visit schedule
-     * Only agents (role 3) can create visit schedules
+     * Agents (role 3) and Agencies (role 4) can create visit schedules
      */
     public function store_visit_schedule(Request $request)
     {
@@ -2821,16 +2831,16 @@ class HomeController extends Controller
                 ], 401);
             }
 
-            // Check if user is an agent (role 3)
-            if ($user->role != 3) {
+            // Check if user is an agent (role 3) or agency (role 4)
+            if ($user->role != 3 && $user->role != 4) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Access denied. Only agents can create visit schedules.',
+                    'message' => 'Access denied. Only agents and agencies can create visit schedules.',
                 ], 403);
             }
 
-            // Validate the request
-            $validator = Validator::make($request->all(), [
+            // Determine validation rules based on user role
+            $validationRules = [
                 'client_name' => 'required|string|max:255',
                 'client_phone_number' => 'required|string|max:20',
                 'client_email_address' => 'nullable|email|max:255',
@@ -2842,7 +2852,15 @@ class HomeController extends Controller
                 'notes' => 'nullable|string|max:1000',
                 'visit_purpose' => 'required|array|min:1',
                 'visit_purpose.*' => 'in:buy,rent',
-            ], [
+            ];
+
+            // Add agent selection validation for agencies
+            if ($user->role == 4) {
+                $validationRules['selected_agent_id'] = 'required|integer|exists:users,id';
+            }
+
+            // Validate the request
+            $validator = Validator::make($request->all(), $validationRules, [
                 'client_name.required' => 'Client name is required',
                 'client_phone_number.required' => 'Client phone number is required',
                 'client_email_address.email' => 'Please provide a valid email address',
@@ -2851,6 +2869,8 @@ class HomeController extends Controller
                 'client_id.max' => 'Client ID file size must not exceed 5MB',
                 'project_id.required' => 'Project selection is required',
                 'project_id.exists' => 'Selected project does not exist',
+                'selected_agent_id.required' => 'Agent selection is required',
+                'selected_agent_id.exists' => 'Selected agent does not exist',
                 'visit_date.required' => 'Visit date is required',
                 'visit_date.after_or_equal' => 'Visit date cannot be in the past',
                 'visit_time.required' => 'Visit time is required',
@@ -2867,6 +2887,30 @@ class HomeController extends Controller
                     'message' => 'Validation failed',
                     'errors' => $validator->errors()
                 ], 422);
+            }
+
+            // Determine the agent ID based on user role
+            $agentId = null;
+            if ($user->role == 4) {
+                // Agency: Use selected agent ID
+                $agentId = $request->selected_agent_id;
+                
+                // Verify that the selected agent belongs to this agency
+                $selectedAgent = User::where('id', $agentId)
+                    ->where('agency_id', $user->id)
+                    ->where('role', 3)
+                    ->where('active', 1)
+                    ->first();
+                    
+                if (!$selectedAgent) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Selected agent is not valid or does not belong to your agency',
+                    ], 403);
+                }
+            } else {
+                // Agent: Use current user's ID
+                $agentId = $user->id;
             }
 
             // Check if project exists and is active
@@ -2895,20 +2939,20 @@ class HomeController extends Controller
             $visitDateTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $request->visit_date . ' ' . $request->visit_time);
 
             // Check for conflicting visit schedules for the same agent
-            $existingVisit = \App\Models\VisiteSchedule::where('agent_id', $user->id)
+            $existingVisit = \App\Models\VisiteSchedule::where('agent_id', $agentId)
                 ->where('visit_time', $visitDateTime)
                 ->first();
 
             if ($existingVisit) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'You already have a visit scheduled at this time',
+                    'message' => 'The selected agent already has a visit scheduled at this time',
                 ], 409);
             }
 
             // Create the visit schedule
             $visitSchedule = \App\Models\VisiteSchedule::create([
-                'agent_id' => $user->id,
+                'agent_id' => $agentId,
                 'client_name' => $request->client_name,
                 'client_phone_number' => $request->client_phone_number,
                 'client_email_address' => $request->client_email_address,

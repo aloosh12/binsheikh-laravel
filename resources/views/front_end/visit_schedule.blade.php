@@ -431,6 +431,35 @@
                                                                         <h6>{{ __('messages.agent_contact_info') }}</h6>
                                                                     </div>
                                                                     <div class="row">
+                                                                        @if(\Auth::user()->role == 4)
+                                                                        <!-- Agency: Show agent selection dropdown -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="selected_agent_id" class="form-label">{{ __('messages.select_agent') }}</label>
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
+                                                                                    <select class="form-control" id="selected_agent_id" name="selected_agent_id" required>
+                                                                                        <option value="">{{ __('messages.select_agent') }}</option>
+                                                                                        @if(isset($agents) && $agents->count() > 0)
+                                                                                            @foreach($agents as $agent)
+                                                                                                <option value="{{ $agent->id }}" data-phone="{{ $agent->phone ?? '' }}">{{ $agent->name }}</option>
+                                                                                            @endforeach
+                                                                                        @endif
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="agent_phone" class="form-label">{{ __('messages.phone_number') }}</label>
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                                                                    <input type="tel" class="form-control" id="agent_phone" name="agent_phone" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        @else
+                                                                        <!-- Agent: Show readonly fields -->
                                                                         <div class="col-md-6">
                                                                             <div class="form-group">
                                                                                 <label for="agent_name" class="form-label">{{ __('messages.name') }}</label>
@@ -449,6 +478,7 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        @endif
                                                                     </div>
                                                                 </div>
 
@@ -1469,6 +1499,13 @@
         // Set minimum date to today
         const today = new Date().toISOString().split('T')[0];
         $('#visit_date').attr('min', today);
+        
+        // Agent selection change handler (for agencies)
+        $('#selected_agent_id').on('change', function() {
+            const selectedOption = $(this).find('option:selected');
+            const phoneNumber = selectedOption.data('phone') || '';
+            $('#agent_phone').val(phoneNumber);
+        });
         
         // Visit schedule search functionality
         $('#visitScheduleSearch').on('input', function() {
