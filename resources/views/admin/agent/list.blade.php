@@ -881,7 +881,7 @@
                             <!-- Action Buttons -->
                             <div class="action-buttons">
                                 <div class="selected-count" id="selectedCount">0 items selected</div>
-                                <button class="export-btn" id="exportBtn">Export</button>
+                                <button class="export-btn" id="exportBtn" onclick="exportAgents()">Export</button>
                                 <button class="delete-btn" id="deleteSelected">Delete</button>
                             </div>
                             <!-- Tab Content -->
@@ -2186,6 +2186,123 @@
                 });
             }
         });
+
+        // Export Agents Function
+        function exportAgents() {
+            const selectedAgents = document.querySelectorAll('.box1:checked');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            
+            if (selectedAgents.length === 0) {
+                // Ask user if they want to export all agents matching filters or select specific ones
+                Swal.fire({
+                    title: 'Export Options',
+                    text: 'No agents selected. Would you like to export all agents matching your current filters?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Export All Matching Filters',
+                    cancelButtonText: 'Select Agents'
+                }).then((result) => {
+                    if (result.value) {
+                        // Export all agents matching current filters (no IDs = all matching)
+                        performExport(null);
+                    } else {
+                        // Show message to select agents
+                        Swal.fire({
+                            title: 'Please Select Agents',
+                            text: 'Please select at least one agent to export, or choose "Export All Matching Filters" to export all agents that match your current filters.',
+                            icon: 'info',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+                return;
+            }
+            
+            // Check if "Select All" is checked
+            if (selectAllCheckbox && selectAllCheckbox.checked) {
+                // Export all agents matching current filters (no IDs = all matching)
+                performExport(null);
+            } else {
+                // Export only selected agents
+                performExport(Array.from(selectedAgents).map(cb => cb.value));
+            }
+        }
+        
+        // Perform the actual export
+        function performExport(agentIds = null) {
+            let exportUrl = `{{ url('admin/agent/export-employees') }}`;
+            
+            // Build query parameters
+            const params = new URLSearchParams();
+            
+            // Add filter parameters from the form
+            const searchText = document.querySelector('input[name="search_text"]')?.value;
+            const fromDate = document.querySelector('input[name="from"]')?.value;
+            const toDate = document.querySelector('input[name="to"]')?.value;
+            
+            if (searchText) {
+                params.append('search_text', searchText);
+            }
+            if (fromDate) {
+                params.append('from', fromDate);
+            }
+            if (toDate) {
+                params.append('to', toDate);
+            }
+            
+            // If specific IDs are provided, add them
+            if (agentIds && agentIds.length > 0) {
+                params.append('ids', agentIds.join(','));
+            }
+            
+            // Construct final URL
+            if (params.toString()) {
+                exportUrl += `?${params.toString()}`;
+            }
+            
+            // Determine export message
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const isSelectAll = selectAllCheckbox && selectAllCheckbox.checked;
+            const exportMessage = isSelectAll ? 
+                'Please wait while we prepare your export of all agents matching your filters.' : 
+                'Please wait while we prepare your export.';
+            
+            // Show loading message
+            Swal.fire({
+                title: 'Exporting...',
+                text: exportMessage,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Create a temporary link to trigger download
+            const link = document.createElement('a');
+            link.href = exportUrl;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Hide loading message after a short delay
+            setTimeout(() => {
+                Swal.close();
+                const successMessage = isSelectAll ? 
+                    'All agents matching your filters have been exported successfully.' : 
+                    'Your selected agent data has been exported successfully.';
+                    
+                Swal.fire({
+                    title: 'Export Complete',
+                    text: successMessage,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }, 1000);
+        }
 
         // Download Document Function
         function downloadDocument(filename) {

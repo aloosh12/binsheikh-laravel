@@ -543,13 +543,32 @@ class AgentController extends Controller
         $ids = $request->get('ids');
         $agentIds = $ids ? explode(',', $ids) : [];
         
-        $query = \App\Models\User::where('deleted', 0)->where('role', 3); // Assuming role 3 is for agents
+        // Get filter parameters
+        $search_text = $request->get('search_text', '');
+        $from = $request->get('from', \Carbon\Carbon::create(2010, 1, 1)->format('Y-m-d'));
+        $to = $request->get('to', \Carbon\Carbon::today()->format('Y-m-d'));
         
+        $query = \App\Models\User::with('agency')->where('deleted', 0)->where('role', 3); // Assuming role 3 is for agents
+        
+        // Apply date range filter
+        $query->whereDate('created_at', '>=', $from)
+              ->whereDate('created_at', '<=', $to);
+        
+        // Apply search filter
+        if ($search_text) {
+            $query->where(function ($q) use ($search_text) {
+                $q->where('name', 'like', "%$search_text%")
+                  ->orWhere('email', 'like', "%$search_text%")
+                  ->orWhere('phone', 'like', "%$search_text%");
+            });
+        }
+        
+        // If specific IDs are provided, filter by them
         if (!empty($agentIds)) {
             $query->whereIn('id', $agentIds);
         }
         
-        $agents = $query->get();
+        $agents = $query->orderBy('created_at', 'desc')->get();
         
         $filename = 'agents_export_' . date('Y-m-d_H-i-s') . '.csv';
         
