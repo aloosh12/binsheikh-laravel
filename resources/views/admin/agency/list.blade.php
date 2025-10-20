@@ -207,7 +207,8 @@
                                 </form>
                             </div>
 
-                            <div class="float-right col-md-3  mb-2" >
+                            <div class="float-right col-md-4 mb-2" >
+                                <button id="exportAgencies" class="btn btn-success mr-2">Export Agencies</button>
                                 <button id="deleteSelected" class="btn btn-danger">Delete Selected</button>
                             </div>
 
@@ -500,6 +501,126 @@
                 });
             });
         });
+
+        // Export Agencies Function
+        function exportAgencies() {
+            const selectedAgencies = document.querySelectorAll('.box1:checked');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            
+            if (selectedAgencies.length === 0) {
+                // Ask user if they want to export all agencies matching filters or select specific ones
+                Swal.fire({
+                    title: 'Export Options',
+                    text: 'No agencies selected. Would you like to export all agencies matching your current filters?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Export All Matching Filters',
+                    cancelButtonText: 'Select Agencies'
+                }).then((result) => {
+                    if (result.value) {
+                        // Export all agencies matching current filters (no IDs = all matching)
+                        performExport(null);
+                    } else {
+                        // Show message to select agencies
+                        Swal.fire({
+                            title: 'Please Select Agencies',
+                            text: 'Please select at least one agency to export, or choose "Export All Matching Filters" to export all agencies that match your current filters.',
+                            icon: 'info',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+                return;
+            }
+            
+            // Check if "Select All" is checked
+            if (selectAllCheckbox && selectAllCheckbox.checked) {
+                // Export all agencies matching current filters (no IDs = all matching)
+                performExport(null);
+            } else {
+                // Export only selected agencies
+                performExport(Array.from(selectedAgencies).map(cb => cb.value));
+            }
+        }
+        
+        // Perform the actual export
+        function performExport(agencyIds = null) {
+            let exportUrl = `{{ url('admin/agency/export-employees') }}`;
+            
+            // Build query parameters
+            const params = new URLSearchParams();
+            
+            // Add filter parameters from the form
+            const searchText = document.querySelector('input[name="search_text"]')?.value;
+            const fromDate = document.querySelector('input[name="from"]')?.value;
+            const toDate = document.querySelector('input[name="to"]')?.value;
+            
+            if (searchText) {
+                params.append('search_text', searchText);
+            }
+            if (fromDate) {
+                params.append('from', fromDate);
+            }
+            if (toDate) {
+                params.append('to', toDate);
+            }
+            
+            // If specific IDs are provided, add them
+            if (agencyIds && agencyIds.length > 0) {
+                params.append('ids', agencyIds.join(','));
+            }
+            
+            // Construct final URL
+            if (params.toString()) {
+                exportUrl += `?${params.toString()}`;
+            }
+            
+            // Determine export message
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const isSelectAll = selectAllCheckbox && selectAllCheckbox.checked;
+            const exportMessage = isSelectAll ? 
+                'Please wait while we prepare your export of all agencies matching your filters.' : 
+                'Please wait while we prepare your export.';
+            
+            // Show loading message
+            Swal.fire({
+                title: 'Exporting...',
+                text: exportMessage,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Create a temporary link to trigger download
+            const link = document.createElement('a');
+            link.href = exportUrl;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Hide loading message after a short delay
+            setTimeout(() => {
+                Swal.close();
+                const successMessage = isSelectAll ? 
+                    'All agencies matching your filters have been exported successfully.' : 
+                    'Your selected agency data has been exported successfully.';
+                    
+                Swal.fire({
+                    title: 'Export Complete',
+                    text: successMessage,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }, 1000);
+        }
+
+        // Export Agencies Button Handler
+        document.getElementById('exportAgencies').addEventListener('click', exportAgencies);
 
         // Delete Selected Handler
         document.getElementById('deleteSelected').addEventListener('click', function () {

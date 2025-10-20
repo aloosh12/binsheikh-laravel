@@ -339,12 +339,21 @@ class AgencyController extends Controller
             $mailbody = view('front_end.approve_mail')->render();
             if(send_email($customer->email, 'Account Approved - Bin Al Sheikh', $mailbody)) {
                 $status = "1";
-                $message = "Customer approved successfully";
+                $message = "Agency approved successfully";
             } else {
-                $message = "Customer approved but email sending failed";
+                $status = "1"; // Still consider it success even if email fails
+                $message = "Agency approved but email sending failed";
             }
         } else {
             $message = "Something went wrong";
+        }
+
+        // Check if it's an AJAX request
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => $status == "1",
+                'message' => $message
+            ]);
         }
 
         return redirect()->back()->with('success', $message);
@@ -520,7 +529,7 @@ class AgencyController extends Controller
     }
 
     /**
-     * Export employees to CSV
+     * Export agencies to CSV
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
@@ -528,47 +537,66 @@ class AgencyController extends Controller
     public function exportEmployees(Request $request)
     {
         $ids = $request->get('ids');
-        $employeeIds = $ids ? explode(',', $ids) : [];
+        $agencyIds = $ids ? explode(',', $ids) : [];
         
-        $query = \App\Models\User::where('deleted', 0)->where('role', 3); // Assuming role 3 is for employees
+        // Get filter parameters
+        $search_text = $request->get('search_text', '');
+        $from = $request->get('from', \Carbon\Carbon::create(2010, 1, 1)->format('Y-m-d'));
+        $to = $request->get('to', \Carbon\Carbon::today()->format('Y-m-d'));
         
-        if (!empty($employeeIds)) {
-            $query->whereIn('id', $employeeIds);
+        $query = \App\Models\User::where('deleted', 0)->where('role', 4); // Role 4 is for agencies
+        
+        // Apply date range filter
+        $query->whereDate('created_at', '>=', $from)
+              ->whereDate('created_at', '<=', $to);
+        
+        // Apply search filter
+        if ($search_text) {
+            $query->where(function ($q) use ($search_text) {
+                $q->where('name', 'like', "%$search_text%")
+                  ->orWhere('email', 'like', "%$search_text%")
+                  ->orWhere('phone', 'like', "%$search_text%");
+            });
         }
         
-        $employees = $query->get();
+        // If specific IDs are provided, filter by them
+        if (!empty($agencyIds)) {
+            $query->whereIn('id', $agencyIds);
+        }
         
-        $filename = 'employees_export_' . date('Y-m-d_H-i-s') . '.csv';
+        $agencies = $query->orderBy('created_at', 'desc')->get();
+        
+        $filename = 'agencies_export_' . date('Y-m-d_H-i-s') . '.csv';
         
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
         
-        return response()->stream(function() use ($employees) {
+        return response()->stream(function() use ($agencies) {
             $file = fopen('php://output', 'w');
             
             // CSV Headers
             fputcsv($file, [
                 'ID',
-                'Name',
+                'Agency Name',
                 'Email',
                 'Phone',
-                'Agency Name',
                 'Created At',
+                'Verified',
                 'Status'
             ]);
             
             // CSV Data
-            foreach ($employees as $employee) {
+            foreach ($agencies as $agency) {
                 fputcsv($file, [
-                    $employee->id,
-                    $employee->name,
-                    $employee->email,
-                    $employee->phone,
-                    $employee->agency->name ?? 'N/A',
-                    $employee->created_at->format('Y-m-d H:i:s'),
-                    $employee->active ? 'Active' : 'Inactive'
+                    $agency->id,
+                    $agency->name,
+                    $agency->email,
+                    $agency->phone,
+                    $agency->created_at->format('Y-m-d H:i:s'),
+                    $agency->verified ? 'Yes' : 'No',
+                    $agency->active ? 'Active' : 'Inactive'
                 ]);
             }
             
