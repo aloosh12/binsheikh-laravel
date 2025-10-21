@@ -1375,15 +1375,10 @@ class HomeController extends Controller
             $page = isset($request->page) ? (int)$request->page : 1;
             $offset = ($page - 1) * $limit;
 
-            // Status filter
-            $status = $request->status ?? '';
-
             // Build query based on user role
             $query = \App\Models\VisiteSchedule::with([
                 'agent',
-                'property.project',
-                'property.property_type',
-                'property.images'
+                'project'
             ]);
 
             if ($user->role == 4) {
@@ -1405,11 +1400,6 @@ class HomeController extends Controller
                 $query->where('agent_id', $user->id);
             }
 
-            // Apply status filter if provided
-            if ($status) {
-                $query->where('status', $status);
-            }
-
             // Get total count for pagination
             $totalVisitSchedules = $query->count();
             $totalPages = ceil($totalVisitSchedules / $limit);
@@ -1422,7 +1412,7 @@ class HomeController extends Controller
                 ->get()
                 ->filter(function($visitSchedule) {
                     // Only include visit schedules with valid relationships
-                    return $visitSchedule->property && $visitSchedule->agent;
+                    return $visitSchedule->project && $visitSchedule->agent;
                 })
                 ->map(function($visitSchedule) {
                     return [
@@ -1434,6 +1424,7 @@ class HomeController extends Controller
                         'visit_time' => $visitSchedule->visit_time ? $visitSchedule->visit_time->toISOString() : '',
                         'notes' => $visitSchedule->notes ?? '',
                         'visit_purpose' => $visitSchedule->visit_purpose ?? '',
+                        'unit_type' => $visitSchedule->unit_type ?? '',
                         'created_at' => $visitSchedule->created_at ? $visitSchedule->created_at->toISOString() : '',
                         'updated_at' => $visitSchedule->updated_at ? $visitSchedule->updated_at->toISOString() : '',
                         'agent' => [
@@ -1443,44 +1434,15 @@ class HomeController extends Controller
                             'phone' => $visitSchedule->agent->phone ?? '',
                             'image' => $visitSchedule->agent->image ? aws_asset_path($visitSchedule->agent->image) : asset('').'front-assets/images/avatar/profile-icon.png',
                         ],
-                        'property' => [
-                            'id' => $visitSchedule->property->id ?? '',
-                            'name' => $visitSchedule->property->name ?? '',
-                            'price' => $visitSchedule->property->price ?? 0,
-                            'apartment_no' => $visitSchedule->property->apartment_no ?? '',
-                            'area' => $visitSchedule->property->area ?? '',
-                            'bedrooms' => $visitSchedule->property->bedrooms ?? '',
-                            'bathrooms' => $visitSchedule->property->bathrooms ?? '',
-                            'floor_no' => $visitSchedule->property->floor_no ?? '',
-                            'location' => $visitSchedule->property->location ?? '',
-                            'sale_type' => $visitSchedule->property->sale_type ?? '',
-                            'is_featured' => $visitSchedule->property->is_featured ?? '',
-                            'image' => ($visitSchedule->property->images && $visitSchedule->property->images->first()) ? aws_asset_path($visitSchedule->property->images->first()->image) : '',
-                            'project' => [
-                                'id' => $visitSchedule->property->project->id ?? '',
-                                'name' => $visitSchedule->property->project->name ?? '',
-                                'location' => $visitSchedule->property->project->location ?? '',
-                            ],
-                            'property_type' => [
-                                'id' => $visitSchedule->property->property_type->id ?? '',
-                                'name' => $visitSchedule->property->property_type->name ?? '',
-                            ],
+                        'project' => [
+                            'id' => $visitSchedule->project->id ?? '',
+                            'name' => $visitSchedule->project->name ?? '',
+                            'name_ar' => $visitSchedule->project->name_ar ?? '',
+                            'location' => $visitSchedule->project->location ?? '',
+                            'location_ar' => $visitSchedule->project->location_ar ?? '',
                         ],
                     ];
                 });
-
-            // Add sale type labels
-            $visitSchedules = $visitSchedules->map(function($visitSchedule) {
-                if(isset($visitSchedule['property']['sale_type'])) {
-                    if($visitSchedule['property']['sale_type'] == 1 || $visitSchedule['property']['sale_type'] == 3){
-                        $visitSchedule['property']['sale_type_label'] = __('messages.buy');
-                    }
-                    if($visitSchedule['property']['sale_type'] == 2 || $visitSchedule['property']['sale_type'] == 3){
-                        $visitSchedule['property']['sale_type_label'] = __('messages.rent');
-                    }
-                }
-                return $visitSchedule;
-            });
 
             // Calculate summary statistics
             $summaryQuery = \App\Models\VisiteSchedule::query();
@@ -1557,9 +1519,7 @@ class HomeController extends Controller
             // Get visit schedule with relationships
             $visitSchedule = \App\Models\VisiteSchedule::with([
                 'agent',
-                'property.project',
-                'property.property_type',
-                'property.images'
+                'project'
             ])->find($visitScheduleId);
 
             if (!$visitSchedule) {
@@ -1605,7 +1565,7 @@ class HomeController extends Controller
                 'visit_time' => $visitSchedule->visit_time ? $visitSchedule->visit_time->toISOString() : '',
                 'notes' => $visitSchedule->notes,
                 'visit_purpose' => $visitSchedule->visit_purpose,
-                'status' => $visitSchedule->status,
+                'unit_type' => $visitSchedule->unit_type,
                 'created_at' => $visitSchedule->created_at ? $visitSchedule->created_at->toISOString() : '',
                 'updated_at' => $visitSchedule->updated_at ? $visitSchedule->updated_at->toISOString() : '',
                 'agent' => [
@@ -1615,56 +1575,16 @@ class HomeController extends Controller
                     'phone' => $visitSchedule->agent->phone,
                     'image' => $visitSchedule->agent->image ? aws_asset_path($visitSchedule->agent->image) : asset('').'front-assets/images/avatar/profile-icon.png',
                 ],
-                'property' => [
-                    'id' => $visitSchedule->property->id,
-                    'name' => $visitSchedule->property->name,
-                    'price' => $visitSchedule->property->price,
-                    'apartment_no' => $visitSchedule->property->apartment_no,
-                    'area' => $visitSchedule->property->area,
-                    'bedrooms' => $visitSchedule->property->bedrooms,
-                    'bathrooms' => $visitSchedule->property->bathrooms,
-                    'floor_no' => $visitSchedule->property->floor_no,
-                    'description' => $visitSchedule->property->description,
-                    'short_description' => $visitSchedule->property->short_description,
-                    'location' => $visitSchedule->property->location,
-                    'location_link' => $visitSchedule->property->location_link,
-                    'video_link' => $visitSchedule->property->video_link,
-                    'link_360' => $visitSchedule->property->link_360,
-                    'unit_layout' => $visitSchedule->property->unit_layout,
-                    'floor_plan' => $visitSchedule->property->floor_plan ? aws_asset_path($visitSchedule->property->floor_plan) : '',
-                    'gross_area' => $visitSchedule->property->gross_area,
-                    'balcony_size' => $visitSchedule->property->balcony_size,
-                    'sale_type' => $visitSchedule->property->sale_type,
-                    'is_featured' => $visitSchedule->property->is_featured,
-                    'images' => $visitSchedule->property->images->map(function($image) {
-                        return [
-                            'id' => $image->id,
-                            'image' => aws_asset_path($image->image),
-                            'type' => $image->type,
-                            'order' => $image->order,
-                        ];
-                    }),
-                    'project' => [
-                        'id' => $visitSchedule->property->project->id,
-                        'name' => $visitSchedule->property->project->name,
-                        'location' => $visitSchedule->property->project->location,
-                        'description' => $visitSchedule->property->project->description,
-                        'image' => $visitSchedule->property->project->app_image ? aws_asset_path($visitSchedule->property->project->app_image) : ($visitSchedule->property->project->image ? aws_asset_path($visitSchedule->property->project->image) : ''),
-                    ],
-                    'property_type' => [
-                        'id' => $visitSchedule->property->property_type->id,
-                        'name' => $visitSchedule->property->property_type->name,
-                    ],
+                'project' => [
+                    'id' => $visitSchedule->project ? $visitSchedule->project->id : null,
+                    'name' => $visitSchedule->project ? $visitSchedule->project->name : 'N/A',
+                    'name_ar' => $visitSchedule->project ? $visitSchedule->project->name_ar : 'N/A',
+                    'location' => $visitSchedule->project ? $visitSchedule->project->location : null,
+                    'location_ar' => $visitSchedule->project ? $visitSchedule->project->location_ar : null,
+                    'description' => $visitSchedule->project ? $visitSchedule->project->description : null,
+                    'image' => $visitSchedule->project && $visitSchedule->project->app_image ? aws_asset_path($visitSchedule->project->app_image) : ($visitSchedule->project && $visitSchedule->project->image ? aws_asset_path($visitSchedule->project->image) : ''),
                 ],
             ];
-
-            // Add sale type label
-            if($visitSchedule->property->sale_type == 1 || $visitSchedule->property->sale_type == 3){
-                $visitScheduleData['property']['sale_type_label'] = __('messages.buy');
-            }
-            if($visitSchedule->property->sale_type == 2 || $visitSchedule->property->sale_type == 3){
-                $visitScheduleData['property']['sale_type_label'] = __('messages.rent');
-            }
 
             return response()->json([
                 'message' => 'Visit Schedule Details Retrieved Successfully',
@@ -1837,30 +1757,37 @@ class HomeController extends Controller
 
             // Validate the request
             $validator = Validator::make($request->all(), [
+                'agent_id' => 'nullable|integer|exists:users,id',
                 'client_name' => 'required|string|max:255',
                 'client_phone_number' => 'required|string|max:20',
                 'client_email_address' => 'nullable|email|max:255',
                 'client_id' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-                'property_id' => 'required|integer|exists:properties,id',
+                'project_id' => 'required|integer|exists:projects,id',
+                'unit_type' => 'nullable|string|max:255',
                 'visit_date' => 'required|date|after_or_equal:today',
                 'visit_time' => 'required|date_format:H:i',
                 'notes' => 'nullable|string|max:1000',
-                'visit_purpose' => 'required|in:buy,rent',
+                'visit_purpose' => 'required|array|min:1',
+                'visit_purpose.*' => 'in:buy,rent',
             ], [
+                'agent_id.integer' => 'Agent ID must be a valid integer',
+                'agent_id.exists' => 'Selected agent does not exist',
                 'client_name.required' => 'Client name is required',
                 'client_phone_number.required' => 'Client phone number is required',
                 'client_email_address.email' => 'Please provide a valid email address',
                 'client_id.file' => 'Client ID must be a file',
                 'client_id.mimes' => 'Client ID file must be jpg, jpeg, png, or pdf',
                 'client_id.max' => 'Client ID file size must not exceed 5MB',
-                'property_id.required' => 'Property selection is required',
-                'property_id.exists' => 'Selected property does not exist',
+                'project_id.required' => 'Project selection is required',
+                'project_id.exists' => 'Selected project does not exist',
                 'visit_date.required' => 'Visit date is required',
                 'visit_date.after_or_equal' => 'Visit date cannot be in the past',
                 'visit_time.required' => 'Visit time is required',
                 'visit_time.date_format' => 'Please provide a valid time format (HH:MM)',
                 'visit_purpose.required' => 'Visit purpose is required',
-                'visit_purpose.in' => 'Visit purpose must be either buy or rent',
+                'visit_purpose.array' => 'Visit purpose must be an array',
+                'visit_purpose.min' => 'At least one visit purpose must be selected',
+                'visit_purpose.*.in' => 'Visit purpose must be either buy or rent',
             ]);
 
             if ($validator->fails()) {
@@ -1870,24 +1797,44 @@ class HomeController extends Controller
                 ], 422);
             }
 
-            // Check if property exists and is active
-            $property = Properties::with(['project', 'property_type'])->where('id', $request->property_id)
+            // Determine which agent ID to use
+            $agentId = $user->id; // Default to current user
+            
+            // If agent_id is provided, validate permissions
+            if ($request->agent_id) {
+                if ($user->role == 4) {
+                    // Agency can assign to any of their agents
+                    $agent = User::where('id', $request->agent_id)
+                        ->where('role', 3)
+                        ->where('agency_id', $user->id)
+                        ->first();
+                    
+                    if (!$agent) {
+                        return response()->json([
+                            'message' => 'Selected agent does not belong to your agency or does not exist',
+                        ], 403);
+                    }
+                    
+                    $agentId = $request->agent_id;
+                } else {
+                    // Agents cannot assign to other agents
+                    return response()->json([
+                        'message' => 'Only agencies can assign visit schedules to other agents',
+                    ], 403);
+                }
+            }
+
+            // Check if project exists and is active
+            $project = \App\Models\Projects::where('id', $request->project_id)
                 ->where('active', 1)
                 ->where('deleted', 0)
                 ->first();
 
-            if (!$property) {
+            if (!$project) {
                 return response()->json([
-                    'message' => 'Selected property is not available',
+                    'message' => 'Selected project is not available',
                 ], 404);
             }
-
-            // // Check if property has a valid project
-            // if (!$property->project) {
-            //     return response()->json([
-            //         'message' => 'Selected property does not have an associated project',
-            //     ], 404);
-            // }
 
             // Handle client ID file upload
             $clientIdFileName = null;
@@ -1902,31 +1849,32 @@ class HomeController extends Controller
             $visitDateTime = Carbon::createFromFormat('Y-m-d H:i', $request->visit_date . ' ' . $request->visit_time);
 
             // Check for conflicting visit schedules for the same agent
-            $existingVisit = \App\Models\VisiteSchedule::where('agent_id', $user->id)
+            $existingVisit = \App\Models\VisiteSchedule::where('agent_id', $agentId)
                 ->where('visit_time', $visitDateTime)
                 ->first();
 
             if ($existingVisit) {
                 return response()->json([
-                    'message' => 'You already have a visit scheduled at this time',
+                    'message' => 'This agent already has a visit scheduled at this time',
                 ], 409);
             }
 
             // Create the visit schedule
             $visitSchedule = \App\Models\VisiteSchedule::create([
-                'agent_id' => $user->id,
+                'agent_id' => $agentId,
                 'client_name' => $request->client_name,
                 'client_phone_number' => $request->client_phone_number,
                 'client_email_address' => $request->client_email_address,
                 'client_id' => $clientIdFileName,
-                'property_id' => $request->property_id,
+                'project_id' => $request->project_id,
+                'unit_type' => $request->unit_type,
                 'visit_time' => $visitDateTime,
                 'notes' => $request->notes,
-                'visit_purpose' => $request->visit_purpose
+                'visit_purpose' => is_array($request->visit_purpose) ? implode(',', $request->visit_purpose) : $request->visit_purpose,
             ]);
 
             // Load relationships for response
-            $visitSchedule->load(['agent', 'property.project', 'property.property_type']);
+            $visitSchedule->load(['agent', 'project']);
 
             // Format the response data
             $responseData = [
@@ -1939,23 +1887,17 @@ class HomeController extends Controller
                 'visit_time' => $visitSchedule->visit_time ? $visitSchedule->visit_time->toISOString() : '',
                 'notes' => $visitSchedule->notes,
                 'visit_purpose' => $visitSchedule->visit_purpose,
+                'unit_type' => $visitSchedule->unit_type,
                 'agent' => [
                     'id' => $visitSchedule->agent->id,
                     'name' => $visitSchedule->agent->name,
                     'email' => $visitSchedule->agent->email,
                 ],
-                'property' => [
-                    'id' => $visitSchedule->property->id,
-                    'name' => $visitSchedule->property->name,
-                    'apartment_no' => $visitSchedule->property->apartment_no,
-                    'project' => [
-                        'id' => $visitSchedule->property->project ? $visitSchedule->property->project->id : null,
-                        'name' => $visitSchedule->property->project ? $visitSchedule->property->project->name : 'N/A',
-                    ],
-                    'property_type' => [
-                        'id' => $visitSchedule->property->property_type ? $visitSchedule->property->property_type->id : null,
-                        'name' => $visitSchedule->property->property_type ? $visitSchedule->property->property_type->name : 'N/A',
-                    ],
+                'project' => [
+                    'id' => $visitSchedule->project ? $visitSchedule->project->id : null,
+                    'name' => $visitSchedule->project ? $visitSchedule->project->name : 'N/A',
+                    'name_ar' => $visitSchedule->project ? $visitSchedule->project->name_ar : 'N/A',
+                    'location' => $visitSchedule->project ? $visitSchedule->project->location : null,
                 ],
                 'created_at' => $visitSchedule->created_at ? $visitSchedule->created_at->toISOString() : '',
                 'updated_at' => $visitSchedule->updated_at ? $visitSchedule->updated_at->toISOString() : '',
