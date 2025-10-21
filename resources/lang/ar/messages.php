@@ -296,6 +296,7 @@ return [
     'already_subscribed' => 'أنت مشترك بالفعل',
     'validation_error_occurred' => 'حدث خطأ في التحقق',
     'invalid_credentials' => 'بيانات الاعتماد غير صالحة',
+    'account_deleted' => 'تم حذف حسابك. يرجى الاتصال بالدعم للحصول على المساعدة.',
     'account_deactivated_by_admin' => 'تم تعطيل حسابك بواسطة المسؤول',
     'account_need_approve_from_admin' => 'حسابك بحاجة موافقة من المدير',
     'logged_in_successfully' => 'تم تسجيل الدخول بنجاح',

@@ -283,6 +283,7 @@ return [
     'already_subscribed' => 'Already Subscribed',
     'validation_error_occurred' => 'Validation error occurred',
     'invalid_credentials' => 'Invalid Credentials',
+    'account_deleted' => 'Your account has been deleted. Please contact support for assistance.',
     'account_deactivated_by_admin' => 'Your account is deactivated by admin',
     'account_need_approve_from_admin' => 'Your account need approval from admin',
     'logged_in_successfully' => 'Logged in successfully',

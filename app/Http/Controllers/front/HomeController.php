@@ -792,28 +792,44 @@ class HomeController extends Controller
             return response()->json(['status' => 0, 'message' => __('messages.validation_error_occurred'), 'errors' => $errors]);
         }
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            if (Auth::user()->role == 1) {
-                session()->pull("user_id");
-                Auth::logout();
-                return response()->json(['status' => 0, 'message' => __('messages.invalid_credentials')]);
-            }
-            if (!Auth::user()->active) {
-                return response()->json(['status' => 0, 'message' => __('messages.account_deactivated_by_admin')]);
-            }
-            if (!Auth::user()->verified) {
-                return response()->json(['status' => 0, 'message' => __('messages.account_need_approve_from_admin')]);
-            }
-
-            $request->session()->put('user_id', Auth::user()->id);
-            if ($request->timezone) {
-                $request->session()->put('user_timezone', $request->timezone);
-            }
-            return response()->json(['status' => 1, 'message' => __('messages.logged_in_successfully')]);
-
+    if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        // Check if user account is deleted
+        if (Auth::user()->deleted == 1) {
+            session()->pull("user_id");
+            Auth::logout();
+            return response()->json(['status' => 0, 'message' => __('messages.account_deleted')]);
+        }
+        
+        // Check if user is admin (role 1) - admins cannot login via frontend
+        if (Auth::user()->role == 1) {
+            session()->pull("user_id");
+            Auth::logout();
+            return response()->json(['status' => 0, 'message' => __('messages.invalid_credentials')]);
+        }
+        
+        // Check if account is active
+        if (!Auth::user()->active) {
+            session()->pull("user_id");
+            Auth::logout();
+            return response()->json(['status' => 0, 'message' => __('messages.account_deactivated_by_admin')]);
+        }
+        
+        // Check if account is verified/approved (only for agents role 3 and agencies role 4, not regular users role 2)
+        if ((Auth::user()->role == 3 || Auth::user()->role == 4) && !Auth::user()->verified) {
+            session()->pull("user_id");
+            Auth::logout();
+            return response()->json(['status' => 0, 'message' => __('messages.account_need_approve_from_admin')]);
         }
 
-        return response()->json(['status' => 0, 'message' => __('messages.invalid_credentials')]);
+        $request->session()->put('user_id', Auth::user()->id);
+        if ($request->timezone) {
+            $request->session()->put('user_timezone', $request->timezone);
+        }
+        return response()->json(['status' => 1, 'message' => __('messages.logged_in_successfully')]);
+
+    }
+
+    return response()->json(['status' => 0, 'message' => __('messages.invalid_credentials')]);
     }
     public function signup(Request $request)
     {
