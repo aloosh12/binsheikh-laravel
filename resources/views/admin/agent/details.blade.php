@@ -1354,8 +1354,7 @@
                     <span id="currentTabTitle">AGENT INFO</span>
                 </h1>
                 <div class="header-actions">
-                    <button class="btn-action btn-danger" onclick="rejectAgent({{ $agent->id }})">Delete</button>
-                    <button class="btn-action btn-gray" onclick="deleteAgent({{ $agent->id }})">Delete</button>
+                    <button class="btn-action btn-danger btn-delete-agent" onclick="deleteAgent({{ $agent->id }})">Delete</button>
                 </div>
             </div>
             
@@ -1885,8 +1884,8 @@
             });
         });
         
-        // Header action buttons
-        document.querySelectorAll('.btn-action').forEach(btn => {
+        // Header action buttons (exclude delete button which has its own onclick handler)
+        document.querySelectorAll('.btn-action:not(.btn-delete-agent)').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const isApprove = this.classList.contains('btn-gold');
