@@ -587,7 +587,7 @@
 {{--                                                        </div>--}}
                                                         <!-- License Upload for Agents/Agencies -->
                                                         <div class="cs-intsputwrap agent_div d-none">
-                                                            <label for="d" style="float:left" id="id_card_label">{{ __('messages.id_card') }}</label>
+                                                            <label for="d" style="float:{{ $locale == 'ar' ? 'right' : 'left' }}" id="id_card_label">{{ __('messages.id_card') }}</label>
                                                             <input type="file" class="form-control agent_inp" name="id_card" required data-parsley-required-message="{{ __('messages.select_id_card') }}"
                                                                    data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
                                                                    data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
@@ -595,7 +595,7 @@
                                                                    accept="image/*,application/pdf">
                                                         </div>
                                                         <div class="cs-intsputwrap agency_div d-none">
-                                                            <label for="d" style="float:left">{{ __('messages.professional_practice_certificate') }}</label> <!-- Translated License -->
+                                                            <label for="d" style="float:{{ $locale == 'ar' ? 'right' : 'left' }}">{{ __('messages.professional_practice_certificate') }}</label> <!-- Translated License -->
                                                             <input type="file" class="form-control agency_inp" name="professional_practice_certificate" data-parsley-required-message="{{ __('messages.select_professional_practice_certificate') }}"
                                                                 data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
                                                                 data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
@@ -603,7 +603,7 @@
                                                                 accept="image/*,application/pdf">
                                                         </div>
                                                         <div class="cs-intsputwrap agency_div d-none">
-                                                            <label for="d" style="float:left">{{ __('messages.authorized_signatory') }}</label> <!-- Translated License -->
+                                                            <label for="d" style="float:{{ $locale == 'ar' ? 'right' : 'left' }}">{{ __('messages.authorized_signatory') }}</label> <!-- Translated License -->
                                                             <input type="file" class="form-control agency_inp" name="authorized_signatory" data-parsley-required-message="{{ __('messages.select_authorized_signatory') }}"
                                                                    data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
                                                                    data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
@@ -611,7 +611,7 @@
                                                                    accept="image/*,application/pdf">
                                                         </div>
                                                         <div class="cs-intsputwrap agency_div d-none">
-                                                            <label for="d" style="float:left">{{ __('messages.cr') }}</label> <!-- Translated License -->
+                                                            <label for="d" style="float:{{ $locale == 'ar' ? 'right' : 'left' }}">{{ __('messages.cr') }}</label> <!-- Translated License -->
                                                             <input type="file" class="form-control agency_inp" name="cr" data-parsley-required-message="{{ __('messages.select_cr') }}"
                                                                    data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
                                                                    data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
@@ -620,7 +620,7 @@
                                                         </div>
                                                         <!-- Agency Selection for Agents -->
                                                         <div class="cs-intputwrap agent_agency_select_div d-none">
-                                                        <label for="d" style="float:left">{{ __('messages.select_agency') }}</label> 
+                                                        <label for="d" style="float:{{ $locale == 'ar' ? 'right' : 'left' }}">{{ __('messages.select_agency') }}</label> 
                                                             <select name="agency_id" id="agency_id" class="agent_agency_select_inp">
                                                                 <option value="">{{ __('messages.select_agency') }}</option>
                                                                 @php
@@ -638,7 +638,7 @@
 
                                                         <!-- License Upload for Agents/Agencies -->
                                                          <div class="cs-intsputwrap agent_agency_div d-none">
-                                                            <label for="d" style="float:left" id="license_label">{{ __('messages.license') }}</label>
+                                                            <label for="d" style="float:{{ $locale == 'ar' ? 'right' : 'left' }}" id="license_label">{{ __('messages.license') }}</label>
                                                             <input type="file" class="form-control agent_agency_inp" name="license" required data-parsley-required-message="{{ __('messages.select_license') }}"
                                                                 data-parsley-trigger="change" data-parsley-fileextension="jpg,png,jpeg,pdf"
                                                                 data-parsley-fileextension-message="{{ __('messages.file_extension_message') }}"
