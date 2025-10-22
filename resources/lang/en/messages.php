@@ -512,4 +512,6 @@ return [
     'preferred_date_time' => 'Preferred Date & Time',
     'time' => 'Time',
     'enter_your_main_message_here' => 'Enter Your Main Message Here...',
+    'favorite' => 'Favorites'
+                                                            
 ];

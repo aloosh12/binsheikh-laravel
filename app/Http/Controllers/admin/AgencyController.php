@@ -280,7 +280,7 @@ class AgencyController extends Controller
         // Load visit schedules for all agents in this agency
         $visitSchedules = \App\Models\VisiteSchedule::with(['agent', 'project'])
             ->whereIn('agent_id', $agentIds)
-            ->orderBy('visit_time', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
         
         // Load reservations for all agents in this agency

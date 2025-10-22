@@ -1942,7 +1942,8 @@
         
         // Visit Schedule tab functionality
         function toggleAllVisitSchedules(source) {
-            document.querySelectorAll('.visit-schedule-checkbox').forEach(checkbox => {
+            const checkboxes = document.querySelectorAll('.visit-schedule-checkbox');
+            checkboxes.forEach(checkbox => {
                 checkbox.checked = source.checked;
             });
             updateSelectedCountVisit();
@@ -1950,6 +1951,23 @@
         
         function updateSelectedCountVisit() {
             const selected = document.querySelectorAll('.visit-schedule-checkbox:checked').length;
+            const total = document.querySelectorAll('.visit-schedule-checkbox').length;
+            const selectAllCheckbox = document.getElementById('selectAllVisitSchedules');
+            
+            // Update the select all checkbox state
+            if (selectAllCheckbox) {
+                if (selected === 0) {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = false;
+                } else if (selected === total) {
+                    selectAllCheckbox.checked = true;
+                    selectAllCheckbox.indeterminate = false;
+                } else {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = true;
+                }
+            }
+            
             document.getElementById('selectedCountVisit').textContent = `${selected} items selected`;
         }
         
@@ -1958,26 +1976,59 @@
             checkbox.addEventListener('change', updateSelectedCountVisit);
         });
         
+        // Select all visit schedules checkbox
+        const selectAllVisitCheckbox = document.getElementById('selectAllVisitSchedules');
+        if (selectAllVisitCheckbox) {
+            selectAllVisitCheckbox.addEventListener('change', function() {
+                toggleAllVisitSchedules(this);
+            });
+        }
+        
         // Visit schedule export functionality
         document.querySelectorAll('#visit-schedule .btn-primary').forEach(button => {
             if (button.textContent.trim() === 'Export') {
                 button.addEventListener('click', function() {
                     const selectedSchedules = document.querySelectorAll('.visit-schedule-checkbox:checked');
-                    if (selectedSchedules.length === 0) {
+                    const searchText = document.getElementById('visitScheduleSearch').value;
+                    const fromDate = document.getElementById('fromDateVisit').value;
+                    const toDate = document.getElementById('toDateVisit').value;
+                    
+                    // Check if any filters are applied
+                    const hasFilters = searchText || fromDate || toDate;
+                    
+                    if (selectedSchedules.length === 0 && !hasFilters) {
                         Swal.fire({
                             title: 'No Selection',
-                            text: 'Please select visit schedules to export',
+                            text: 'Please select visit schedules to export or apply filters to export all matching records',
                             icon: 'warning',
                             confirmButtonText: 'OK'
                         });
                         return;
                     }
                     
-                    const scheduleIds = Array.from(selectedSchedules).map(cb => cb.value);
+                    let exportUrl;
+                    let exportMessage;
+                    
+                    if (selectedSchedules.length > 0) {
+                        // Export selected schedules
+                        const scheduleIds = Array.from(selectedSchedules).map(cb => cb.value);
+                        exportUrl = `/admin/agent/export-visit-schedules?ids=${scheduleIds.join(',')}`;
+                        exportMessage = `Export ${selectedSchedules.length} selected visit schedule(s)?`;
+                    } else if (hasFilters) {
+                        // Export all matching filters
+                        const params = new URLSearchParams();
+                        if (searchText) params.append('search_text', searchText);
+                        if (fromDate) params.append('from', fromDate);
+                        if (toDate) params.append('to', toDate);
+                        params.append('agent_id', '{{ $agent->id }}');
+                        
+                        exportUrl = `/admin/agent/export-visit-schedules?${params.toString()}`;
+                        exportMessage = 'Export all visit schedules matching the current filters?';
+                    }
                     
                     Swal.fire({
                         title: 'Export Visit Schedules',
-                        text: `Export ${selectedSchedules.length} selected visit schedule(s)?`,
+                        text: exportMessage,
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonColor: '#007bff',
@@ -1985,8 +2036,6 @@
                         confirmButtonText: 'Yes, export!'
                     }).then((result) => {
                         if (result.value) {
-                            // Create export URL with selected IDs
-                            const exportUrl = `/admin/agent/export-visit-schedules?ids=${scheduleIds.join(',')}`;
                             window.open(exportUrl, '_blank');
                             
                             Swal.fire({

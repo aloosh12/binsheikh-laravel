@@ -284,7 +284,7 @@ class AgentController extends Controller
         // Load visit schedules for this specific agent
         $visitSchedules = \App\Models\VisiteSchedule::with(['agent', 'project'])
             ->where('agent_id', $id)
-            ->orderBy('visit_time', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
         
         // Load reservations for this specific agent
@@ -1046,7 +1046,7 @@ class AgentController extends Controller
     {
         try {
             $visits = \App\Models\VisiteSchedule::with(['agent', 'project'])
-                ->orderBy('visit_time', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function($visit) {
                     return [

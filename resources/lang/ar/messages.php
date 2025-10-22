@@ -492,4 +492,5 @@ return [
     'preferred_date_time' => 'التاريخ والوقت المفضل',
     'time' => 'الوقت',
     'enter_your_main_message_here' => 'أدخل رسالتك الرئيسية هنا...',
+    'favorite' => 'المفضلة'
 ];

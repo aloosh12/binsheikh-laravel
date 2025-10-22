@@ -18,6 +18,17 @@
         margin: 0;
     }
     
+    .breadcrumb-link {
+        color: #007bff;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .breadcrumb-link:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+    
     .header-actions {
         display: flex;
         gap: 10px;
@@ -356,6 +367,18 @@
     .agent-name {
         font-weight: 500;
         color: #333;
+    }
+    
+    .agent-name-link {
+        font-weight: 500;
+        color: #007bff;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .agent-name-link:hover {
+        color: #0056b3;
+        text-decoration: underline;
     }
     
     .status-section {
@@ -1331,7 +1354,12 @@
         <div class="fade-in">
             <!-- Header -->
             <div class="agency-details-header">
-                <h1 class="breadcrumb-title">AGENCIES / {{ strtoupper($customer->name) }} / <span id="currentTabTitle">AGENCY INFO</span></h1>
+                <h1 class="breadcrumb-title">
+                    <a href="{{ url('admin/agency/list') }}" class="breadcrumb-link">AGENCIES</a> / 
+                    <a href="{{ url('admin/agency/details/' . $customer->id) }}" class="breadcrumb-link">{{ strtoupper($customer->name) }}</a> / 
+                    <span id="currentTabTitle">AGENCY INFO</span>
+                    <span id="employeeBreadcrumb" style="display: none;"> / <span id="employeeName" class="breadcrumb-link"></span></span>
+                </h1>
                 <div class="header-actions">
                     <!-- <button class="btn-action btn-gray">Edit</button>
                     <button class="btn-action btn-gold">Approve</button> -->
@@ -1516,7 +1544,7 @@
                                                 <i class="fas fa-user"></i>
                                                 <div class="status-dot"></div>
                                             </div>
-                                            <span class="agent-name">{{ $agent->name }}</span>
+                                            <a href="{{ url('admin/agent/details/' . $agent->id) }}" class="agent-name-link" data-agent-id="{{ $agent->id }}" data-agent-name="{{ $agent->name }}">{{ $agent->name }}</a>
                                         </div>
                                     </td>
                                     <td>{{ $customer->name }}</td>
@@ -2020,8 +2048,72 @@
             };
             
             const currentTabTitle = document.getElementById('currentTabTitle');
+            const employeeBreadcrumb = document.getElementById('employeeBreadcrumb');
+            
             if (currentTabTitle && tabTitles[tabId]) {
                 currentTabTitle.textContent = tabTitles[tabId];
+            }
+            
+            // Hide employee breadcrumb when switching tabs
+            if (employeeBreadcrumb) {
+                employeeBreadcrumb.style.display = 'none';
+            }
+        }
+        
+        // Function to show employee in breadcrumb
+        function showEmployeeInBreadcrumb(agentId, agentName) {
+            const employeeBreadcrumb = document.getElementById('employeeBreadcrumb');
+            const employeeName = document.getElementById('employeeName');
+            
+            if (employeeBreadcrumb && employeeName) {
+                employeeName.textContent = agentName.toUpperCase();
+                if (agentId) {
+                    employeeName.setAttribute('href', `/admin/agent/details/${agentId}`);
+                    employeeName.style.cursor = 'pointer';
+                } else {
+                    employeeName.removeAttribute('href');
+                    employeeName.style.cursor = 'default';
+                }
+                employeeBreadcrumb.style.display = 'inline';
+            }
+        }
+        
+        // Function to hide employee from breadcrumb
+        function hideEmployeeFromBreadcrumb() {
+            const employeeBreadcrumb = document.getElementById('employeeBreadcrumb');
+            if (employeeBreadcrumb) {
+                employeeBreadcrumb.style.display = 'none';
+            }
+        }
+        
+        // Function to handle employee selection and update breadcrumb
+        function handleEmployeeSelection() {
+            const selectedCheckboxes = document.querySelectorAll('.employee-checkbox:checked');
+            
+            if (selectedCheckboxes.length === 1) {
+                // Single employee selected - show in breadcrumb
+                const selectedCheckbox = selectedCheckboxes[0];
+                const row = selectedCheckbox.closest('.main-row');
+                const agentNameLink = row.querySelector('.agent-name-link');
+                
+                if (agentNameLink) {
+                    const agentId = agentNameLink.getAttribute('data-agent-id');
+                    const agentName = agentNameLink.getAttribute('data-agent-name');
+                    showEmployeeInBreadcrumb(agentId, agentName);
+                }
+            } else if (selectedCheckboxes.length === 0) {
+                // No employees selected - hide from breadcrumb
+                hideEmployeeFromBreadcrumb();
+            } else {
+                // Multiple employees selected - show count in breadcrumb
+                const employeeBreadcrumb = document.getElementById('employeeBreadcrumb');
+                const employeeName = document.getElementById('employeeName');
+                
+                if (employeeBreadcrumb && employeeName) {
+                    employeeName.textContent = `${selectedCheckboxes.length} EMPLOYEES SELECTED`;
+                    employeeName.removeAttribute('href');
+                    employeeBreadcrumb.style.display = 'inline';
+                }
             }
         }
         
@@ -2099,6 +2191,7 @@
                 checkbox.checked = source.checked;
             });
             updateSelectedCount();
+            handleEmployeeSelection();
         }
         
         function updateSelectedCount() {
@@ -2108,7 +2201,10 @@
         
         // Employee checkbox change
         document.querySelectorAll('.employee-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', updateSelectedCount);
+            checkbox.addEventListener('change', function() {
+                updateSelectedCount();
+                handleEmployeeSelection();
+            });
         });
         
         // Employee export functionality
@@ -2267,13 +2363,47 @@
                     detailRow.style.display = 'table-row';
                     this.classList.remove('fa-chevron-down');
                     this.classList.add('fa-chevron-up');
+                    
+                    // Show employee in breadcrumb when expanding details
+                    const agentNameLink = row.querySelector('.agent-name-link');
+                    if (agentNameLink) {
+                        const agentId = agentNameLink.getAttribute('data-agent-id');
+                        const agentName = agentNameLink.getAttribute('data-agent-name');
+                        showEmployeeInBreadcrumb(agentId, agentName);
+                    }
                 } else {
                     // Close this detail row
                     detailRow.style.display = 'none';
                     this.classList.remove('fa-chevron-up');
                     this.classList.add('fa-chevron-down');
+                    
+                    // Hide employee from breadcrumb when collapsing details
+                    hideEmployeeFromBreadcrumb();
                 }
             });
+        });
+        
+        // Agent name link click functionality
+        document.querySelectorAll('.agent-name-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const agentId = this.getAttribute('data-agent-id');
+                const agentName = this.getAttribute('data-agent-name');
+                
+                // Show employee in breadcrumb
+                showEmployeeInBreadcrumb(agentId, agentName);
+                
+                // Navigate to agent details page
+                window.open(this.getAttribute('href'), '_blank');
+            });
+        });
+        
+        // Employee name in breadcrumb click functionality
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'employeeName' && e.target.getAttribute('href')) {
+                e.preventDefault();
+                window.open(e.target.getAttribute('href'), '_blank');
+            }
         });
         
         // Employee search functionality

@@ -413,6 +413,16 @@ class HomeController extends Controller
         $data['country_name'] = $user->country->name ?? '';
         $data['image'] = $user->image ? aws_asset_path($user->image) : asset('').'front-assets/images/avatar/profile-icon.png';
 
+        // Add agency information for agents (role 3)
+        if ($user->role == 3 && $user->agency_id) {
+            $agency = User::where('id', $user->agency_id)->where('role', 4)->first();
+            $data['agency_id'] = $user->agency_id;
+            $data['agency_name'] = $agency ? $agency->name : null;
+        } else {
+            $data['agency_id'] = null;
+            $data['agency_name'] = null;
+        }
+
         return response()->json(['message' => "My Profile", 'data' => convert_all_elements_to_string($data)], 200);
     }
     public function countries()

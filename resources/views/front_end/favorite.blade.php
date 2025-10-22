@@ -44,7 +44,10 @@
                                                         <li><a href="{{ url('favorite') }}" style="background-color: rgb(242, 233, 224);">{{ __('messages.favorite') }}
                                                             <!-- <span>6</span> -->
                                                         </a></li>
-                                                        <li><a href="{{ url('visit-schedule') }}">{{ __('messages.visit_schedule') }}</a></li>
+                                                        @if(\Auth::user()->role == 3 || \Auth::user()->role == 4)
+                                                            <!-- Only show visit schedule for agents (role 3) and agencies (role 4) -->
+                                                            <li><a href="{{ url('visit-schedule') }}">{{ __('messages.visit_schedule') }}</a></li>
+                                                        @endif
                                                     </ul>
                                                     <a href="{{ url('user/logout') }}" class="hum_log-out_btn"><i class="fa-light fa-power-off"></i> {{ __('messages.log_out') }}</a>
                                                 </div>
