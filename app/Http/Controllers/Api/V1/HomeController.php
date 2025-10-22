@@ -960,7 +960,7 @@ class HomeController extends Controller
         // Get visit schedules for agents in this agency
         $visit_schedules = \App\Models\VisiteSchedule::with(['agent', 'project'])
             ->whereIn('agent_id', $agentIds)
-            ->orderBy('visit_time', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get()
             ->map(function($visit) {
                 return [
@@ -1416,7 +1416,7 @@ class HomeController extends Controller
             $hasNextPage = $page < $totalPages;
 
             // Get visit schedules with pagination
-            $visitSchedules = $query->orderBy('visit_time', 'desc')
+            $visitSchedules = $query->orderBy('created_at', 'desc')
                 ->limit($limit)
                 ->skip($offset)
                 ->get()
