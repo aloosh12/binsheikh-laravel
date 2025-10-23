@@ -183,13 +183,15 @@
         width: 100%;
     }
     
-    /* Mobile image fix - prevent cropping */
+    /* Mobile image fix - show full image without cropping */
     @media screen and (max-width: 768px) {
         .popup-image-col img {
             object-fit: contain;
-            object-position: center;
+            object-position: center center;
             width: 100% !important;
-            max-width: 100%;
+            height: auto !important;
+            border-radius: 12px 12px 0 0;
+            display: block;
         }
     }
     
@@ -269,49 +271,51 @@
     /* Mobile Responsive Styles */
     @media screen and (max-width: 768px) {
         .popup-modal-dialog {
-            max-width: 95%;
-            margin: 0.5rem auto;
-            min-height: calc(100vh - 1rem);
+            max-width: 90%;
+            margin: 1rem auto;
+            min-height: auto;
             align-items: center;
         }
         
         .popup-modal-content {
             max-width: 100%;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
-            border-radius: 8px;
+            border-radius: 12px;
         }
         
         .popup-image-col {
-            min-height: 180px;
-            max-height: 220px;
-            border-radius: 8px 8px 0 0;
-            padding: 10px 10px 0 10px;
+            min-height: auto;
+            max-height: none;
+            border-radius: 12px 12px 0 0;
+            padding: 0;
         }
         
         .popup-content-col {
-            padding: 1.5rem 1.2rem;
+            padding: 2.5rem 1.5rem 2rem;
             min-height: auto;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            border-radius: 0 0 12px 12px;
         }
         
         .popup-text-content {
             flex: 0 1 auto;
-            padding-bottom: 1rem;
+            padding-bottom: 1.5rem;
+            margin-top: 0.5rem;
         }
         
         .popup-title {
-            font-size: 1.6rem;
-            margin-bottom: 0.5rem !important;
+            font-size: 1.5rem;
+            margin-bottom: 1rem !important;
             line-height: 1.3;
         }
         
         .popup-subtitle {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             margin-bottom: 0 !important;
-            line-height: 1.4;
+            line-height: 1.5;
         }
         
         .popup-button-container {
@@ -320,42 +324,91 @@
         }
         
         .popup-button {
-            padding: 12px 20px;
+            padding: 14px 24px;
             font-size: 14px;
-            min-height: 44px;
+            min-height: 48px;
             width: 100%;
             display: block;
             line-height: 1.4;
+            border-radius: 6px;
         }
     }
     
     @media screen and (max-width: 480px) {
         .popup-modal-dialog {
-            max-width: 96%;
-            margin: 0.25rem auto;
-            min-height: calc(100vh - 0.5rem);
+            max-width: 92%;
+            margin: 0.5rem auto;
+            min-height: auto;
         }
         
         .popup-modal-content {
-            max-height: 92vh;
+            max-height: 88vh;
         }
         
         .popup-image-col {
-            min-height: 160px;
-            max-height: 200px;
+            min-height: auto;
+            max-height: none;
         }
         
         .popup-content-col {
-            padding: 1.2rem 1rem;
+            padding: 2.2rem 1.3rem 1.8rem;
+        }
+        
+        .popup-text-content {
+            margin-top: 0.5rem;
         }
         
         .popup-title {
-            font-size: 1.4rem;
-            margin-bottom: 0.4rem !important;
+            font-size: 1.35rem;
+            margin-bottom: 0.9rem !important;
         }
         
         .popup-subtitle {
             font-size: 0.85rem;
+        }
+        
+        .popup-button-container {
+            margin-top: 1.3rem;
+        }
+        
+        .popup-button {
+            padding: 12px 20px;
+            font-size: 13px;
+            min-height: 44px;
+        }
+    }
+    
+    /* Extra small devices */
+    @media screen and (max-width: 360px) {
+        .popup-modal-dialog {
+            max-width: 90%;
+            margin: 0.3rem auto;
+        }
+        
+        .popup-modal-content {
+            max-height: 90vh;
+        }
+        
+        .popup-image-col {
+            min-height: auto;
+            max-height: none;
+        }
+        
+        .popup-content-col {
+            padding: 2rem 1rem 1.5rem;
+        }
+        
+        .popup-text-content {
+            margin-top: 0.5rem;
+        }
+        
+        .popup-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem !important;
+        }
+        
+        .popup-subtitle {
+            font-size: 0.8rem;
         }
         
         .popup-button-container {
@@ -364,47 +417,8 @@
         
         .popup-button {
             padding: 11px 18px;
-            font-size: 13px;
-            min-height: 42px;
-        }
-    }
-    
-    /* Extra small devices */
-    @media screen and (max-width: 360px) {
-        .popup-modal-dialog {
-            max-width: 98%;
-            margin: 0.2rem auto;
-        }
-        
-        .popup-modal-content {
-            max-height: 94vh;
-        }
-        
-        .popup-image-col {
-            min-height: 140px;
-            max-height: 180px;
-        }
-        
-        .popup-content-col {
-            padding: 1rem 0.8rem;
-        }
-        
-        .popup-title {
-            font-size: 1.25rem;
-        }
-        
-        .popup-subtitle {
-            font-size: 0.8rem;
-        }
-        
-        .popup-button-container {
-            margin-top: 1rem;
-        }
-        
-        .popup-button {
-            padding: 10px 16px;
             font-size: 12px;
-            min-height: 40px;
+            min-height: 42px;
         }
     }
     
@@ -416,22 +430,26 @@
         }
         
         .popup-modal-content {
-            max-height: 95vh;
+            max-height: 92vh;
         }
         
         .popup-image-col {
-            min-height: 120px;
-            max-height: 150px;
+            min-height: auto;
+            max-height: none;
         }
         
         .popup-content-col {
-            padding: 1rem;
+            padding: 1.5rem 1.2rem;
             min-height: auto;
         }
         
+        .popup-text-content {
+            margin-top: 0.5rem;
+        }
+        
         .popup-title {
-            font-size: 1.3rem;
-            margin-bottom: 0.3rem !important;
+            font-size: 1.25rem;
+            margin-bottom: 0.6rem !important;
         }
         
         .popup-subtitle {
@@ -439,12 +457,12 @@
         }
         
         .popup-button-container {
-            margin-top: 0.8rem;
+            margin-top: 1rem;
         }
         
         .popup-button {
-            padding: 8px 16px;
-            min-height: 36px;
+            padding: 10px 18px;
+            min-height: 40px;
             font-size: 12px;
         }
     }
