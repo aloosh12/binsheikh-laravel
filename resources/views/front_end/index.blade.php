@@ -183,6 +183,14 @@
         width: 100%;
     }
     
+    /* Mobile image fix - prevent cropping */
+    @media screen and (max-width: 768px) {
+        .popup-image-col img {
+            object-fit: contain;
+            object-position: center;
+        }
+    }
+    
     .popup-content-col {
         padding: 2.5rem 2rem;
         display: flex;
@@ -276,6 +284,7 @@
             min-height: 180px;
             max-height: 220px;
             border-radius: 8px 8px 0 0;
+            padding: 10px 10px 0 10px;
         }
         
         .popup-content-col {
