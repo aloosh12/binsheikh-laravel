@@ -188,6 +188,8 @@
         .popup-image-col img {
             object-fit: contain;
             object-position: center;
+            width: 100% !important;
+            max-width: 100%;
         }
     }
     
