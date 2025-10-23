@@ -180,7 +180,8 @@ class HomeController extends Controller
     {
         $page_heading = "Home";
         $categories = Categories::where(['deleted' => 0])->orderBy('name', 'asc')->get();
-        $recommended = Properties::with(['property_type', 'images'])->where(['is_recommended' => 1, 'active' => '1', 'deleted' => 0])->orderBy('order')->limit(3)->get();
+         // $recommended = Properties::with(['property_type', 'images'])->where(['is_recommended' => 1, 'active' => '1', 'deleted' => 0])->orderBy('order')->limit(3)->get();
+        $recommended = Properties::with(['property_type', 'images'])->where(['is_recommended' => 1, 'active' => '1', 'deleted' => 0])->orderBy('order')->get();
         foreach ($recommended as $key => $val) {
             $recommended[$key]->is_fav = 0;
             if (Auth::check() && (Auth::user()->role != '1')) {
